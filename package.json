@@ -9,9 +9,12 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "ldapjs": "^2.3.3",
     "next": "12.3.1",
     "react": "18.2.0",
-    "react-dom": "18.2.0"
+    "react-dom": "18.2.0",
+    "sequelize": "^6.24.0",
+    "tedious": "^15.1.0"
   },
   "devDependencies": {
     "eslint": "8.24.0",
