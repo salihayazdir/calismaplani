@@ -67,24 +67,29 @@ export default function handler(req, response) {
         const joinArray = (array) =>
           typeof array == "object" ? array.join() : array;
 
-        const refactoredUserData = ldapData.map((user) => {
+        const userData = ldapData.map((user) => {
+          if (user.mail === null || user.mail === undefined) return;
+          if (user.sAMAccountName !== "salaya") return;
           return {
             username: user.sAMAccountName,
-            display_name: user.name,
+            display_name: user.name || null,
             mail: user.mail,
             is_manager: Boolean(user.directReports),
             is_hr: Boolean(user.description === "İnsan Kaynakları Bölümü"),
-            user_dn: user.dn,
-            title: user.title,
-            description: user.description,
-            physicalDeliveryOfficeName: user.physicalDeliveryOfficeName,
-            memberOf: joinArray(user.memberOf),
-            department: user.department,
-            directReports: joinArray(user.directReports),
-            manager_dn: user.manager,
+            user_dn: user.dn || null,
+            title: user.title || null,
+            description: user.description || null,
+            physicalDeliveryOfficeName: user.physicalDeliveryOfficeName || null,
+            memberOf: joinArray(user.memberOf) || null,
+            department: user.department || null,
+            directReports: joinArray(user.directReports) || null,
+            manager_dn: user.manager || null,
           };
         });
-        refactoredUserData.forEach((user) => addUser(user));
+
+        const filteredData = userData.filter((user) => user !== undefined);
+
+        filteredData.forEach((user) => addUser(user));
         response.status(200).json({ test: "ok", data: ldapData });
       });
     });

@@ -6,26 +6,72 @@ export async function addUser(user) {
     const pool = await sql.connect(dbConfig);
     const result = await pool
       .request()
-      .input("username", sql.VarChar, user.username)
-      .input("display_name", sql.VarChar, user.display_name)
-      .input("mail", sql.VarChar, user.mail)
+      .input("username", sql.NVarChar, user.username)
+      .input("display_name", sql.NVarChar, user.display_name)
+      .input("mail", sql.NVarChar, user.mail)
       .input("is_manager", sql.Bit, user.is_manager)
       .input("is_hr", sql.Bit, user.is_hr)
-      .input("user_dn", sql.VarChar, user.user_dn)
-      .input("title", sql.VarChar, user.title)
-      .input("description", sql.VarChar, user.description)
+      .input("user_dn", sql.NVarChar, user.user_dn)
+      .input("title", sql.NVarChar, user.title)
+      .input("description", sql.NVarChar, user.description)
       .input(
         "physicalDeliveryOfficeName",
-        sql.VarChar,
+        sql.NVarChar,
         user.physicalDeliveryOfficeName
       )
-      .input("memberOf", sql.VarChar, user.memberOf)
-      .input("department", sql.VarChar, user.department)
-      .input("directReports", sql.VarChar, user.directReports)
-      .input("manager_dn", sql.VarChar, user.manager_dn)
+      .input("memberOf", sql.NVarChar, user.memberOf)
+      .input("department", sql.NVarChar, user.department)
+      .input("directReports", sql.NVarChar, user.directReports)
+      .input("manager_dn", sql.NVarChar, user.manager_dn)
       .execute("PKDS.AddUser");
     console.log(result);
     return result;
+  } catch (err) {
+    console.error(err);
+    return err;
+  }
+}
+
+export async function getLoginInfo(username) {
+  try {
+    const pool = await sql.connect(dbConfig);
+    const result = await pool
+      .request()
+      .input("username", sql.NVarChar, username)
+      .execute("PKDS.GetLoginInfo");
+    console.log(result);
+    return result.recordset;
+  } catch (err) {
+    console.error(err);
+    return err;
+  }
+}
+
+export async function addOtp(code, username, createdAt) {
+  try {
+    const pool = await sql.connect(dbConfig);
+    const result = await pool
+      .request()
+      .input("username", sql.NVarChar, username)
+      .input("code", sql.NVarChar, code)
+      .input("created_at", sql.DateTime2, createdAt)
+      .execute("PKDS.AddOtp");
+    console.log(result);
+    return result;
+  } catch (err) {
+    console.error(err);
+    return err;
+  }
+}
+
+export async function getOtp(username) {
+  try {
+    const pool = await sql.connect(dbConfig);
+    const result = await pool
+      .request()
+      .input("username", sql.NVarChar, username)
+      .execute("PKDS.GetOtp");
+    return result.recordset;
   } catch (err) {
     console.error(err);
     return err;
