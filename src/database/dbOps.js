@@ -77,3 +77,17 @@ export async function getOtp(username) {
     return err;
   }
 }
+
+export async function deleteOtp(username) {
+  try {
+    const pool = await sql.connect(dbConfig);
+    const result = await pool
+      .request()
+      .input("username", sql.NVarChar, username)
+      .execute("PKDS.DeleteOtp");
+    return result.recordset;
+  } catch (err) {
+    console.error(err);
+    return err;
+  }
+}

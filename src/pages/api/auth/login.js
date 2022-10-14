@@ -1,5 +1,5 @@
-import { getLoginInfo, addOtp } from "../../database/dbOps";
-import sendMail from "../../backend/sendMail";
+import { getLoginInfo, addOtp } from "../../../database/dbOps";
+import sendMail from "../../../backend/sendMail";
 import crypto from "node:crypto";
 import bcrypt from "bcrypt";
 
@@ -7,7 +7,7 @@ export default async function handler(req, res) {
   const usernameFromRequest = req.body.username;
   const loginInfoArray = await getLoginInfo(usernameFromRequest);
 
-  if (loginInfoArray.length !== 1) throw "User not found.";
+  if (loginInfoArray.length !== 1) throw "Kullanıcı bulunamadı.";
 
   const loginInfo = loginInfoArray[0];
   const username = await loginInfo.username;
