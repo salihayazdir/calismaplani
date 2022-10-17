@@ -4,50 +4,58 @@ import crypto from "node:crypto";
 import bcrypt from "bcrypt";
 
 export default async function handler(req, res) {
-  const usernameFromRequest = req.body.username;
-  const loginInfoArray = await getLoginInfo(usernameFromRequest);
+	console.log(req.headers.cookie);
+	try {
+		const usernameFromRequest = req.body.username;
+		const loginInfoArray = await getLoginInfo(usernameFromRequest);
 
-  if (loginInfoArray.length !== 1) throw "Kullanıcı bulunamadı.";
+		if (loginInfoArray.length !== 1) throw "Kullanıcı bulunamadı.";
 
-  const loginInfo = loginInfoArray[0];
-  const username = await loginInfo.username;
-  const usermail = await loginInfo.mail;
+		const loginInfo = loginInfoArray[0];
 
-  var currentTime = new Date();
-  var createdAt =
-    currentTime.getFullYear() +
-    "-" +
-    (currentTime.getMonth() + 1) +
-    "-" +
-    currentTime.getDate() +
-    " " +
-    currentTime.getHours() +
-    ":" +
-    currentTime.getMinutes() +
-    ":" +
-    currentTime.getSeconds();
+		if (loginInfo.is_hr === false && loginInfo.is_manager === false)
+			throw "Sisteme giriş yetkiniz bulunmuyor.";
 
-  console.log(createdAt);
+		const username = loginInfo.username;
+		const usermail = loginInfo.mail;
 
-  const randomNumber = crypto.randomInt(0, 1000000);
-  const otp = randomNumber.toString().padStart(6, "0");
+		var currentTime = new Date();
+		var createdAt =
+			currentTime.getFullYear() +
+			"-" +
+			(currentTime.getMonth() + 1) +
+			"-" +
+			currentTime.getDate() +
+			" " +
+			currentTime.getHours() +
+			":" +
+			currentTime.getMinutes() +
+			":" +
+			currentTime.getSeconds();
 
-  try {
-    bcrypt.hash(otp, 10, (err, hash) => {
-      addOtp(hash, username, createdAt);
-    });
+		const randomNumber = crypto.randomInt(0, 1000000);
+		const otp = randomNumber.toString().padStart(6, "0");
 
-    const mailInfo = await sendMail({
-      mailTo: usermail,
-      subject: "Bileşim PKDS | Kullanıcı Girişi",
-      html: `<p>Tek Kullanımlık Şifreniz: ${otp}. Şifre geçerlilik süresi 3 dakikadır.<p>`,
-    });
+		bcrypt.hash(otp, 10, (err, hash) => {
+			addOtp(hash, username, createdAt);
+		});
 
-    if ((await mailInfo.success) === false)
-      throw `Mailer Error: ${mailInfo.info || null}`;
+		const mailInfo = await sendMail({
+			mailTo: usermail,
+			subject: "Bileşim PKDS | Kullanıcı Girişi",
+			html: `<p>Tek Kullanımlık Şifreniz: ${otp}. Şifre geçerlilik süresi 3 dakikadır.<p>`,
+		});
 
-    res.status(200).json({ test: "ok", loginInfo });
-  } catch (err) {
-    console.error(err);
-  }
+		if ((await mailInfo.success) === false)
+			throw `Mailer Error: ${mailInfo.info || null}`;
+
+		res.status(200).json({
+			success: true,
+			message: `Tek kullanımlık doğrulama kodunuz ${usermail} adresine gönderilmiştir.`,
+			data: loginInfo,
+		});
+	} catch (err) {
+		console.error(err);
+		res.status(200).json({ success: false, message: err });
+	}
 }

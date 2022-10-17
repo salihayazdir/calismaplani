@@ -1,7 +1,182 @@
-function giris() {
-  return (
-    <div>giris</div>
-  )
+import { useState } from "react";
+import axios from "axios";
+import { useRouter } from "next/router";
+import LoginForm from "../components/login/LoginForm";
+import OtpForm from "../components/login/OtpForm";
+import Steps from "../components/login/Steps";
+import verifyToken from "../backend/verifyToken";
+import cookie from "cookie";
+
+export default function Giris() {
+	const [loginStep, setLoginStep] = useState(1);
+	const [loginFormData, setLoginFormData] = useState({
+		username: "",
+	});
+	const [otpFormData, setOtpFormData] = useState({ otp: "" });
+	const [loginStatus, setLoginStatus] = useState({
+		isLoading: false,
+		isError: false,
+		message: "",
+	});
+
+	const router = useRouter();
+
+	const handleLoginFormChange = (e) => {
+		setLoginFormData({ [e.target.name]: e.target.value });
+	};
+
+	const handleOtpFormChange = (e) => {
+		setOtpFormData({ [e.target.name]: e.target.value });
+	};
+
+	const handleLoginFormSubmit = async (e) => {
+		e.preventDefault();
+		setLoginStatus((prev) => ({
+			...prev,
+			isError: false,
+			isLoading: true,
+			message: "",
+		}));
+		axios
+			.post(`${process.env.NEXT_PUBLIC_DOMAIN}/api/auth/login`, {
+				username: loginFormData.username,
+			})
+			.then((res) => {
+				// console.log(res);
+				if (res.data.success === true) {
+					setLoginStep(2);
+					setLoginStatus((prev) => ({
+						...prev,
+						isLoading: false,
+						isError: false,
+						message: res.data.message || "",
+					}));
+					localStorage.setItem("username", res.data.data.username);
+				} else {
+					setLoginStatus((prev) => ({
+						...prev,
+						isLoading: false,
+						isError: true,
+						message: res.data.message || "Bağlantı hatası.",
+					}));
+				}
+			})
+			.catch((err) => {
+				console.error(err);
+				setLoginStatus((prev) => ({
+					...prev,
+					isLoading: false,
+					isError: true,
+					message: "Bağlantı hatası.",
+				}));
+			});
+	};
+
+	const handleOtpFormSubmit = async (e) => {
+		e.preventDefault();
+		setLoginStatus((prev) => ({
+			...prev,
+			isError: false,
+			isLoading: true,
+			message: "",
+		}));
+		axios
+			.post(`${process.env.NEXT_PUBLIC_DOMAIN}/api/auth/otp`, {
+				username: localStorage.getItem("username") || null,
+				otp: otpFormData.otp,
+			})
+			.then((res) => {
+				// console.log(res);
+				if (res.data.success === true) {
+					setLoginStatus((prev) => ({
+						...prev,
+						isLoading: false,
+						isError: false,
+					}));
+					router.reload();
+				} else {
+					setLoginStatus((prev) => ({
+						...prev,
+						isLoading: false,
+						isError: true,
+						message: res.data.message || "Bağlantı hatası.",
+					}));
+				}
+			})
+
+			.catch((err) => {
+				console.error(err);
+				setLoginStatus((prev) => ({
+					...prev,
+					isLoading: false,
+					isError: true,
+					message: "Bağlantı hatası.",
+				}));
+			});
+	};
+
+	return (
+		<div className="flex min-h-full items-center justify-center py-12 px-4">
+			<div className="border-gray-200pt-8 flex w-full max-w-md flex-col rounded-xl border shadow-sm ">
+				<h2 className=" border-b border-gray-200 py-4 text-center text-xl font-bold tracking-tight text-gray-700">
+					Kullanıcı Girişi
+				</h2>
+				<Steps loginStep={loginStep} />
+				{loginStatus.message && (
+					<div
+						className={`mx-10 mt-10 rounded-md bg-green-100 py-4 px-6 text-green-800 
+            ${loginStatus.isError === true && "bg-red-100 text-red-700"} `}
+					>
+						{loginStatus.message}
+					</div>
+				)}
+				<div className="flex flex-col gap-10 p-10">
+					{loginStep === 1 && (
+						<LoginForm
+							loginFormData={loginFormData}
+							handleLoginFormChange={handleLoginFormChange}
+							handleLoginFormSubmit={handleLoginFormSubmit}
+							isLoading={loginStatus.isLoading}
+						/>
+					)}
+					{loginStep === 2 && (
+						<OtpForm
+							otpFormData={otpFormData}
+							handleOtpFormChange={handleOtpFormChange}
+							handleOtpFormSubmit={handleOtpFormSubmit}
+							isLoading={loginStatus.isLoading}
+						/>
+					)}
+				</div>
+			</div>
+		</div>
+	);
 }
 
-export default giris
+export async function getServerSideProps(context) {
+	if (context.req.headers.cookie) {
+		const parsedCookie = cookie.parse(context.req.headers.cookie);
+		const userData = await verifyToken(parsedCookie.token);
+		if (userData) {
+			if (userData.is_hr === true)
+				return {
+					redirect: {
+						permanent: false,
+						destination: "/dashboard",
+					},
+					props: {},
+				};
+			else if (userData.is_manager === true)
+				return {
+					redirect: {
+						permanent: false,
+						destination: "/",
+					},
+					props: {},
+				};
+		}
+	}
+	return {
+		props: {},
+	};
+}
