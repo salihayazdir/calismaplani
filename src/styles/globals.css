@@ -7,7 +7,7 @@ body {
   padding:0;
   margin:0;
   background-color:#f9fafb;
-  font-family:-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
+  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
 }
 
@@ -20,11 +20,11 @@ body {
 }
 
 .react-datepicker__input-container input {
-  @apply  text-base px-4 py-2 md:text-sm bg-white border border-gray-200 rounded-md shadow-sm focus:outline-blue-200
+  @apply  px-4 py-1 text-sm bg-white border-2 border-blue-500 rounded-r-lg  focus:outline-blue-200
 }
 
 .react-datepicker-popper {
-  @apply z-40 w-72 text-sm bg-white shadow p-3 border-gray-200 rounded-lg
+  @apply z-40 w-72 text-sm bg-white shadow-xl border p-3 border-gray-200 rounded-lg
 }
 
 .react-datepicker-left {

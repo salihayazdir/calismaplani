@@ -2,7 +2,7 @@ import Head from 'next/head';
 import React from 'react';
 import Header from './header/Header';
 
-export default function Layout({ children, title }) {
+export default function Layout({ children, title, displayName }) {
   return (
     <div>
       <Head>
@@ -10,7 +10,7 @@ export default function Layout({ children, title }) {
         <meta name='description' content='' />
         <link rel='icon' href='/favicon.ico' />
       </Head>
-      <Header />
+      <Header displayName={displayName} />
       <main>{children}</main>
     </div>
   );

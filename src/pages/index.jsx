@@ -2,20 +2,23 @@ import { useState } from 'react';
 import verifyToken from '../backend/verifyToken';
 import { getDirectReports, getUserStatuses } from '../database/dbOps';
 import NewRecordTable from '../components/table/NewRecordTable';
-import DatePicker from 'react-datepicker';
-import { isSameISOWeek, startOfISOWeek, addDays, format } from 'date-fns';
+import { startOfISOWeek, addDays, format } from 'date-fns';
 import axios from 'axios';
 import Layout from '../components/layout/Layout';
+import ModalDialog from '../components/ModalDialog';
+import WeekPicker from '../components/WeekPicker';
 
-export default function Home({ directReports, userStatuses }) {
+export default function Home({ directReports, userStatuses, userData }) {
   const days = ['Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma'];
-  const [startDate, setStartDate] = useState(startOfISOWeek(new Date()));
+  const [selectedDate, setSelectedDate] = useState(
+    startOfISOWeek(addDays(new Date(), 7))
+  );
+  const [modalIsOpen, setModalIsOpen] = useState(false);
   const [apiStatus, setApiStatus] = useState({
     isLoading: false,
     isError: false,
     message: '',
   });
-  console.log(apiStatus);
   const [records, setRecords] = useState(
     days.map((day, dayIdx) => ({
       dayIdx,
@@ -30,16 +33,20 @@ export default function Home({ directReports, userStatuses }) {
     }))
   );
 
+  console.log(apiStatus);
+
   const sendRecords = () => {
     setApiStatus({
       isLoading: true,
       isError: false,
       message: '',
     });
+    setModalIsOpen(true);
+
     const recordsToSend = records
       .map((dayOfRecords) => {
         const recordDate = format(
-          addDays(startDate, dayOfRecords.dayIdx),
+          addDays(selectedDate, dayOfRecords.dayIdx),
           'yyyy-MM-dd'
         );
         return dayOfRecords.data.map((record) => ({
@@ -82,67 +89,49 @@ export default function Home({ directReports, userStatuses }) {
   };
 
   return (
-    <Layout title='Anasayfa'>
-      <div className='flex  flex-col gap-6 px-10 py-6'>
-        <div className='flex items-center justify-between'>
-          <h1 className='w-full text-xl font-bold text-gray-700'>
-            Personel Haftalık Devam Çizelgesi
-          </h1>
-          <div className='flex items-center'>
-            <span>Hafta:</span>
-            <DatePicker
-              selected={startDate}
-              onChange={(date) => setStartDate(startOfISOWeek(date))}
-              startDate={startDate}
-              // endDate={endDate}
-              // selectsRange
-              fixedHeight
-              dateFormat='dd-MM-yyyy'
-              // inline
-              calendarStartDay={1}
-              nextMonthButtonLabel='>'
-              previousMonthButtonLabel='<'
-              // locale={`tr-TR`}
-              dayClassName={(date) =>
-                isSameISOWeek(date, startDate)
-                  ? 'react-datepicker__day--selected'
-                  : ''
-              }
-              popperPlacement='top-end'
-              popperModifiers={[
-                {
-                  name: 'offset',
-                  options: {
-                    offset: [0, 4],
-                  },
-                },
-                {
-                  name: 'preventOverflow',
-                  options: {
-                    rootBoundary: 'viewport',
-                    tether: false,
-                    altAxis: true,
-                  },
-                },
-              ]}
+    <>
+      <Layout title='PDKS | Anasayfa' displayName={userData.display_name}>
+        <div className='flex  flex-col gap-6 px-10 py-6'>
+          <div className='flex items-center justify-between'>
+            <h1 className='w-full text-xl font-bold text-gray-700'>
+              Personel Haftalık Devam Çizelgesi
+            </h1>
+            <div className='flex rounded-lg border border-gray-200 bg-white  shadow-lg'>
+              <span className='flex items-center rounded-l-lg border-r px-4 text-sm font-semibold text-gray-500'>
+                Hafta
+              </span>
+              <WeekPicker
+                selectedDate={selectedDate}
+                setSelectedDate={setSelectedDate}
+                minDate={startOfISOWeek(addDays(new Date(), 7))}
+                maxDate={addDays(
+                  startOfISOWeek(addDays(new Date(), 7 * 3)),
+                  -1
+                )}
+              />
+            </div>
+          </div>
+          <div className='flex flex-col rounded-xl border border-gray-200 bg-white pb-4'>
+            <NewRecordTable
+              records={records}
+              setRecords={setRecords}
+              userStatuses={userStatuses}
             />
           </div>
+          <button
+            className='self-end rounded-lg bg-green-500 px-10 py-3 font-semibold text-white hover:bg-green-600 '
+            onClick={sendRecords}
+          >
+            Gönder
+          </button>
         </div>
-        <div className='flex flex-col rounded-xl border border-gray-200 bg-white pb-4'>
-          <NewRecordTable
-            records={records}
-            setRecords={setRecords}
-            userStatuses={userStatuses}
-          />
-        </div>
-        <button
-          className='self-end rounded-lg bg-green-500 px-8 py-2 text-sm font-semibold text-white hover:bg-green-600 '
-          onClick={sendRecords}
-        >
-          Gönder
-        </button>
-      </div>
-    </Layout>
+      </Layout>
+      <ModalDialog
+        isOpen={modalIsOpen}
+        setIsOpen={setModalIsOpen}
+        apiStatus={apiStatus}
+      />
+    </>
   );
 }
 
@@ -170,6 +159,6 @@ export async function getServerSideProps(context) {
   const userStatuses = await getUserStatuses();
 
   return {
-    props: { directReports, userStatuses },
+    props: { directReports, userStatuses, userData },
   };
 }

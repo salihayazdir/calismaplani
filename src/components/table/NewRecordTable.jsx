@@ -112,9 +112,10 @@ export default function NewRecordTable({ records, setRecords, userStatuses }) {
           setRecords={setRecords}
           userStatuses={userStatuses}
           selectedFlatRows={selectedFlatRows}
+          numberOfSelectedRows={Object.keys(selectedRowIds).length}
         />
       </div>
-      <div className={`overflow-x-auto text-xs`}>
+      <div className={`overflow-x-auto overflow-y-visible text-xs`}>
         <table
           {...getTableProps()}
           className='w-full border-collapse rounded-lg'

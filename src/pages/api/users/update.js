@@ -1,5 +1,5 @@
 const ldap = require('ldapjs');
-import { addUser } from '../../database/dbOps';
+import { addUser } from '../../../database/dbOps';
 
 export default function handler(req, response) {
   try {
@@ -91,10 +91,20 @@ export default function handler(req, response) {
 
         filteredData.forEach((user) => addUser(user));
 
-        response.status(200).json({ test: 'ok', ldapData });
+        response
+          .status(200)
+          .json({
+            success: true,
+            message: 'Tüm kullanıcı bilgileri güncellendi.',
+            ldapData,
+          });
       });
     });
   } catch (err) {
     console.error('CAUGHT ERROR: ' + err);
+    response.status(200).json({
+      success: false,
+      message: err,
+    });
   }
 }

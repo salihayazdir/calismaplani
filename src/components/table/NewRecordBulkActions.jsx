@@ -7,6 +7,7 @@ export default function NewRecordBulkActions({
   setRecords,
   userStatuses,
   selectedFlatRows,
+  numberOfSelectedRows,
 }) {
   const [selectedStatus, setSelectedStatus] = useState(userStatuses[0]);
 
@@ -97,9 +98,12 @@ export default function NewRecordBulkActions({
       </div>
       <button
         onClick={applyBulkStatus}
-        className='rounded-lg bg-gray-700 py-2 px-4 font-semibold text-white'
+        disabled={numberOfSelectedRows === 0}
+        className='rounded-lg bg-gray-700 py-2 px-4 font-semibold text-white disabled:bg-gray-300'
       >
-        Uygula
+        {numberOfSelectedRows === 0
+          ? 'Uygula'
+          : `Uygula (${numberOfSelectedRows})`}
       </button>
     </div>
   );
