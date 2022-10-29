@@ -19,6 +19,7 @@ export default function WeekPicker({
       </button>
     );
   });
+  CustomInput.displayName = 'CustomInput';
 
   return (
     <DatePicker

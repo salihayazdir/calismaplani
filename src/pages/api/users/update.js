@@ -69,12 +69,15 @@ export default function handler(req, response) {
 
         const userData = ldapData.map((user) => {
           if (user.mail === null || user.mail === undefined) return;
-          // if (user.sAMAccountName !== "salaya") return;
+          if (user.manager === undefined) return;
+          if (user.sAMAccountName === 'murhak') return;
+
           return {
             username: user.sAMAccountName,
             display_name: user.name || null,
             mail: user.mail,
-            is_manager: Boolean(user.directReports),
+            // is_manager: Boolean(user.directReports),
+            is_manager: Boolean(user.manager.includes('OU=Genel Mud. Yrd.')),
             is_hr: Boolean(user.description === 'İnsan Kaynakları Bölümü'),
             user_dn: user.dn || null,
             title: user.title || null,
@@ -91,13 +94,11 @@ export default function handler(req, response) {
 
         filteredData.forEach((user) => addUser(user));
 
-        response
-          .status(200)
-          .json({
-            success: true,
-            message: 'Tüm kullanıcı bilgileri güncellendi.',
-            ldapData,
-          });
+        response.status(200).json({
+          success: true,
+          message: 'Tüm kullanıcı bilgileri güncellendi.',
+          ldapData,
+        });
       });
     });
   } catch (err) {

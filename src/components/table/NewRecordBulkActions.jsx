@@ -12,8 +12,6 @@ export default function NewRecordBulkActions({
   const [selectedStatus, setSelectedStatus] = useState(userStatuses[0]);
 
   const applyBulkStatus = () => {
-    console.log(records);
-
     const usersToApplyBulkAction = selectedFlatRows.map(
       (row) => row.values.username
     );

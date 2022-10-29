@@ -2,20 +2,23 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import verifyToken from '../backend/verifyToken';
 import { startOfISOWeek, addDays, format } from 'date-fns';
-import { getUserStatuses } from '../database/dbOps';
-import DashboardTable from '../components/table/DashboardTable';
-import WeekPicker from '../components/WeekPicker';
+import { getUserStatuses, getUsersWithManagers } from '../database/dbOps';
 import Layout from '../components/layout/Layout';
-import Loader from '../components/Loader';
-import DoughnutChart from '../components/dashboard/DoughnutChart';
-import BarChart from '../components/dashboard/BarChart';
+import WeekPicker from '../components/WeekPicker';
 import ModalDialog from '../components/ModalDialog';
+import DateRangeRadio from '../components/DateRangeRadio';
+import DashboardViewRadio from '../components/DashboardViewRadio';
+import DashboardHeader from '../components/layout/DashboardHeader';
+import DashboardStats from '../components/dashboardViews/DashboardStats';
+import DashboardManagers from '../components/dashboardViews/DashboardManagers';
+import DashboardRecords from '../components/dashboardViews/DashboardRecords';
 
 // import 'react-datepicker/dist/react-datepicker.css';
 
-export default function Dashboard({ userStatuses, userData }) {
+export default function Dashboard({ userStatuses, userData, listOfUsers }) {
   const [selectedDate, setSelectedDate] = useState(startOfISOWeek(new Date()));
-  const [reportRange, setReportRange] = useState('month');
+  const [selectedDateRange, setSelectedDateRange] = useState('month');
+  const [selectedView, setSelectedView] = useState('stats');
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [records, setRecords] = useState([]);
   const [apiStatus, setApiStatus] = useState({
@@ -29,7 +32,7 @@ export default function Dashboard({ userStatuses, userData }) {
     message: '',
   });
 
-  const fetchTableData = (date, reportRange) => {
+  const fetchTableData = (date) => {
     const startDate = format(date, 'yyyy-MM-dd');
     const endDate = format(addDays(date, 5), 'yyyy-MM-dd');
 
@@ -74,62 +77,25 @@ export default function Dashboard({ userStatuses, userData }) {
     fetchTableData(selectedDate);
   }, [selectedDate]);
 
-  const updateUserData = () => {
-    console.log('update');
-    setupdateUserDataStatus({
-      isLoading: true,
-      isError: false,
-      message: '',
-    });
-    setModalIsOpen(true);
-
-    axios
-      .get(`${process.env.NEXT_PUBLIC_DOMAIN}/api/users/update`)
-      .then((res) => {
-        if (res.data.success === true) {
-          setRecords(res.data.records);
-          setupdateUserDataStatus({
-            isLoading: false,
-            isError: false,
-            message: res.data.message || '',
-          });
-        } else {
-          setupdateUserDataStatus({
-            isLoading: false,
-            isError: true,
-            message: res.data.message || 'Bağlantı hatası.',
-          });
-        }
-      })
-      .catch((err) => {
-        console.error(err);
-        setupdateUserDataStatus({
-          isLoading: false,
-          isError: true,
-          message: 'Bağlantı hatası.',
-        });
-      });
-  };
-
   return (
     <>
       <Layout title='PDKS | Dashboard' displayName={userData.display_name}>
+        <DashboardHeader />
+
         <div className='flex  flex-col gap-6 px-10 py-6'>
           <div className='flex items-center justify-between'>
-            <h1 className='w-full text-xl font-bold text-gray-700'>
-              Personel Devam Raporu
-            </h1>
+            <DashboardViewRadio
+              selected={selectedView}
+              setSelected={setSelectedView}
+            />
             <div className='flex gap-4'>
-              <button
-                onClick={updateUserData}
-                disabled
-                className='whitespace-nowrap rounded-lg border border-gray-50 bg-orange-600 px-4 text-sm font-semibold text-white hover:bg-orange-500'
-              >
-                Kullanıcıları Güncelle
-              </button>
-              <div className='flex rounded-lg border border-gray-200 bg-white  shadow-lg'>
+              <DateRangeRadio
+                selected={selectedDateRange}
+                setSelected={setSelectedDateRange}
+              />
+              <div className='flex rounded-lg border border-gray-200 bg-white'>
                 <span className='flex items-center rounded-l-lg border-r px-4 text-sm font-semibold text-gray-500'>
-                  Hafta
+                  Tarih
                 </span>
                 <WeekPicker
                   selectedDate={selectedDate}
@@ -138,27 +104,28 @@ export default function Dashboard({ userStatuses, userData }) {
               </div>
             </div>
           </div>
-          <div className='flex justify-between gap-6 '>
-            <div className='w-2/3 items-center justify-center rounded-lg border border-gray-200 bg-white'>
-              <BarChart records={records} userStatuses={userStatuses} />
-            </div>
-            <div className='w-1/3 rounded-lg border border-gray-200 bg-white '>
-              <DoughnutChart records={records} userStatuses={userStatuses} />
-            </div>
-          </div>
-          <div className='flex flex-col rounded-xl border border-gray-200 bg-white py-4'>
-            {apiStatus.isLoading ? (
-              <Loader />
-            ) : (
-              <DashboardTable
-                records={records}
-                userStatuses={userStatuses}
-                selectedDate={selectedDate}
-              />
-            )}
-          </div>
+
+          {selectedView === 'stats' && (
+            <DashboardStats records={records} userStatuses={userStatuses} />
+          )}
+          {selectedView === 'records' && (
+            <DashboardRecords
+              records={records}
+              userStatuses={userStatuses}
+              selectedDate={selectedDate}
+              apiStatus={apiStatus}
+            />
+          )}
+          {selectedView === 'managers' && (
+            <DashboardManagers
+              listOfUsers={listOfUsers}
+              records={records}
+              apiStatus={apiStatus}
+            />
+          )}
         </div>
       </Layout>
+
       <ModalDialog
         isOpen={modalIsOpen}
         setIsOpen={setModalIsOpen}
@@ -200,7 +167,28 @@ export async function getServerSideProps(context) {
     };
 
   const userStatuses = await getUserStatuses();
+  const listOfUsers = await getUsersWithManagers();
+
   return {
-    props: { userStatuses, userData },
+    props: { userStatuses, userData, listOfUsers },
   };
 }
+
+// {
+//   !(['managers', 'records', 'stats'].indexOf(selectedView) > -1) && (
+//     <>
+//       <DashboardStats records={records} userStatuses={userStatuses} />
+//       <DashboardRecords
+//         records={records}
+//         userStatuses={userStatuses}
+//         selectedDate={selectedDate}
+//         apiStatus={apiStatus}
+//       />
+//       <DashboardManagers
+//         listOfUsers={listOfUsers}
+//         records={records}
+//         apiStatus={apiStatus}
+//       />
+//     </>
+//   );
+// }

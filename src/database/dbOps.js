@@ -154,3 +154,14 @@ export async function getAllRecordsByDate(startDate, endDate) {
     return err;
   }
 }
+
+export async function getUsersWithManagers() {
+  try {
+    const pool = await sql.connect(dbConfig);
+    const result = await pool.request().execute('PKDS.GetUsersWithManagers');
+    return result.recordset;
+  } catch (err) {
+    console.error(err);
+    return err;
+  }
+}

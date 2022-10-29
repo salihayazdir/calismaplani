@@ -11,7 +11,6 @@ export default async function handler(req, response) {
       throw 'Bu işlem için yetkiniz bulunmamaktadır.';
 
     const { startDate, endDate } = req.body;
-    console.log(startDate + endDate);
 
     if (!startDate || !endDate)
       throw 'startDate ve endDate alanları zorunludur.';

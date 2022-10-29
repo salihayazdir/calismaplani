@@ -10,16 +10,16 @@ export default function DashboardTable({
   const getStatusContainerStyles = (statusId) => {
     switch (statusId) {
       case 1:
-        return 'bg-green-100 text-green-700';
+        return 'bg-green-100 text-green-700 border border-green-300';
         break;
       case 2:
-        return 'bg-sky-100 text-sky-700 ';
+        return 'bg-sky-100 text-sky-700 border border-sky-300';
         break;
       case 3:
-        return 'bg-yellow-100 text-yellow-700';
+        return 'bg-yellow-100 text-yellow-700 border border-yellow-300';
         break;
       case 4:
-        return 'bg-red-100 text-red-700';
+        return 'bg-red-100 text-red-700 border border-red-300';
       default:
         return 'bg-gray-100';
     }
@@ -39,6 +39,8 @@ export default function DashboardTable({
       manager_display_name: record.manager_display_name,
       username: record.username,
       manager_username: record.manager_username,
+      department: record.department,
+      description: record.description,
     }));
     const uniqUsersInRecords = removeDuplicateObjects(
       usersInRecords,
@@ -52,6 +54,9 @@ export default function DashboardTable({
       {
         Header: 'Personel',
         accessor: 'display_name',
+        Cell: ({ value }) => (
+          <span className=' font-medium text-gray-700'>{String(value)}</span>
+        ),
       },
       {
         Header: 'username',
@@ -60,6 +65,20 @@ export default function DashboardTable({
       {
         Header: 'Yönetici',
         accessor: 'manager_display_name',
+        Cell: ({ value }) => (
+          <span className=' text-gray-500'>{String(value)}</span>
+        ),
+      },
+      // {
+      //   Header: 'Departman',
+      //   accessor: 'department',
+      // },
+      {
+        Header: 'Bölüm',
+        accessor: 'description',
+        Cell: ({ value }) => (
+          <span className=' text-gray-500'>{String(value)}</span>
+        ),
       },
     ],
     []
@@ -68,7 +87,16 @@ export default function DashboardTable({
   const days = ['Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma'];
   const statusColumns = days.map((dayName, dayIdx) => ({
     id: dayIdx,
-    Header: dayName,
+    Header: () => {
+      const day = addDays(selectedDate, dayIdx);
+      const formattedDay = format(day, 'dd-MM');
+      return (
+        <div className='w-20'>
+          <div className='text-gray-400'>{formattedDay}</div>
+          <div>{dayName}</div>
+        </div>
+      );
+    },
     Cell: ({ row }) => {
       const day = addDays(selectedDate, dayIdx);
       const formattedDay = format(day, 'yyyy-MM-dd');
@@ -88,7 +116,7 @@ export default function DashboardTable({
       );
       const status = userStatusObject[0].user_status_name;
       return (
-        <div className={`rounded-md py-1 text-center ${containerStyles}`}>
+        <div className={`rounded-full py-[2px] text-center ${containerStyles}`}>
           {status}
         </div>
       );
@@ -113,12 +141,13 @@ export default function DashboardTable({
     <div className={`overflow-x-auto overflow-y-visible text-xs`}>
       <table {...getTableProps()} className='w-full border-collapse rounded-lg'>
         <thead className='border-y border-gray-200 bg-gray-50'>
-          {headerGroups.map((headerGroup) => (
-            <tr {...headerGroup.getHeaderGroupProps()}>
-              {headerGroup.headers.map((column) => (
+          {headerGroups.map((headerGroup, idx) => (
+            <tr key={idx} {...headerGroup.getHeaderGroupProps()}>
+              {headerGroup.headers.map((column, idx) => (
                 <th
+                  key={idx}
                   {...column.getHeaderProps()}
-                  className='whitespace-nowrap px-3 py-3 text-left align-bottom font-semibold first-of-type:pl-10'
+                  className='whitespace-nowrap px-3 py-2 text-left align-bottom font-semibold first-of-type:pl-10'
                 >
                   {column.render('Header')}
                 </th>
@@ -127,15 +156,20 @@ export default function DashboardTable({
           ))}
         </thead>
         <tbody {...getTableBodyProps()} className='text-gray-800'>
-          {rows.map((row) => {
+          {rows.map((row, idx) => {
             prepareRow(row);
             return (
-              <tr {...row.getRowProps()} className='border-b border-gray-200'>
-                {row.cells.map((cell) => {
+              <tr
+                key={idx}
+                {...row.getRowProps()}
+                className='border-b border-gray-200'
+              >
+                {row.cells.map((cell, idx) => {
                   return (
                     <td
+                      key={idx}
                       {...cell.getCellProps()}
-                      className='py-3 pl-3 pr-5 first-of-type:pl-10 '
+                      className='py-2 pl-3 pr-5 first-of-type:pl-10 '
                     >
                       {cell.render('Cell')}
                     </td>

@@ -20,13 +20,15 @@ ChartJS.register(
 );
 
 export default function BarChart({ records, userStatuses }) {
-  const departments = [...new Set(records.map((record) => record.department))];
+  const descriptions = [
+    ...new Set(records.map((record) => record.description)),
+  ];
 
   const datasets = userStatuses.map((status, idx) => {
-    const data = departments.map((department, idx) => {
+    const data = descriptions.map((description, idx) => {
       return records.reduce((acc, record) => {
         if (
-          record.department === department &&
+          record.description === description &&
           record.user_status_id === status.user_status_id
         )
           return acc + 1;
@@ -60,7 +62,7 @@ export default function BarChart({ records, userStatuses }) {
   };
 
   const data = {
-    labels: departments,
+    labels: descriptions,
     datasets,
   };
 

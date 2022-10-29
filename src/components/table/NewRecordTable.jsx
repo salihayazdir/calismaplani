@@ -6,7 +6,7 @@ import NewRecordBulkActions from './NewRecordBulkActions';
 const IndeterminateCheckbox = forwardRef(({ indeterminate, ...rest }, ref) => {
   const defaultRef = useRef();
   const resolvedRef = ref || defaultRef;
-
+  IndeterminateCheckbox.displayName = 'IndeterminateCheckbox';
   useEffect(() => {
     resolvedRef.current.indeterminate = indeterminate;
   }, [resolvedRef, indeterminate]);
@@ -121,10 +121,11 @@ export default function NewRecordTable({ records, setRecords, userStatuses }) {
           className='w-full border-collapse rounded-lg'
         >
           <thead className='border-y border-gray-200 bg-gray-50'>
-            {headerGroups.map((headerGroup) => (
-              <tr {...headerGroup.getHeaderGroupProps()}>
-                {headerGroup.headers.map((column) => (
+            {headerGroups.map((headerGroup, idx) => (
+              <tr key={idx} {...headerGroup.getHeaderGroupProps()}>
+                {headerGroup.headers.map((column, idx) => (
                   <th
+                    key={idx}
                     {...column.getHeaderProps()}
                     className='whitespace-nowrap px-3 py-3 text-left align-bottom font-semibold first-of-type:pl-6'
                   >
@@ -135,13 +136,18 @@ export default function NewRecordTable({ records, setRecords, userStatuses }) {
             ))}
           </thead>
           <tbody {...getTableBodyProps()} className='text-gray-800 '>
-            {rows.map((row) => {
+            {rows.map((row, idx) => {
               prepareRow(row);
               return (
-                <tr {...row.getRowProps()} className='border-b border-gray-200'>
-                  {row.cells.map((cell) => {
+                <tr
+                  key={idx}
+                  {...row.getRowProps()}
+                  className='border-b border-gray-200'
+                >
+                  {row.cells.map((cell, idx) => {
                     return (
                       <td
+                        key={idx}
                         {...cell.getCellProps()}
                         className='py-3 pl-3 pr-5 first-of-type:pl-6 '
                       >

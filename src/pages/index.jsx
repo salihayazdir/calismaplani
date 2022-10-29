@@ -33,8 +33,6 @@ export default function Home({ directReports, userStatuses, userData }) {
     }))
   );
 
-  console.log(apiStatus);
-
   const sendRecords = () => {
     setApiStatus({
       isLoading: true,
