@@ -17,7 +17,7 @@ import DashboardRecords from '../components/dashboardViews/DashboardRecords';
 
 export default function Dashboard({ userStatuses, userData, listOfUsers }) {
   const [selectedDate, setSelectedDate] = useState(startOfISOWeek(new Date()));
-  const [selectedDateRange, setSelectedDateRange] = useState('month');
+  const [selectedDateRange, setSelectedDateRange] = useState('week');
   const [selectedView, setSelectedView] = useState('stats');
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [records, setRecords] = useState([]);
@@ -105,24 +105,25 @@ export default function Dashboard({ userStatuses, userData, listOfUsers }) {
             </div>
           </div>
 
-          {selectedView === 'stats' && (
+          {selectedView === 'stats' ? (
             <DashboardStats records={records} userStatuses={userStatuses} />
-          )}
-          {selectedView === 'records' && (
+          ) : null}
+          {selectedView === 'records' ? (
             <DashboardRecords
               records={records}
               userStatuses={userStatuses}
               selectedDate={selectedDate}
               apiStatus={apiStatus}
             />
-          )}
-          {selectedView === 'managers' && (
+          ) : null}
+          {selectedView === 'managers' ? (
             <DashboardManagers
               listOfUsers={listOfUsers}
               records={records}
               apiStatus={apiStatus}
+              selectedDate={selectedDate}
             />
-          )}
+          ) : null}
         </div>
       </Layout>
 

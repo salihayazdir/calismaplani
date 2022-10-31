@@ -20,7 +20,7 @@ export default function DashboardViewRadio({ selected, setSelected }) {
   return (
     <div className='flex text-sm'>
       <RadioGroup value={selected} onChange={setSelected}>
-        <div className='flex gap-2  rounded-lg border border-slate-500 bg-slate-600 p-1'>
+        <div className='flex gap-2  rounded-lg bg-slate-600 p-1'>
           {dashboardViews.map((view) => (
             <RadioGroup.Option
               key={view.value}

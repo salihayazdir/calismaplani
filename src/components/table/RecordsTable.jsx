@@ -1,6 +1,51 @@
 import { useMemo } from 'react';
-import { useTable } from 'react-table';
+import { useTable, useFilters } from 'react-table';
 import { addDays, format } from 'date-fns';
+
+function DefaultColumnFilter({
+  column: { filterValue, preFilteredRows, setFilter },
+}) {
+  const count = preFilteredRows.length;
+  return (
+    <input
+      className='mt-1 rounded-md py-1 px-2 text-gray-500 focus:outline-blue-300'
+      value={filterValue || ''}
+      onChange={(e) => {
+        setFilter(e.target.value || undefined);
+      }}
+      placeholder={`Ara...`}
+    />
+  );
+}
+
+function SelectColumnFilter({
+  column: { filterValue, setFilter, preFilteredRows, id },
+}) {
+  const options = useMemo(() => {
+    const options = new Set();
+    preFilteredRows.forEach((row) => {
+      options.add(row.values[id]);
+    });
+    return [...options.values()];
+  }, [id, preFilteredRows]);
+
+  return (
+    <select
+      className='mt-1 rounded-md py-1 px-2 text-gray-500 focus:outline-blue-300'
+      value={filterValue}
+      onChange={(e) => {
+        setFilter(e.target.value || undefined);
+      }}
+    >
+      <option value=''>Tüm Bölümler</option>
+      {options.map((option, i) => (
+        <option key={i} value={option}>
+          {option}
+        </option>
+      ))}
+    </select>
+  );
+}
 
 export default function DashboardTable({
   records,
@@ -32,6 +77,29 @@ export default function DashboardTable({
       return seen.hasOwnProperty(k) ? false : (seen[k] = true);
     });
   };
+
+  const filterTypes = useMemo(
+    () => ({
+      text: (rows, id, filterValue) => {
+        return rows.filter((row) => {
+          const rowValue = row.values[id];
+          return rowValue !== undefined
+            ? String(rowValue)
+                .toLowerCase()
+                .startsWith(String(filterValue).toLowerCase())
+            : true;
+        });
+      },
+    }),
+    []
+  );
+
+  const defaultColumn = useMemo(
+    () => ({
+      Filter: DefaultColumnFilter,
+    }),
+    []
+  );
 
   const tableData = useMemo(() => {
     const usersInRecords = records.map((record) => ({
@@ -76,6 +144,7 @@ export default function DashboardTable({
       {
         Header: 'Bölüm',
         accessor: 'description',
+        Filter: SelectColumnFilter,
         Cell: ({ value }) => (
           <span className=' text-gray-500'>{String(value)}</span>
         ),
@@ -91,9 +160,9 @@ export default function DashboardTable({
       const day = addDays(selectedDate, dayIdx);
       const formattedDay = format(day, 'dd-MM');
       return (
-        <div className='w-20'>
-          <div className='text-gray-400'>{formattedDay}</div>
+        <div className='w-20 text-center'>
           <div>{dayName}</div>
+          <div className='mt-2 rounded-lg text-gray-400'>{formattedDay}</div>
         </div>
       );
     },
@@ -132,8 +201,11 @@ export default function DashboardTable({
       {
         columns,
         data: tableData,
+        defaultColumn,
+        filterTypes,
         initialState: { hiddenColumns: ['username'] },
       },
+      useFilters,
       tableHooks
     );
 
@@ -147,9 +219,10 @@ export default function DashboardTable({
                 <th
                   key={idx}
                   {...column.getHeaderProps()}
-                  className='whitespace-nowrap px-3 py-2 text-left align-bottom font-semibold first-of-type:pl-10'
+                  className='whitespace-nowrap px-3 py-2 text-left align-baseline font-semibold first-of-type:pl-10'
                 >
                   {column.render('Header')}
+                  <div>{column.canFilter ? column.render('Filter') : null}</div>
                 </th>
               ))}
             </tr>
