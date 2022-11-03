@@ -8,7 +8,10 @@ export default function DashboardHeader() {
       <h1 className='w-full text-xl font-bold text-white'>
         Personel Devam Raporu
       </h1>
-      <DashboardMenu />
+      {/* <DashboardMenu /> */}
+      {/* <button className='whitespace-nowrap rounded-lg px-4 py-1 text-sm text-slate-400 hover:bg-slate-600 hover:text-slate-200'>
+        Personel Bilgilerini Güncellle
+      </button> */}
     </div>
   );
 }

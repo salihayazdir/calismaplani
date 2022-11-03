@@ -1,0 +1,42 @@
+"filename", "language", "JavaScript React", "JavaScript", "CSS", "comment", "blank", "total"
+"c:\Users\salaya\Desktop\pdks-app\src\backend\sendMail.js", "JavaScript", 0, 41, 0, 3, 4, 48
+"c:\Users\salaya\Desktop\pdks-app\src\backend\verifyToken.js", "JavaScript", 0, 14, 0, 0, 4, 18
+"c:\Users\salaya\Desktop\pdks-app\src\components\charts\BarChart.jsx", "JavaScript React", 72, 0, 0, 0, 8, 80
+"c:\Users\salaya\Desktop\pdks-app\src\components\charts\DailyStats.jsx", "JavaScript React", 64, 0, 0, 0, 6, 70
+"c:\Users\salaya\Desktop\pdks-app\src\components\charts\DoughnutChart.jsx", "JavaScript React", 77, 0, 0, 0, 8, 85
+"c:\Users\salaya\Desktop\pdks-app\src\components\dashboardViews\DashboardManagers.jsx", "JavaScript React", 45, 0, 0, 0, 2, 47
+"c:\Users\salaya\Desktop\pdks-app\src\components\dashboardViews\DashboardRecords.jsx", "JavaScript React", 24, 0, 0, 0, 2, 26
+"c:\Users\salaya\Desktop\pdks-app\src\components\dashboardViews\DashboardStats.jsx", "JavaScript React", 29, 0, 0, 0, 3, 32
+"c:\Users\salaya\Desktop\pdks-app\src\components\datepickers\WeekPicker.jsx", "JavaScript React", 59, 0, 0, 0, 3, 62
+"c:\Users\salaya\Desktop\pdks-app\src\components\layout\DashboardHeader.jsx", "JavaScript React", 14, 0, 0, 46, 5, 65
+"c:\Users\salaya\Desktop\pdks-app\src\components\layout\Header.jsx", "JavaScript React", 40, 0, 0, 0, 4, 44
+"c:\Users\salaya\Desktop\pdks-app\src\components\layout\Layout.jsx", "JavaScript React", 16, 0, 0, 0, 2, 18
+"c:\Users\salaya\Desktop\pdks-app\src\components\login\LoginForm.jsx", "JavaScript React", 47, 0, 0, 0, 2, 49
+"c:\Users\salaya\Desktop\pdks-app\src\components\login\OtpForm.jsx", "JavaScript React", 47, 0, 0, 0, 2, 49
+"c:\Users\salaya\Desktop\pdks-app\src\components\login\Steps.jsx", "JavaScript React", 24, 0, 0, 0, 3, 27
+"c:\Users\salaya\Desktop\pdks-app\src\components\modals\ManagerMailModal.jsx", "JavaScript React", 219, 0, 0, 0, 13, 232
+"c:\Users\salaya\Desktop\pdks-app\src\components\modals\NewRecordsModal.jsx", "JavaScript React", 245, 0, 0, 1, 18, 264
+"c:\Users\salaya\Desktop\pdks-app\src\components\radio\DashboardViewRadio.jsx", "JavaScript React", 33, 0, 0, 0, 2, 35
+"c:\Users\salaya\Desktop\pdks-app\src\components\radio\DateRangeRadio.jsx", "JavaScript React", 44, 0, 0, 0, 3, 47
+"c:\Users\salaya\Desktop\pdks-app\src\components\skeletons\Loader.jsx", "JavaScript React", 23, 0, 0, 0, 1, 24
+"c:\Users\salaya\Desktop\pdks-app\src\components\table\ManagerUserTable.jsx", "JavaScript React", 245, 0, 0, 0, 8, 253
+"c:\Users\salaya\Desktop\pdks-app\src\components\table\NewRecordBulkActions.jsx", "JavaScript React", 105, 0, 0, 0, 8, 113
+"c:\Users\salaya\Desktop\pdks-app\src\components\table\NewRecordTable.jsx", "JavaScript React", 177, 0, 0, 120, 15, 312
+"c:\Users\salaya\Desktop\pdks-app\src\components\table\RecordsTable.jsx", "JavaScript React", 298, 0, 0, 165, 32, 495
+"c:\Users\salaya\Desktop\pdks-app\src\components\table\StatusSelect.jsx", "JavaScript React", 88, 0, 0, 0, 5, 93
+"c:\Users\salaya\Desktop\pdks-app\src\database\dbConfig.js", "JavaScript", 0, 13, 0, 0, 1, 14
+"c:\Users\salaya\Desktop\pdks-app\src\database\dbOps.js", "JavaScript", 0, 172, 0, 4, 12, 188
+"c:\Users\salaya\Desktop\pdks-app\src\pages\_app.js", "JavaScript", 0, 6, 0, 0, 3, 9
+"c:\Users\salaya\Desktop\pdks-app\src\pages\api\auth\login.js", "JavaScript", 0, 49, 0, 0, 12, 61
+"c:\Users\salaya\Desktop\pdks-app\src\pages\api\auth\logout.js", "JavaScript", 0, 21, 0, 0, 2, 23
+"c:\Users\salaya\Desktop\pdks-app\src\pages\api\auth\otp.js", "JavaScript", 0, 62, 0, 1, 13, 76
+"c:\Users\salaya\Desktop\pdks-app\src\pages\api\records\add-record.js", "JavaScript", 0, 42, 0, 0, 8, 50
+"c:\Users\salaya\Desktop\pdks-app\src\pages\api\records\get-all-records.js", "JavaScript", 0, 27, 0, 0, 10, 37
+"c:\Users\salaya\Desktop\pdks-app\src\pages\api\records\get-records-by-manager.js", "JavaScript", 0, 30, 0, 0, 11, 41
+"c:\Users\salaya\Desktop\pdks-app\src\pages\api\send-mail.js", "JavaScript", 0, 30, 0, 1, 9, 40
+"c:\Users\salaya\Desktop\pdks-app\src\pages\api\users\update.js", "JavaScript", 0, 87, 0, 7, 18, 112
+"c:\Users\salaya\Desktop\pdks-app\src\pages\dashboard.jsx", "JavaScript React", 181, 0, 0, 0, 16, 197
+"c:\Users\salaya\Desktop\pdks-app\src\pages\giris.jsx", "JavaScript React", 164, 0, 0, 2, 10, 176
+"c:\Users\salaya\Desktop\pdks-app\src\pages\index.jsx", "JavaScript React", 183, 0, 0, 10, 16, 209
+"c:\Users\salaya\Desktop\pdks-app\src\styles\globals.css", "CSS", 0, 0, 89, 0, 27, 116
+"Total", "-", 2563, 594, 89, 360, 331, 3937

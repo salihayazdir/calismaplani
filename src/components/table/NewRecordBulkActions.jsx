@@ -3,20 +3,22 @@ import { Listbox, Transition } from '@headlessui/react';
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid';
 
 export default function NewRecordBulkActions({
-  records,
-  setRecords,
+  setNewRecords,
   userStatuses,
   selectedFlatRows,
   numberOfSelectedRows,
+  toggleAllRowsSelected,
 }) {
   const [selectedStatus, setSelectedStatus] = useState(userStatuses[0]);
 
   const applyBulkStatus = () => {
+    toggleAllRowsSelected(false);
+
     const usersToApplyBulkAction = selectedFlatRows.map(
       (row) => row.values.username
     );
 
-    setRecords((prevRecords) =>
+    setNewRecords((prevRecords) =>
       prevRecords.map((dayOfRecords) => {
         const recordsOfSelectedUsers = dayOfRecords.data.filter((record) =>
           usersToApplyBulkAction.includes(record.username)
@@ -66,7 +68,7 @@ export default function NewRecordBulkActions({
                     key={status.user_status_id}
                     className={({ active }) =>
                       `relative cursor-default select-none py-2 pl-10 pr-4 ${
-                        active ? 'bg-amber-100 text-amber-900' : 'text-gray-900'
+                        active ? 'bg-blue-50 text-blue-700' : 'text-gray-600'
                       }`
                     }
                     value={status}
@@ -75,13 +77,15 @@ export default function NewRecordBulkActions({
                       <>
                         <span
                           className={`block truncate ${
-                            selectedStatus ? 'font-medium' : 'font-normal'
+                            selectedStatus
+                              ? 'font-medium text-blue-700'
+                              : 'font-normal'
                           }`}
                         >
                           {status.user_status_name}
                         </span>
                         {selectedStatus ? (
-                          <span className='absolute inset-y-0 left-0 flex items-center pl-3 text-amber-600'>
+                          <span className='absolute inset-y-0 left-0 flex items-center pl-3 text-blue-700'>
                             <CheckIcon className='h-5 w-5' aria-hidden='true' />
                           </span>
                         ) : null}

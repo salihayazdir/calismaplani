@@ -1,27 +1,23 @@
-import { useState } from 'react';
 import { RadioGroup } from '@headlessui/react';
+import { startOfISOWeek, addDays } from 'date-fns';
 
-const dashboardViews = [
-  {
-    name: 'İstatistikler',
-    value: 'stats',
-  },
-  {
-    name: 'Kayıtlar',
-    value: 'records',
-  },
-  {
-    name: 'Yöneticiler',
-    value: 'managers',
-  },
-];
+export default function ViewRadio({
+  selected,
+  setSelected,
+  views,
+  setSelectedDate,
+}) {
+  const handleOnChange = (value) => {
+    setSelected(value);
+    if (value === 'newrecord')
+      setSelectedDate(startOfISOWeek(addDays(new Date(), 7)));
+  };
 
-export default function DashboardViewRadio({ selected, setSelected }) {
   return (
     <div className='flex text-sm'>
-      <RadioGroup value={selected} onChange={setSelected}>
+      <RadioGroup value={selected} onChange={handleOnChange}>
         <div className='flex gap-2  rounded-lg bg-slate-600 p-1'>
-          {dashboardViews.map((view) => (
+          {views.map((view) => (
             <RadioGroup.Option
               key={view.value}
               value={view.value}

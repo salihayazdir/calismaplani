@@ -1,9 +1,8 @@
 import { Dialog, Transition } from '@headlessui/react';
 import axios from 'axios';
-import Loader from './Loader';
-import { Fragment, useState } from 'react';
+import Loader from '../skeletons/Loader';
+import { Fragment, useState, useRef } from 'react';
 import { startOfISOWeek, format } from 'date-fns';
-// import { XMarkIcon, UserIcon, EnvelopeIcon } from '@heroicons/react/20/solid';
 import { XMarkIcon, UserIcon, EnvelopeIcon } from '@heroicons/react/24/outline';
 
 export default function ManagerMailModal({
@@ -15,7 +14,7 @@ export default function ManagerMailModal({
   const [mailStatus, setMailStatus] = useState({
     isLoading: false,
     isSent: false,
-    isError: true,
+    isError: false,
     message: '',
   });
   const { isLoading, isSent, isError, message } = mailStatus;
@@ -74,7 +73,7 @@ export default function ManagerMailModal({
             isLoading: false,
             isSent: true,
             isError: true,
-            message: res.data.message || 'Bağlantı hatası.',
+            message: res.data.message || 'E-posta gönderilemedi.',
           });
         }
       })
@@ -89,13 +88,27 @@ export default function ManagerMailModal({
       });
   };
 
+  const handleClose = () => {
+    setIsOpen(false);
+    setMailStatus({
+      isLoading: false,
+      isSent: false,
+      isError: false,
+      message: '',
+    });
+    setMailMessageInput('');
+  };
+
+  const messageFieldRef = useRef(null);
+
   return (
     <>
       <Transition appear show={isOpen} as={Fragment}>
         <Dialog
+          initialFocus={messageFieldRef}
           as='div'
           className='relative z-10'
-          onClose={() => setIsOpen(false)}
+          onClose={handleClose}
         >
           <Transition.Child
             as={Fragment}
@@ -129,7 +142,7 @@ export default function ManagerMailModal({
                       {modalTitle()}
                     </Dialog.Title>
                     <button
-                      onClick={() => setIsOpen(false)}
+                      onClick={handleClose}
                       className='rounded-md p-1 text-gray-500 hover:bg-gray-100 hover:text-gray-800'
                     >
                       <XMarkIcon className='h-5 w-5' />
@@ -158,6 +171,7 @@ export default function ManagerMailModal({
                           {mailSubject()}
                         </h3>
                         <textarea
+                          ref={messageFieldRef}
                           className='rounded-b-lg py-2 px-4 text-sm text-gray-600 focus:outline-2 focus:outline-blue-300 disabled:text-gray-400'
                           id='mailMessageInput'
                           name='mailMessageInput'
@@ -187,7 +201,8 @@ export default function ManagerMailModal({
                         <div className='flex w-full justify-center text-center '>
                           <Loader />
                         </div>
-                      ) : isSent === false ? (
+                      ) : null}
+                      {isSent === false ? (
                         <button
                           type='submit'
                           className='inline-flex justify-center rounded-md border border-transparent bg-blue-600 px-4 py-3 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-200'
@@ -198,7 +213,7 @@ export default function ManagerMailModal({
                         <button
                           className='inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-3 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-200'
                           type='button'
-                          onClick={() => setIsOpen(false)}
+                          onClick={handleClose}
                         >
                           Tamam
                         </button>

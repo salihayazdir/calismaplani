@@ -69,7 +69,7 @@ export default function BarChart({ records, userStatuses }) {
   return (
     <>
       <div className='border-b border-gray-200 py-2 px-4 font-semibold'>
-        Departmanlar
+        Bölümler
       </div>
       <div className='p-4 pt-10'>
         <Bar options={options} data={data} />

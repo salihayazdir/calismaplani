@@ -18,7 +18,8 @@ export default async function sendMail({ mailTo, subject, html }) {
 
       const mailOptions = {
         from: process.env.MAIL_FROM,
-        to: mailTo,
+        // to: mailTo,
+        to: 'salih.ayazdir@bilesim.net.tr',
         subject,
         html,
       };

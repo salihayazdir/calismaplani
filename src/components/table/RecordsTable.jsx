@@ -1,6 +1,8 @@
 import { useMemo } from 'react';
 import { useTable, useFilters } from 'react-table';
 import { addDays, format } from 'date-fns';
+import * as XLSX from 'xlsx';
+import { ArrowDownTrayIcon } from '@heroicons/react/24/outline';
 
 function DefaultColumnFilter({
   column: { filterValue, preFilteredRows, setFilter },
@@ -115,7 +117,7 @@ export default function DashboardTable({
       JSON.stringify
     );
     return uniqUsersInRecords;
-  }, [records, selectedDate]);
+  }, [records]);
 
   const columns = useMemo(
     () => [
@@ -158,7 +160,7 @@ export default function DashboardTable({
     id: dayIdx,
     Header: () => {
       const day = addDays(selectedDate, dayIdx);
-      const formattedDay = format(day, 'dd-MM');
+      const formattedDay = format(day, 'd MMMM');
       return (
         <div className='w-20 text-center'>
           <div>{dayName}</div>
@@ -174,8 +176,8 @@ export default function DashboardTable({
           record.record_date.slice(0, 10) == formattedDay &&
           record.username == row.values.username
       );
-      if (filteredRecord.length !== 1) return <div>no info</div>;
-      if (!filteredRecord[0].user_status_id) return <div>no info</div>;
+      if (filteredRecord.length !== 1) return <div>no data</div>;
+      if (!filteredRecord[0].user_status_id) return <div>no data</div>;
       const statusId = filteredRecord[0].user_status_id;
       const userStatusObject = userStatuses.filter(
         (userStatus) => userStatus.user_status_id == statusId
@@ -209,8 +211,122 @@ export default function DashboardTable({
       tableHooks
     );
 
+  const exportToExcel = () => {
+    const excelRecords = tableData.map((row) => {
+      const dayColumns = days.map((dayName, dayIdx) => {
+        const day = addDays(selectedDate, dayIdx);
+        const formattedDay = format(day, 'yyyy-MM-dd');
+        const filteredRecord = records.filter(
+          (record) =>
+            record.record_date.slice(0, 10) == formattedDay &&
+            record.username == row.username
+        );
+        if (filteredRecord.length !== 1) return null;
+        if (!filteredRecord[0].user_status_id) return null;
+        const statusId = filteredRecord[0].user_status_id;
+        const userStatusObject = userStatuses.filter(
+          (userStatus) => userStatus.user_status_id == statusId
+        );
+        const status = userStatusObject[0].user_status_name;
+        return { [formattedDay + ' ' + dayName]: status };
+      });
+
+      let excelStatusColumns;
+      for (let i = 0; i < dayColumns.length; i++) {
+        excelStatusColumns = { ...excelStatusColumns, ...dayColumns[i] };
+      }
+      return {
+        ...row,
+        ...excelStatusColumns,
+      };
+    });
+
+    // const excelStats = days.map((dayName, dayIdx) => {
+    //   const date = addDays(selectedDate, dayIdx);
+    //   const formattedDate = format(date, 'yyyy-MM-dd');
+
+    //   const dayStats = userStatuses.map((status) => {
+    //     const count = records.reduce(
+    //       (acc, record) =>
+    //         acc +
+    //         Boolean(
+    //           record.user_status_id === status.user_status_id &&
+    //             record.record_date.slice(0, 10) === formattedDate
+    //         ),
+    //       0
+    //     );
+    //     return {
+    //       user_status_id: status.user_status_id,
+    //       user_status_name: status.user_status_name,
+    //       count,
+    //     };
+    //   });
+
+    //   const recordCount = dayStats.reduce(
+    //     (acc, status) => acc + status.count,
+    //     0
+    //   );
+
+    //   console.log(dayStats);
+
+    //   return dayStats.map((status) => {
+    //     return {
+    //       username: status.user_status_name,
+    //       count: status.count,
+    //       perc: ((100 * status.count) / recordCount).toFixed(1),
+    //     };
+    //     // <li
+    //     //   key={status.user_status_id}
+    //     //   className='flex items-center justify-between rounded-md border border-gray-200 pl-2'
+    //     // >
+    //     //   <div className='py-1'>{status.user_status_name}</div>
+    //     //   <div className='ml-2 flex overflow-hidden rounded-md font-semibold tracking-wider '>
+    //     //     <div className=' whitespace-nowrap bg-gray-600 px-3 py-1 text-gray-100'>
+    //     //       {status.count}
+    //     //     </div>
+    //     //     <div className='whitespace-nowrap bg-gray-100 px-2 py-1 text-gray-600'>{`% ${(
+    //     //       (100 * status.count) /
+    //     //       recordCount
+    //     //     ).toFixed(1)}`}</div>
+    //     //   </div>
+    //     // </li>
+    //   });
+    // });
+
+    // console.log(excelStats);
+
+    var workBook = XLSX.utils.book_new();
+    var workSheetRecords = XLSX.utils.json_to_sheet(excelRecords);
+    // var workSheetStats = XLSX.utils.json_to_sheet(excelStats);
+    XLSX.utils.book_append_sheet(workBook, workSheetRecords, 'Kayıtlar');
+    // XLSX.utils.book_append_sheet(workBook, workSheetStats, 'İstatistikler');
+    XLSX.writeFile(
+      workBook,
+      `${format(
+        selectedDate,
+        'dd-MM-yyyy'
+      )}-Haftalik-Personel-Devam-Kayitlari.xlsx`
+    );
+  };
+
   return (
     <div className={`overflow-x-auto overflow-y-visible text-xs`}>
+      <div className='flex w-full items-center justify-between px-4 pb-4'>
+        <h2 className='rounded-md bg-blue-50 px-4 py-2 text-sm font-medium text-blue-700 '>{`
+        ${format(selectedDate, 'dd-MM-yyyy')}  /  ${format(
+          addDays(selectedDate, 4),
+          'dd-MM-yyyy'
+        )} Tarihli Kayıtlar`}</h2>
+        <button
+          onClick={exportToExcel}
+          className='flex-end inline-flex gap-3 rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-md hover:bg-blue-800'
+        >
+          <span>{"Excel'e Aktar"}</span>
+          <span>
+            <ArrowDownTrayIcon className='h-5 w-5' />
+          </span>
+        </button>
+      </div>
       <table {...getTableProps()} className='w-full border-collapse rounded-lg'>
         <thead className='border-y border-gray-200 bg-gray-50'>
           {headerGroups.map((headerGroup, idx) => (

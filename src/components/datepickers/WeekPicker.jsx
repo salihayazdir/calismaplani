@@ -1,6 +1,7 @@
-import DatePicker from 'react-datepicker';
-import { isSameISOWeek, startOfISOWeek, addDays, format } from 'date-fns';
+import DatePicker, { registerLocale } from 'react-datepicker';
+import { isSameISOWeek, startOfISOWeek } from 'date-fns';
 import { forwardRef } from 'react';
+import tr from 'date-fns/locale/tr';
 
 export default function WeekPicker({
   selectedDate,
@@ -8,10 +9,11 @@ export default function WeekPicker({
   minDate,
   maxDate,
 }) {
+  registerLocale('tr', tr);
   const CustomInput = forwardRef(({ value, onClick }, ref) => {
     return (
       <button
-        className=' whitespace-nowrap rounded-r-lg px-4 py-2 text-sm font-semibold text-blue-500 hover:bg-blue-500 hover:text-white'
+        className=' w-28 whitespace-nowrap rounded-r-lg px-4 py-2 text-sm font-semibold text-blue-500 hover:bg-blue-600 hover:text-white '
         onClick={onClick}
         ref={ref}
       >
@@ -24,10 +26,11 @@ export default function WeekPicker({
   return (
     <DatePicker
       selected={selectedDate}
+      locale='tr'
       onChange={(date) => setSelectedDate(startOfISOWeek(date))}
       startDate={selectedDate}
       fixedHeight
-      dateFormat='dd-MM-yyyy'
+      dateFormat='dd MMM yyyy'
       calendarStartDay={1}
       minDate={minDate}
       maxDate={maxDate}

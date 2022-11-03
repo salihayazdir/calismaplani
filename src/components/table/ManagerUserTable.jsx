@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useTable, useExpanded } from 'react-table';
-import ManagerMailModal from '../ManagerMailModal';
+import ManagerMailModal from '../modals/ManagerMailModal';
 import {
   CheckIcon,
   ChevronRightIcon,
@@ -14,7 +14,7 @@ export default function ManagerUserTable({
   records,
   selectedDate,
 }) {
-  const [mailPopupIsOpen, setMailPopupIsOpen] = useState(false);
+  const [managerMailModalIsOpen, setManagerMailModalIsOpen] = useState(false);
   const [managerMailProps, setManagerMailProps] = useState({
     name: null,
     mail: null,
@@ -144,7 +144,7 @@ export default function ManagerUserTable({
                 mail: row.values.mail,
                 type: 'reminder',
               });
-              setMailPopupIsOpen(true);
+              setManagerMailModalIsOpen(true);
             }}
             className='inline-flex items-center gap-2 rounded-md bg-gray-100 py-1 px-3 font-medium text-gray-600 hover:bg-blue-50 hover:text-blue-600'
           >
@@ -161,7 +161,7 @@ export default function ManagerUserTable({
                 mail: row.values.mail,
                 type: 'edit',
               });
-              setMailPopupIsOpen(true);
+              setManagerMailModalIsOpen(true);
             }}
             className='flex items-center gap-2 rounded-md py-1 px-3 font-medium text-gray-600 hover:bg-blue-50 hover:text-blue-600'
           >
@@ -241,14 +241,12 @@ export default function ManagerUserTable({
           </tbody>
         </table>
       </div>
-      {mailPopupIsOpen ? (
-        <ManagerMailModal
-          isOpen={mailPopupIsOpen}
-          setIsOpen={setMailPopupIsOpen}
-          managerMailProps={managerMailProps}
-          selectedDate={selectedDate}
-        />
-      ) : null}
+      <ManagerMailModal
+        isOpen={managerMailModalIsOpen}
+        setIsOpen={setManagerMailModalIsOpen}
+        managerMailProps={managerMailProps}
+        selectedDate={selectedDate}
+      />
     </>
   );
 }

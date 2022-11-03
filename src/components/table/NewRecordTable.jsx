@@ -2,6 +2,7 @@ import { useMemo, useRef, forwardRef, useEffect } from 'react';
 import { useTable, useRowSelect } from 'react-table';
 import StatusSelect from './StatusSelect';
 import NewRecordBulkActions from './NewRecordBulkActions';
+import { addDays, format } from 'date-fns';
 
 const IndeterminateCheckbox = forwardRef(({ indeterminate, ...rest }, ref) => {
   const defaultRef = useRef();
@@ -18,15 +19,20 @@ const IndeterminateCheckbox = forwardRef(({ indeterminate, ...rest }, ref) => {
   );
 });
 
-export default function NewRecordTable({ records, setRecords, userStatuses }) {
+export default function NewRecordTable({
+  newRecords,
+  setNewRecords,
+  userStatuses,
+  selectedDate,
+}) {
   const tableData = useMemo(
     () =>
-      records[0].data.map((user) => ({
+      newRecords[0].data.map((user) => ({
         username: user.username,
         display_name: user.display_name,
         user_status_id: user.user_status_id,
       })),
-    []
+    [selectedDate]
   );
 
   const columns = useMemo(
@@ -40,24 +46,33 @@ export default function NewRecordTable({ records, setRecords, userStatuses }) {
         accessor: 'username',
       },
     ],
-    [records]
+    [newRecords, selectedDate]
   );
 
   const days = ['Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma'];
   const selectBoxColumns = days.map((dayName, dayIdx) => ({
     id: dayIdx,
-    Header: dayName,
+    Header: () => {
+      const day = addDays(selectedDate, dayIdx);
+      const formattedDay = format(day, 'd MMMM');
+      return (
+        <div className='inline-flex w-full items-center gap-4'>
+          <div>{dayName}</div>
+          <div className='rounded-lg text-gray-400'>{formattedDay}</div>
+        </div>
+      );
+    },
     Cell: ({ row }) => {
       return (
         <StatusSelect
           selectedId={
-            records
-              .filter((records) => records.dayIdx === dayIdx)[0]
+            newRecords
+              .filter((newRecords) => newRecords.dayIdx === dayIdx)[0]
               .data.filter(
                 (record) => record.username === row.values.username
               )[0].user_status_id
           }
-          setRecords={setRecords}
+          setNewRecords={setNewRecords}
           userStatuses={userStatuses}
           username={row.values.username}
           day={dayIdx}
@@ -93,6 +108,7 @@ export default function NewRecordTable({ records, setRecords, userStatuses }) {
     rows,
     prepareRow,
     selectedFlatRows,
+    toggleAllRowsSelected,
     state: { selectedRowIds },
   } = useTable(
     {
@@ -105,14 +121,15 @@ export default function NewRecordTable({ records, setRecords, userStatuses }) {
   );
 
   return (
-    <>
+    <div className='flex flex-col rounded-xl border border-gray-200 bg-white pb-4'>
       <div className='flex items-center justify-end p-4'>
         <NewRecordBulkActions
-          records={records}
-          setRecords={setRecords}
+          newRecords={newRecords}
+          setNewRecords={setNewRecords}
           userStatuses={userStatuses}
           selectedFlatRows={selectedFlatRows}
           numberOfSelectedRows={Object.keys(selectedRowIds).length}
+          toggleAllRowsSelected={toggleAllRowsSelected}
         />
       </div>
       <div className={`overflow-x-auto overflow-y-visible text-xs`}>
@@ -127,7 +144,7 @@ export default function NewRecordTable({ records, setRecords, userStatuses }) {
                   <th
                     key={idx}
                     {...column.getHeaderProps()}
-                    className='whitespace-nowrap px-3 py-3 text-left align-bottom font-semibold first-of-type:pl-6'
+                    className='whitespace-nowrap px-3 py-3 text-left font-semibold first-of-type:pl-6'
                   >
                     {column.render('Header')}
                   </th>
@@ -161,7 +178,7 @@ export default function NewRecordTable({ records, setRecords, userStatuses }) {
           </tbody>
         </table>
       </div>
-    </>
+    </div>
   );
 }
 
@@ -190,13 +207,13 @@ export default function NewRecordTable({ records, setRecords, userStatuses }) {
 //     return (
 //       <StatusSelect
 //         selectedId={
-//           records
-//             .filter((records) => records.dayIdx === 0)[0]
+//           newRecords
+//             .filter((newRecords) => newRecords.dayIdx === 0)[0]
 //             .data.filter(
 //               (record) => record.username === row.values.username
 //             )[0].user_status_id
 //         }
-//         setRecords={setRecords}
+//         setNewRecords={setNewRecords}
 //         userStatuses={userStatuses}
 //         username={row.values.username}
 //         day={0}
@@ -212,13 +229,13 @@ export default function NewRecordTable({ records, setRecords, userStatuses }) {
 //     return (
 //       <StatusSelect
 //         selectedId={
-//           records
-//             .filter((records) => records.dayIdx === 1)[0]
+//           newRecords
+//             .filter((newRecords) => newRecords.dayIdx === 1)[0]
 //             .data.filter(
 //               (record) => record.username === row.values.username
 //             )[0].user_status_id
 //         }
-//         setRecords={setRecords}
+//         setNewRecords={setNewRecords}
 //         userStatuses={userStatuses}
 //         username={row.values.username}
 //         day={1}
@@ -234,13 +251,13 @@ export default function NewRecordTable({ records, setRecords, userStatuses }) {
 //     return (
 //       <StatusSelect
 //         selectedId={
-//           records
-//             .filter((records) => records.dayIdx === 2)[0]
+//           newRecords
+//             .filter((newRecords) => newRecords.dayIdx === 2)[0]
 //             .data.filter(
 //               (record) => record.username === row.values.username
 //             )[0].user_status_id
 //         }
-//         setRecords={setRecords}
+//         setNewRecords={setNewRecords}
 //         userStatuses={userStatuses}
 //         username={row.values.username}
 //         day={2}
@@ -256,13 +273,13 @@ export default function NewRecordTable({ records, setRecords, userStatuses }) {
 //     return (
 //       <StatusSelect
 //         selectedId={
-//           records
-//             .filter((records) => records.dayIdx === 3)[0]
+//           newRecords
+//             .filter((newRecords) => newRecords.dayIdx === 3)[0]
 //             .data.filter(
 //               (record) => record.username === row.values.username
 //             )[0].user_status_id
 //         }
-//         setRecords={setRecords}
+//         setNewRecords={setNewRecords}
 //         userStatuses={userStatuses}
 //         username={row.values.username}
 //         day={3}
@@ -278,13 +295,13 @@ export default function NewRecordTable({ records, setRecords, userStatuses }) {
 //     return (
 //       <StatusSelect
 //         selectedId={
-//           records
-//             .filter((records) => records.dayIdx === 4)[0]
+//           newRecords
+//             .filter((newRecords) => newRecords.dayIdx === 4)[0]
 //             .data.filter(
 //               (record) => record.username === row.values.username
 //             )[0].user_status_id
 //         }
-//         setRecords={setRecords}
+//         setNewRecords={setNewRecords}
 //         userStatuses={userStatuses}
 //         username={row.values.username}
 //         day={4}

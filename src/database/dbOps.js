@@ -155,6 +155,26 @@ export async function getAllRecordsByDate(startDate, endDate) {
   }
 }
 
+export async function getAllRecordsByDateByManager(
+  startDate,
+  endDate,
+  managerUsername
+) {
+  try {
+    const pool = await sql.connect(dbConfig);
+    const result = await pool
+      .request()
+      .input('manager_username', sql.NVarChar, managerUsername)
+      .input('start_date', sql.Date, startDate)
+      .input('end_date', sql.Date, endDate)
+      .execute('PKDS.GetAllRecordsByDateByManager');
+    return result.recordset;
+  } catch (err) {
+    console.error(err);
+    return err;
+  }
+}
+
 export async function getUsersWithManagers() {
   try {
     const pool = await sql.connect(dbConfig);

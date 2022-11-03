@@ -13,13 +13,12 @@ export default async function handler(req, response) {
 
     if (!mailReceiver) throw '"mailReceiver alanı zorunludur."';
     if (!mailSubject) throw '"mailSubject alanı zorunludur."';
-    if (!mailTextField) throw '"mailTextField alanı zorunludur."';
+    // if (!mailTextField) throw '"mailTextField" alanı zorunludur.';
 
     const html = `<p>${mailTextField}</p>`;
 
     const mailResult = await sendMail({
-      //   mailTo: mailReceiver,
-      mailTo: 'salih.ayazdir@bilesim.net.tr',
+      mailTo: mailReceiver,
       subject: mailSubject,
       html,
     });
@@ -35,6 +34,6 @@ export default async function handler(req, response) {
     });
   } catch (err) {
     console.error(`Error: ${err}`);
-    return response.status(500).json({ success: false, message: `${err}` });
+    return response.status(200).json({ success: false, message: `${err}` });
   }
 }

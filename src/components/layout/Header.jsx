@@ -3,6 +3,7 @@ import Image from 'next/image';
 import { ArrowLeftOnRectangleIcon } from '@heroicons/react/20/solid';
 import axios from 'axios';
 import { useRouter } from 'next/router';
+import { UserIcon } from '@heroicons/react/24/outline';
 
 export default function Header({ displayName }) {
   const router = useRouter();
@@ -25,7 +26,10 @@ export default function Header({ displayName }) {
         height='33'
       />
       <div className='flex overflow-hidden rounded-lg border border-gray-200 text-sm'>
-        <span className='px-4  py-[6px] text-gray-600'>{displayName}</span>
+        <div className=' inline-flex items-center gap-3 py-[6px] px-4 text-gray-600'>
+          <UserIcon className='h-4 w-4' />
+          <span>{displayName}</span>
+        </div>
         <button
           onClick={signOut}
           className='flex gap-2 border-l border-gray-200 py-[6px] px-4 font-semibold hover:bg-gray-50 hover:text-red-500'
