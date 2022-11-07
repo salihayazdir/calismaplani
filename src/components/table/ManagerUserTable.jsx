@@ -241,12 +241,14 @@ export default function ManagerUserTable({
           </tbody>
         </table>
       </div>
-      <ManagerMailModal
-        isOpen={managerMailModalIsOpen}
-        setIsOpen={setManagerMailModalIsOpen}
-        managerMailProps={managerMailProps}
-        selectedDate={selectedDate}
-      />
+      {managerMailModalIsOpen ? (
+        <ManagerMailModal
+          isOpen={managerMailModalIsOpen}
+          setIsOpen={setManagerMailModalIsOpen}
+          managerMailProps={managerMailProps}
+          selectedDate={selectedDate}
+        />
+      ) : null}
     </>
   );
 }

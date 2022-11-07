@@ -1,14 +1,19 @@
 const ldap = require('ldapjs');
+import verifyToken from '../../../backend/verifyToken';
 import { addUser } from '../../../database/dbOps';
 
-export default function handler(req, response) {
+export default async function handler(req, response) {
   try {
+    const userData = await verifyToken(req.headers.cookie);
+    if (userData.is_hr !== true)
+      throw 'Bu işlem için yetkiniz bulunmamaktadır.';
+
     const client = ldap.createClient({
       url: [process.env.LDAP_IP_1, process.env.LDAP_IP_2],
     });
 
     client.bind(process.env.LDAP_USER, process.env.LDAP_PW, (err) => {
-      if (err) throw `Bind Error : ${err}`;
+      if (err) throw `LDAP Bind Error : ${err}`;
     });
 
     const opts = {
@@ -71,6 +76,7 @@ export default function handler(req, response) {
           if (user.mail === null || user.mail === undefined) return;
           if (user.manager === undefined) return;
           if (user.sAMAccountName === 'murhak') return;
+          if (user.sAMAccountName.length !== 6) return;
 
           return {
             username: user.sAMAccountName,
@@ -92,17 +98,36 @@ export default function handler(req, response) {
 
         const filteredData = userData.filter((user) => user !== undefined);
 
-        filteredData.forEach((user) => addUser(user));
+        // filteredData.forEach((user) => addUser(user));
+        const dbResults = filteredData.map(async (user) => await addUser(user));
+        const results = await Promise.all(dbResults);
+
+        const message = () => {
+          const totalLength = results.length;
+          const errorlength = results.filter(
+            (result) => result.returnValue !== 0
+          ).length;
+          const successLength = totalLength - errorlength;
+          if (errorlength === 0)
+            return `${successLength} kullanıcı başarıyla güncellendi.`;
+          if (errorlength === totalLength) return false;
+          return `${successLength} kullanıcı başarıyla güncellendi. ${errorlength} kullanıcı güncellenirken hata oluştu.`;
+        };
+
+        if (message() === false)
+          response.status(200).json({
+            success: false,
+            message: 'Kullanıcılar güncellenemedi',
+          });
 
         response.status(200).json({
           success: true,
-          message: 'Tüm kullanıcı bilgileri güncellendi.',
-          ldapData,
+          message: message(),
         });
       });
     });
   } catch (err) {
-    console.error('CAUGHT ERROR: ' + err);
+    console.error('Hata: ' + err);
     response.status(200).json({
       success: false,
       message: err,

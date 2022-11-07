@@ -26,7 +26,12 @@ export default function BarChart({ records, userStatuses }) {
 
   const datasets = userStatuses.map((status, idx) => {
     const data = descriptions.map((description, idx) => {
-      return records.reduce((acc, record) => {
+      const divisionTotal = records.reduce((acc, record) => {
+        if (record.description === description) return acc + 1;
+        return acc;
+      }, 0);
+
+      const statusCount = records.reduce((acc, record) => {
         if (
           record.description === description &&
           record.user_status_id === status.user_status_id
@@ -34,13 +39,17 @@ export default function BarChart({ records, userStatuses }) {
           return acc + 1;
         return acc;
       }, 0);
+
+      return ((statusCount * 100) / divisionTotal).toFixed(1);
     });
-    const statusColors = ['#dcfce7', '#e0f2fe', '#fef9c3', '#fee2e2'];
+
+    const statusColors = ['#22c55e', '#3b82f6', '#facc15', '#ef4444'];
 
     return {
       label: status.user_status_name,
       data,
       backgroundColor: statusColors[idx],
+      borderRadius: 5,
       stack: `Stack ${idx}`,
     };
   });
@@ -68,10 +77,11 @@ export default function BarChart({ records, userStatuses }) {
 
   return (
     <>
-      <div className='border-b border-gray-200 py-2 px-4 font-semibold'>
-        Bölümler
+      <div className='flex justify-between border-b border-gray-200 py-2 px-4 font-semibold'>
+        <span>Bölümler</span>
+        <span className='ml-2 text-gray-400'>{`% Yüzdelik Veri`}</span>
       </div>
-      <div className='p-4 pt-10'>
+      <div className='p-4'>
         <Bar options={options} data={data} />
       </div>
     </>

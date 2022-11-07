@@ -1,17 +1,25 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import verifyToken from '../backend/verifyToken';
-import { startOfISOWeek, addDays, format, endOfMonth } from 'date-fns';
+import {
+  startOfISOWeek,
+  endOfISOWeek,
+  addDays,
+  format,
+  endOfMonth,
+} from 'date-fns';
 import { getUserStatuses, getUsersWithManagers } from '../database/dbOps';
 import Layout from '../components/layout/Layout';
+import DayPicker from '../components/datepickers/DayPicker';
 import WeekPicker from '../components/datepickers/WeekPicker';
+import MonthPicker from '../components/datepickers/MonthPicker';
 import DateRangeRadio from '../components/radio/DateRangeRadio';
 import ViewRadio from '../components/radio/ViewRadio';
 import DashboardStats from '../components/dashboardViews/DashboardStats';
 import DashboardManagers from '../components/dashboardViews/DashboardManagers';
 import DashboardRecords from '../components/dashboardViews/DashboardRecords';
 import { ArrowPathIcon } from '@heroicons/react/24/outline';
-import MonthPicker from '../components/datepickers/MonthPicker';
+import { useRouter } from 'next/router';
 
 export default function Dashboard({ userStatuses, userData, listOfUsers }) {
   const [selectedDate, setSelectedDate] = useState(startOfISOWeek(new Date()));
@@ -24,16 +32,34 @@ export default function Dashboard({ userStatuses, userData, listOfUsers }) {
     message: '',
   });
 
+  const router = useRouter();
+  const signOut = () => {
+    axios
+      .get(`${process.env.NEXT_PUBLIC_DOMAIN}/api/auth/logout`)
+      .then((res) => router.push('/giris'))
+      .catch((err) => {
+        console.error(err);
+      });
+  };
+
+  useEffect(() => {
+    if (apiStatus.isError === true) signOut();
+  }, [apiStatus]);
+
+  useEffect(() => {
+    fetchTableData();
+  }, [selectedDate, selectedDateRange]);
+
   const fetchTableData = () => {
     const startDate = format(selectedDate, 'yyyy-MM-dd');
-
     let endDate;
 
-    if (selectedDateRange === 'month') {
+    if (selectedDateRange === 'month')
       endDate = format(endOfMonth(selectedDate), 'yyyy-MM-dd');
-    } else {
+    if (selectedDateRange === 'week')
       endDate = format(addDays(selectedDate, 5), 'yyyy-MM-dd');
-    }
+    if (selectedDateRange === 'day')
+      endDate = format(selectedDate, 'yyyy-MM-dd');
 
     setApiStatus({
       isLoading: true,
@@ -72,13 +98,9 @@ export default function Dashboard({ userStatuses, userData, listOfUsers }) {
       });
   };
 
-  useEffect(() => {
-    fetchTableData();
-  }, [selectedDate, selectedDateRange]);
-
   const views = [
     {
-      name: 'İstatistikler',
+      name: 'Dashboard',
       value: 'stats',
     },
     {
@@ -109,18 +131,29 @@ export default function Dashboard({ userStatuses, userData, listOfUsers }) {
               />
               <div className='flex rounded-lg border border-gray-200 bg-white'>
                 <div className='flex w-16 items-center justify-center rounded-l-lg border-r text-center text-sm font-semibold text-gray-500'>
-                  {selectedDateRange === 'month' ? 'Ay' : 'Hafta'}
+                  {selectedDateRange === 'day' ? 'Gün' : null}
+                  {selectedDateRange === 'week' ? 'Hafta' : null}
+                  {selectedDateRange === 'month' ? 'Ay' : null}
                 </div>
+                {selectedDateRange === 'day' ? (
+                  <DayPicker
+                    selectedDate={selectedDate}
+                    setSelectedDate={setSelectedDate}
+                    maxDate={addDays(endOfISOWeek(new Date()), 7)}
+                  />
+                ) : null}
                 {selectedDateRange === 'week' ? (
                   <WeekPicker
                     selectedDate={selectedDate}
                     setSelectedDate={setSelectedDate}
+                    maxDate={addDays(endOfISOWeek(new Date()), 7)}
                   />
                 ) : null}
                 {selectedDateRange === 'month' ? (
                   <MonthPicker
                     selectedDate={selectedDate}
                     setSelectedDate={setSelectedDate}
+                    maxDate={new Date()}
                   />
                 ) : null}
               </div>
@@ -194,7 +227,7 @@ export async function getServerSideProps(context) {
       props: {},
     };
 
-  if (userData.is_hr === false)
+  if (userData.is_hr !== true)
     return {
       redirect: {
         permanent: false,

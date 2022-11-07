@@ -1,9 +1,8 @@
 import DatePicker, { registerLocale } from 'react-datepicker';
-import { isSameISOWeek, startOfMonth } from 'date-fns';
-import tr from 'date-fns/locale/tr';
 import { forwardRef } from 'react';
+import tr from 'date-fns/locale/tr';
 
-export default function MonthPicker({
+export default function DayPicker({
   selectedDate,
   setSelectedDate,
   minDate,
@@ -13,7 +12,7 @@ export default function MonthPicker({
   const CustomInput = forwardRef(({ value, onClick }, ref) => {
     return (
       <button
-        className='w-28 whitespace-nowrap rounded-r-lg px-4 py-2 text-sm font-semibold text-blue-500 hover:bg-blue-600 hover:text-white '
+        className=' w-28 whitespace-nowrap rounded-r-lg px-4 py-2 text-sm font-semibold text-blue-500 hover:bg-blue-600 hover:text-white '
         onClick={onClick}
         ref={ref}
       >
@@ -26,23 +25,22 @@ export default function MonthPicker({
   return (
     <DatePicker
       selected={selectedDate}
-      onChange={(date) => setSelectedDate(startOfMonth(date))}
       locale='tr'
+      onChange={(date) => setSelectedDate(date)}
       startDate={selectedDate}
       fixedHeight
-      showMonthYearPicker
-      dateFormat='MMMM yyyy'
+      dateFormat='dd MMM yyyy'
       calendarStartDay={1}
       minDate={minDate}
       maxDate={maxDate}
-      nextYearButtonLabel='>'
-      previousYearButtonLabel='<'
+      nextMonthButtonLabel='>'
+      previousMonthButtonLabel='<'
       customInput={<CustomInput />}
-      dayClassName={(date) =>
-        isSameISOWeek(date, selectedDate)
-          ? 'react-datepicker__day--selected'
-          : ''
-      }
+      //   dayClassName={(date) =>
+      //     isSameISOWeek(date, selectedDate)
+      //       ? 'react-datepicker__day--selected'
+      //       : ''
+      //   }
       popperPlacement='top-end'
       popperModifiers={[
         {

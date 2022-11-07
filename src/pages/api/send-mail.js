@@ -6,7 +6,7 @@ export default async function handler(req, response) {
     if (req.method !== 'POST') throw 'Http metodu POST olmalıdır.';
 
     const userData = await verifyToken(req.headers.cookie);
-    if (userData.is_hr === false)
+    if (userData.is_hr !== true)
       throw 'Bu işlem için yetkiniz bulunmamaktadır.';
 
     const { mailReceiver, mailSubject, mailTextField } = req.body;
@@ -23,7 +23,7 @@ export default async function handler(req, response) {
       html,
     });
 
-    if (mailResult.success === false)
+    if (mailResult.success !== true)
       throw mailResult.info
         ? JSON.stringify(mailResult.info)
         : 'E-posta gönderilemedi.';

@@ -7,7 +7,7 @@ import { ArrowDownTrayIcon } from '@heroicons/react/24/outline';
 function DefaultColumnFilter({
   column: { filterValue, preFilteredRows, setFilter },
 }) {
-  const count = preFilteredRows.length;
+  // const count = preFilteredRows.length;
   return (
     <input
       className='mt-1 rounded-md py-1 px-2 text-gray-500 focus:outline-blue-300'
@@ -241,65 +241,9 @@ export default function DashboardTable({
       };
     });
 
-    // const excelStats = days.map((dayName, dayIdx) => {
-    //   const date = addDays(selectedDate, dayIdx);
-    //   const formattedDate = format(date, 'yyyy-MM-dd');
-
-    //   const dayStats = userStatuses.map((status) => {
-    //     const count = records.reduce(
-    //       (acc, record) =>
-    //         acc +
-    //         Boolean(
-    //           record.user_status_id === status.user_status_id &&
-    //             record.record_date.slice(0, 10) === formattedDate
-    //         ),
-    //       0
-    //     );
-    //     return {
-    //       user_status_id: status.user_status_id,
-    //       user_status_name: status.user_status_name,
-    //       count,
-    //     };
-    //   });
-
-    //   const recordCount = dayStats.reduce(
-    //     (acc, status) => acc + status.count,
-    //     0
-    //   );
-
-    //   console.log(dayStats);
-
-    //   return dayStats.map((status) => {
-    //     return {
-    //       username: status.user_status_name,
-    //       count: status.count,
-    //       perc: ((100 * status.count) / recordCount).toFixed(1),
-    //     };
-    //     // <li
-    //     //   key={status.user_status_id}
-    //     //   className='flex items-center justify-between rounded-md border border-gray-200 pl-2'
-    //     // >
-    //     //   <div className='py-1'>{status.user_status_name}</div>
-    //     //   <div className='ml-2 flex overflow-hidden rounded-md font-semibold tracking-wider '>
-    //     //     <div className=' whitespace-nowrap bg-gray-600 px-3 py-1 text-gray-100'>
-    //     //       {status.count}
-    //     //     </div>
-    //     //     <div className='whitespace-nowrap bg-gray-100 px-2 py-1 text-gray-600'>{`% ${(
-    //     //       (100 * status.count) /
-    //     //       recordCount
-    //     //     ).toFixed(1)}`}</div>
-    //     //   </div>
-    //     // </li>
-    //   });
-    // });
-
-    // console.log(excelStats);
-
     var workBook = XLSX.utils.book_new();
     var workSheetRecords = XLSX.utils.json_to_sheet(excelRecords);
-    // var workSheetStats = XLSX.utils.json_to_sheet(excelStats);
     XLSX.utils.book_append_sheet(workBook, workSheetRecords, 'Kayıtlar');
-    // XLSX.utils.book_append_sheet(workBook, workSheetStats, 'İstatistikler');
     XLSX.writeFile(
       workBook,
       `${format(
@@ -372,123 +316,3 @@ export default function DashboardTable({
     </div>
   );
 }
-
-// {
-//         id: 'pazartesi',
-//         Header: 'Pazartesi',
-//         Cell: ({ row }) => {
-//           const dayIdx = 0;
-//           const day = addDays(selectedDate, dayIdx);
-//           const formattedDay = format(day, 'yyyy-MM-dd');
-//           const filteredRecord = records.filter(
-//             (record) =>
-//               record.record_date.slice(0, 10) == formattedDay &&
-//               record.username == row.values.username
-//           );
-//           console.log(filteredRecord);
-//           if (filteredRecord.length !== 1) return <div>no info</div>;
-//           if (!filteredRecord[0].user_status_id) return <div>no info</div>;
-//           const statusId = filteredRecord[0].user_status_id;
-//           const userStatusObject = userStatuses.filter(
-//             (userStatus) => userStatus.user_status_id == statusId
-//           );
-//           const status = userStatusObject[0].user_status_name;
-//           return <div>{status}</div>;
-//         },
-//       },
-
-//       {
-//         id: 'sali',
-//         Header: 'Salı',
-//         Cell: ({ row }) => {
-//           const dayIdx = 1;
-//           const day = addDays(selectedDate, dayIdx);
-//           const formattedDay = format(day, 'yyyy-MM-dd');
-//           const filteredRecord = records.filter(
-//             (record) =>
-//               record.record_date.slice(0, 10) == formattedDay &&
-//               record.username == row.values.username
-//           );
-
-//           if (filteredRecord.length !== 1) return <div>no info</div>;
-//           if (!filteredRecord[0].user_status_id) return <div>no info</div>;
-//           const statusId = filteredRecord[0].user_status_id;
-//           const userStatusObject = userStatuses.filter(
-//             (userStatus) => userStatus.user_status_id == statusId
-//           );
-//           const status = userStatusObject[0].user_status_name;
-//           return <div>{status}</div>;
-//         },
-//       },
-
-//       {
-//         id: 'carsamba',
-//         Header: 'Çarşamba',
-//         Cell: ({ row }) => {
-//           const dayIdx = 2;
-//           const day = addDays(selectedDate, dayIdx);
-//           const formattedDay = format(day, 'yyyy-MM-dd');
-//           const filteredRecord = records.filter(
-//             (record) =>
-//               record.record_date.slice(0, 10) == formattedDay &&
-//               record.username == row.values.username
-//           );
-
-//           if (filteredRecord.length !== 1) return <div>no info</div>;
-//           if (!filteredRecord[0].user_status_id) return <div>no info</div>;
-//           const statusId = filteredRecord[0].user_status_id;
-//           const userStatusObject = userStatuses.filter(
-//             (userStatus) => userStatus.user_status_id == statusId
-//           );
-//           const status = userStatusObject[0].user_status_name;
-//           return <div>{status}</div>;
-//         },
-//       },
-
-//       {
-//         id: 'persembe',
-//         Header: 'Perşembe',
-//         Cell: ({ row }) => {
-//           const dayIdx = 3;
-//           const day = addDays(selectedDate, dayIdx);
-//           const formattedDay = format(day, 'yyyy-MM-dd');
-//           const filteredRecord = records.filter(
-//             (record) =>
-//               record.record_date.slice(0, 10) == formattedDay &&
-//               record.username == row.values.username
-//           );
-
-//           if (filteredRecord.length !== 1) return <div>no info</div>;
-//           if (!filteredRecord[0].user_status_id) return <div>no info</div>;
-//           const statusId = filteredRecord[0].user_status_id;
-//           const userStatusObject = userStatuses.filter(
-//             (userStatus) => userStatus.user_status_id == statusId
-//           );
-//           const status = userStatusObject[0].user_status_name;
-//           return <div>{status}</div>;
-//         },
-//       },
-
-//       {
-//         id: 'cuma',
-//         Header: 'Cuma',
-//         Cell: ({ row }) => {
-//           const dayIdx = 4;
-//           const day = addDays(selectedDate, dayIdx);
-//           const formattedDay = format(day, 'yyyy-MM-dd');
-//           const filteredRecord = records.filter(
-//             (record) =>
-//               record.record_date.slice(0, 10) == formattedDay &&
-//               record.username == row.values.username
-//           );
-
-//           if (filteredRecord.length !== 1) return <div>no info</div>;
-//           if (!filteredRecord[0].user_status_id) return <div>no info</div>;
-//           const statusId = filteredRecord[0].user_status_id;
-//           const userStatusObject = userStatuses.filter(
-//             (userStatus) => userStatus.user_status_id == statusId
-//           );
-//           const status = userStatusObject[0].user_status_name;
-//           return <div>{status}</div>;
-//         },
-//       },

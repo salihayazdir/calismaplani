@@ -45,7 +45,7 @@ export default async function handler(req, res) {
       html: `<p>Tek Kullanımlık Şifreniz: ${otp}. Şifre geçerlilik süresi 3 dakikadır.<p>`,
     });
 
-    if ((await mailInfo.success) === false)
+    if ((await mailInfo.success) !== true)
       throw `Mailer Error: ${mailInfo.info || null}`;
 
     res.status(200).json({

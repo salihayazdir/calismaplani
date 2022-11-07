@@ -1,7 +1,8 @@
 import RecordsTable from '../table/RecordsTable';
-import Loader from '../skeletons/Loader';
 import { ExclamationCircleIcon } from '@heroicons/react/24/outline';
 import NoRecords from '../skeletons/NoRecords';
+import TableSkeleton from '../skeletons/TableSkeleton';
+import { Transition } from '@headlessui/react';
 
 export default function DashboardRecords({
   records,
@@ -25,16 +26,27 @@ export default function DashboardRecords({
         />
       ) : selectedDateRange === 'week' ? (
         isLoading ? (
-          <Loader />
+          <TableSkeleton />
         ) : (
-          <div className='flex flex-col rounded-xl border border-gray-200 bg-white py-4'>
-            <RecordsTable
-              records={records}
-              userStatuses={userStatuses}
-              selectedDate={selectedDate}
-              selectedDateRange={selectedDateRange}
-            />
-          </div>
+          <Transition
+            appear={true}
+            show={true}
+            enter='transition-opacity duration-500'
+            enterFrom='opacity-0'
+            enterTo='opacity-100'
+            leave='transition-opacity duration-500'
+            leaveFrom='opacity-100'
+            leaveTo='opacity-0'
+          >
+            <div className='flex flex-col rounded-xl border border-gray-200 bg-white py-4'>
+              <RecordsTable
+                records={records}
+                userStatuses={userStatuses}
+                selectedDate={selectedDate}
+                selectedDateRange={selectedDateRange}
+              />
+            </div>
+          </Transition>
         )
       ) : (
         <div className='inline-flex items-center justify-center gap-4 py-6 text-center text-lg font-medium text-gray-400'>

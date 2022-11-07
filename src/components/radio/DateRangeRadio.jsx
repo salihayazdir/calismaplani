@@ -3,6 +3,10 @@ import { startOfMonth, startOfISOWeek, addDays } from 'date-fns';
 
 const ranges = [
   {
+    name: 'Günlük',
+    value: 'day',
+  },
+  {
     name: 'Haftalık',
     value: 'week',
   },

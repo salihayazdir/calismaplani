@@ -7,7 +7,7 @@ export default async function handler(req, response) {
     if (req.method !== 'POST') throw 'Http metodu POST olmalıdır.';
 
     const userData = await verifyToken(req.headers.cookie);
-    if (userData.is_hr === false)
+    if (userData.is_hr !== true)
       throw 'Bu işlem için yetkiniz bulunmamaktadır.';
 
     const { startDate, endDate } = req.body;

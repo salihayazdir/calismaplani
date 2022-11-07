@@ -21,10 +21,6 @@ export default function ManagerMailModal({
   const { name, mail, type } = managerMailProps;
   const [mailMessageInput, setMailMessageInput] = useState('');
 
-  console.log(managerMailProps);
-  console.log(selectedDate);
-  console.log(mailMessageInput);
-
   const modalTitle = () => {
     if (type === 'edit') return 'Kayıt Düzenleme İsteği';
     if (type === 'reminder') return 'Hatırlatma E-postası';
@@ -89,14 +85,14 @@ export default function ManagerMailModal({
   };
 
   const handleClose = () => {
+    // setMailStatus({
+    //   isLoading: false,
+    //   isSent: false,
+    //   isError: false,
+    //   message: '',
+    // });
+    // setMailMessageInput('');
     setIsOpen(false);
-    setMailStatus({
-      isLoading: false,
-      isSent: false,
-      isError: false,
-      message: '',
-    });
-    setMailMessageInput('');
   };
 
   const messageFieldRef = useRef(null);
@@ -182,6 +178,7 @@ export default function ManagerMailModal({
                           onChange={(e) => setMailMessageInput(e.target.value)}
                         />
                       </div>
+
                       {isSent === true && isLoading === false ? (
                         <div
                           className={`rounded-lg border px-6 py-3 text-sm ${
@@ -197,19 +194,23 @@ export default function ManagerMailModal({
                             : 'E-posta başarıyla gönderildi.'}
                         </div>
                       ) : null}
+
                       {isLoading === true ? (
                         <div className='flex w-full justify-center text-center '>
                           <Loader />
                         </div>
                       ) : null}
-                      {isSent === false ? (
+
+                      {isSent === false && isLoading === false ? (
                         <button
                           type='submit'
                           className='inline-flex justify-center rounded-md border border-transparent bg-blue-600 px-4 py-3 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-200'
                         >
                           E-posta Gönder
                         </button>
-                      ) : (
+                      ) : null}
+
+                      {isSent === true ? (
                         <button
                           className='inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-3 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-200'
                           type='button'
@@ -217,7 +218,7 @@ export default function ManagerMailModal({
                         >
                           Tamam
                         </button>
-                      )}
+                      ) : null}
                     </form>
                   </div>
                 </Dialog.Panel>

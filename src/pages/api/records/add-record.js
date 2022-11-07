@@ -9,7 +9,7 @@ export default async function handler(req, response) {
       throw 'Records alanı array içermelidir.';
 
     const userData = await verifyToken(req.headers.cookie);
-    if (userData.is_manager === false)
+    if (userData.is_manager !== true)
       throw 'Bu işlem için yetkiniz bulunmamaktadır.';
 
     const recordEntryResults = records.map(

@@ -1,4 +1,5 @@
 import { addDays, format } from 'date-fns';
+import { Transition } from '@headlessui/react';
 
 export default function DailyStats({ records, userStatuses, selectedDate }) {
   const days = ['Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma'];
@@ -40,27 +41,39 @@ export default function DailyStats({ records, userStatuses, selectedDate }) {
               <div>{dayName}</div>
               <div className='text-gray-300'>{formattedDate}</div>
             </h3>
-            <ul className='flex flex-col gap-2 p-4 text-xs'>
-              {dayStats.map((status) => {
-                return (
-                  <li
-                    key={status.user_status_id}
-                    className='flex items-center justify-between rounded-md border border-gray-200 pl-2'
-                  >
-                    <div className='py-1'>{status.user_status_name}</div>
-                    <div className='ml-2 flex overflow-hidden rounded-md font-semibold tracking-wider '>
-                      <div className=' whitespace-nowrap bg-gray-600 px-3 py-1 text-gray-100'>
-                        {status.count}
+            <Transition
+              appear={true}
+              show={true}
+              enter='transition-opacity duration-500'
+              enterFrom='opacity-0'
+              enterTo='opacity-100'
+              leave='transition-opacity duration-500'
+              leaveFrom='opacity-100'
+              leaveTo='opacity-0'
+            >
+              {/* Your content goes here*/}
+              <ul className='flex flex-col gap-2 p-4 text-xs'>
+                {dayStats.map((status) => {
+                  return (
+                    <li
+                      key={status.user_status_id}
+                      className='flex items-center justify-between rounded-md border border-gray-200 pl-2'
+                    >
+                      <div className='py-1'>{status.user_status_name}</div>
+                      <div className='ml-2 flex overflow-hidden rounded-md font-semibold tracking-wider '>
+                        <div className=' whitespace-nowrap bg-gray-600 px-3 py-1 text-gray-100'>
+                          {status.count}
+                        </div>
+                        <div className='whitespace-nowrap bg-gray-100 px-2 py-1 text-gray-600'>{`% ${(
+                          (100 * status.count) /
+                          recordCount
+                        ).toFixed(1)}`}</div>
                       </div>
-                      <div className='whitespace-nowrap bg-gray-100 px-2 py-1 text-gray-600'>{`% ${(
-                        (100 * status.count) /
-                        recordCount
-                      ).toFixed(1)}`}</div>
-                    </div>
-                  </li>
-                );
-              })}
-            </ul>
+                    </li>
+                  );
+                })}
+              </ul>
+            </Transition>
           </div>
         );
       })}

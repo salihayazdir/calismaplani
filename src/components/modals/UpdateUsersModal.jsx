@@ -5,17 +5,7 @@ import axios from 'axios';
 import { XMarkIcon, ExclamationCircleIcon } from '@heroicons/react/24/outline';
 import { format, addDays } from 'date-fns';
 
-export default function NewRecordsModal({
-  isOpen,
-  setIsOpen,
-  newRecords,
-  selectedDate,
-  records,
-}) {
-  const [offPersonnelExists, setOffPersonnelExists] = useState(false);
-  const [prevRecordsExist, setPrevRecordsExist] = useState(false);
-  // console.log(prevRecordsExist);
-
+export default function UpdateUsersModal({ isOpen, setIsOpen }) {
   const [apiStatus, setApiStatus] = useState({
     isLoading: false,
     isSent: false,
@@ -23,19 +13,6 @@ export default function NewRecordsModal({
     message: '',
   });
   const { isLoading, isSent, isError, message } = apiStatus;
-
-  const indexOfPreviousRecord = records.findIndex(
-    (record) =>
-      record.record_date.slice(0, 10) === format(selectedDate, 'yyyy-MM-dd')
-  );
-
-  useEffect(() => {
-    if (indexOfPreviousRecord !== -1) {
-      setPrevRecordsExist(true);
-    } else {
-      setPrevRecordsExist(false);
-    }
-  }, [selectedDate, isOpen]);
 
   const sendRecords = () => {
     setApiStatus({
@@ -45,32 +22,10 @@ export default function NewRecordsModal({
       message: '',
     });
 
-    const recordsToSend = newRecords
-      .map((dayOfRecords) => {
-        const recordDate = format(
-          addDays(selectedDate, dayOfRecords.dayIdx),
-          'yyyy-MM-dd'
-        );
-        return dayOfRecords.data.map((record) => ({
-          username: record.username,
-          record_date: recordDate,
-          user_status_id: record.user_status_id,
-          record_status_id: record.record_status_id,
-        }));
-      })
-      .flat();
-
-    const indexOfOffPersonnelRecord = recordsToSend.findIndex(
-      (record) => record.user_status_id === 4
-    );
-    if (indexOfOffPersonnelRecord !== -1) setOffPersonnelExists(true);
-
     axios
-      .post(`${process.env.NEXT_PUBLIC_DOMAIN}/api/records/add-record`, {
-        records: recordsToSend,
-      })
+      .get(`${process.env.NEXT_PUBLIC_DOMAIN}/api/users/update`)
       .then((res) => {
-        // console.log(res);
+        console.log(res);
         if (res.data.success === true) {
           setApiStatus({
             isLoading: false,
@@ -106,7 +61,6 @@ export default function NewRecordsModal({
     //   isError: false,
     //   message: '',
     // });
-    // setOffPersonnelExists(false);
   };
 
   return (
@@ -142,7 +96,7 @@ export default function NewRecordsModal({
                       as='h3'
                       className='py-3 text-lg font-bold text-gray-900'
                     >
-                      Kayıtları Gönder
+                      Kullanıcıları Güncelle
                     </Dialog.Title>
                     <button
                       onClick={handleClose}
@@ -152,19 +106,11 @@ export default function NewRecordsModal({
                     </button>
                   </div>
 
-                  {isSent === false && (
+                  {isSent === false && isLoading === false && (
                     <div className='px-6 pt-4'>
                       <div className='flex flex-col rounded-md bg-gray-50 p-4 text-gray-800'>
-                        <span className='font-medium text-blue-600'>{`${format(
-                          selectedDate,
-                          'dd-MM-yyyy'
-                        )}  /  ${format(
-                          addDays(selectedDate, 4),
-                          'dd-MM-yyyy'
-                        )} `}</span>
-                        <span>
-                          tarih aralığı için kayıtlar gönderilecektir.
-                        </span>
+                        Onaylamanız halinde tüm personel bilgileri
+                        güncellenecektir.
                       </div>
                     </div>
                   )}
@@ -172,7 +118,11 @@ export default function NewRecordsModal({
                   <div className='flex flex-col gap-6 p-6'>
                     <div className='flex flex-col gap-6'>
                       {isLoading === true ? (
-                        <div className='flex w-full justify-center text-center '>
+                        <div className='flex w-full flex-col items-center justify-center gap-6 text-center '>
+                          <div className='w-full rounded-md bg-gray-50 p-4 text-gray-800'>
+                            <p>Kullanıcılar güncelleniyor.</p>
+                            <p>Bu işlem birkaç dakika sürebilir.</p>
+                          </div>
                           <Loader />
                         </div>
                       ) : null}
@@ -193,45 +143,14 @@ export default function NewRecordsModal({
                         </p>
                       ) : null}
 
-                      {isSent === true && offPersonnelExists === true ? (
-                        <div className='flex flex-col gap-2 rounded-lg bg-gray-100 px-6 py-3 text-sm leading-[18px] text-gray-700'>
-                          <h3 className='inline-flex items-center gap-2 text-base font-medium text-amber-600'>
-                            <span>
-                              <ExclamationCircleIcon className='h-5 w-5' />
-                            </span>
-                            <span>Uyarı</span>
-                          </h3>
-                          <p>
-                            Gönderilen kayıtlar arasında izinli personel
-                            bulunuyor. Lütfen HR uygulaması üzerinden izin kaydı
-                            girmeyi unutmayın.
-                          </p>
-                        </div>
-                      ) : null}
-
-                      {isSent === false && prevRecordsExist === true ? (
-                        <div className='flex flex-col gap-2 rounded-lg border border-amber-200 bg-amber-100 px-6 py-3 text-sm leading-[18px] text-amber-700'>
-                          <h3 className='inline-flex items-center gap-2 text-base font-medium'>
-                            <span>
-                              <ExclamationCircleIcon className='h-5 w-5' />
-                            </span>
-                            <span>Uyarı</span>
-                          </h3>
-                          <p>
-                            Seçilen tarihlerde mevcut kayıt bulunmaktadır.
-                            Onaylamanız halinde kayıtlar değiştirilecektir.
-                          </p>
-                        </div>
-                      ) : null}
-
-                      {isSent === false ? (
+                      {isSent === false && isLoading === false ? (
                         <>
                           <button
                             onClick={sendRecords}
                             type='button'
                             className='inline-flex justify-center rounded-md border border-transparent bg-green-600 px-4 py-3 text-sm font-medium text-white hover:bg-green-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-200'
                           >
-                            Onayla ve Gönder
+                            Onayla ve Güncelle
                           </button>
                           <button
                             onClick={handleClose}
@@ -241,15 +160,17 @@ export default function NewRecordsModal({
                             İptal
                           </button>
                         </>
-                      ) : (
+                      ) : null}
+
+                      {isSent === true && isLoading === false ? (
                         <button
                           className='inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-3 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-200'
-                          type='button'
+                          // type='button'
                           onClick={handleClose}
                         >
                           Tamam
                         </button>
-                      )}
+                      ) : null}
                     </div>
                   </div>
                 </Dialog.Panel>

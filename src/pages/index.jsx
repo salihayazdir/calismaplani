@@ -3,13 +3,15 @@ import axios from 'axios';
 import verifyToken from '../backend/verifyToken';
 import { getDirectReports, getUserStatuses } from '../database/dbOps';
 import NewRecordTable from '../components/table/NewRecordTable';
-import { startOfISOWeek, addDays, format } from 'date-fns';
+import { startOfISOWeek, endOfISOWeek, addDays, format } from 'date-fns';
 import Layout from '../components/layout/Layout';
 import WeekPicker from '../components/datepickers/WeekPicker';
 import NewRecordsModal from '../components/modals/NewRecordsModal';
 import DashboardRecords from '../components/dashboardViews/DashboardRecords';
 import ViewRadio from '../components/radio/ViewRadio';
 import { ArrowPathIcon } from '@heroicons/react/24/outline';
+import { Transition } from '@headlessui/react';
+import { useRouter } from 'next/router';
 
 export default function Home({ directReports, userStatuses, userData }) {
   const days = ['Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma'];
@@ -24,6 +26,20 @@ export default function Home({ directReports, userStatuses, userData }) {
     isError: false,
     message: '',
   });
+
+  const router = useRouter();
+  const signOut = () => {
+    axios
+      .get(`${process.env.NEXT_PUBLIC_DOMAIN}/api/auth/logout`)
+      .then((res) => router.push('/giris'))
+      .catch((err) => {
+        console.error(err);
+      });
+  };
+
+  useEffect(() => {
+    if (apiStatus.isError === true) signOut();
+  }, [apiStatus]);
 
   const [newRecords, setNewRecords] = useState(
     days.map((day, dayIdx) => ({
@@ -123,11 +139,7 @@ export default function Home({ directReports, userStatuses, userData }) {
                       ? startOfISOWeek(new Date())
                       : null
                   }
-                  maxDate={
-                    selectedView === 'newrecord'
-                      ? addDays(startOfISOWeek(addDays(new Date(), 7 * 2)), -1)
-                      : null
-                  }
+                  maxDate={addDays(endOfISOWeek(new Date()), 7)}
                 />
               </div>
               {selectedView === 'records' ? (
@@ -143,20 +155,31 @@ export default function Home({ directReports, userStatuses, userData }) {
           </div>
 
           {selectedView === 'newrecord' ? (
-            <>
-              <NewRecordTable
-                newRecords={newRecords}
-                setNewRecords={setNewRecords}
-                userStatuses={userStatuses}
-                selectedDate={selectedDate}
-              />
-              <button
-                className='self-end rounded-lg bg-green-500 px-8 py-3 font-semibold text-white hover:bg-green-600 '
-                onClick={() => setModalIsOpen(true)}
-              >
-                Tümünü Gönder
-              </button>
-            </>
+            <Transition
+              appear={true}
+              show={true}
+              enter='transition-opacity duration-500'
+              enterFrom='opacity-0'
+              enterTo='opacity-100'
+              leave='transition-opacity duration-500'
+              leaveFrom='opacity-100'
+              leaveTo='opacity-0'
+            >
+              <div className='flex flex-col gap-6'>
+                <NewRecordTable
+                  newRecords={newRecords}
+                  setNewRecords={setNewRecords}
+                  userStatuses={userStatuses}
+                  selectedDate={selectedDate}
+                />
+                <button
+                  className='self-end rounded-lg bg-green-500 px-8 py-3 font-semibold text-white hover:bg-green-600 '
+                  onClick={() => setModalIsOpen(true)}
+                >
+                  Tümünü Gönder
+                </button>
+              </div>
+            </Transition>
           ) : null}
 
           {selectedView === 'records' ? (
@@ -171,13 +194,15 @@ export default function Home({ directReports, userStatuses, userData }) {
           ) : null}
         </div>
       </Layout>
-      <NewRecordsModal
-        isOpen={modalIsOpen}
-        setIsOpen={setModalIsOpen}
-        newRecords={newRecords}
-        selectedDate={selectedDate}
-        records={records}
-      />
+      {modalIsOpen ? (
+        <NewRecordsModal
+          isOpen={modalIsOpen}
+          setIsOpen={setModalIsOpen}
+          newRecords={newRecords}
+          selectedDate={selectedDate}
+          records={records}
+        />
+      ) : null}
     </>
   );
 }
