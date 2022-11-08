@@ -19,10 +19,6 @@ body {
   @apply font-sans
 }
 
-.react-datepicker__week:hover { 
-  @apply bg-blue-100 text-white rounded cursor-pointer outline outline-1 outline-blue-200
-}
-
 .react-datepicker__input-container input {
   @apply  px-4 py-1 text-sm bg-white border-2 border-blue-500 rounded-r-lg  focus:outline-blue-200
 }
@@ -83,8 +79,12 @@ body {
   @apply my-[2px] w-8 h-8 flex items-center justify-center py-1 text-sm leading-loose transition text-gray-700 rounded
 }
 
+.react-datepicker__day:hover {
+  @apply outline outline-2 outline-blue-300 cursor-pointer
+}
+
 .react-datepicker__day--disabled {
-  @apply cursor-not-allowed opacity-40 hover:bg-transparent
+  @apply cursor-not-allowed opacity-40 hover:bg-transparent !important
 }
 
 .react-datepicker__day--outside-month {

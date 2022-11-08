@@ -1,5 +1,5 @@
-import verifyToken from '../../backend/verifyToken';
-import sendMail from '../../backend/sendMail';
+import verifyToken from '../../../backend/verifyToken';
+import sendMail from '../../../backend/sendMail';
 
 export default async function handler(req, response) {
   try {

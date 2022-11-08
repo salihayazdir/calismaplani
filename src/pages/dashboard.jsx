@@ -15,9 +15,9 @@ import WeekPicker from '../components/datepickers/WeekPicker';
 import MonthPicker from '../components/datepickers/MonthPicker';
 import DateRangeRadio from '../components/radio/DateRangeRadio';
 import ViewRadio from '../components/radio/ViewRadio';
-import DashboardStats from '../components/dashboardViews/DashboardStats';
-import DashboardManagers from '../components/dashboardViews/DashboardManagers';
-import DashboardRecords from '../components/dashboardViews/DashboardRecords';
+import DashboardStatsView from '../components/dashboardViews/DashboardStatsView';
+import DashboardManagersView from '../components/dashboardViews/DashboardManagersView';
+import DashboardRecordsView from '../components/dashboardViews/DashboardRecordsView';
 import { ArrowPathIcon } from '@heroicons/react/24/outline';
 import { useRouter } from 'next/router';
 
@@ -168,7 +168,7 @@ export default function Dashboard({ userStatuses, userData, listOfUsers }) {
           </div>
           <hr className=' -mx-10 pb-2 text-gray-200' />
           {selectedView === 'stats' ? (
-            <DashboardStats
+            <DashboardStatsView
               records={records}
               apiStatus={apiStatus}
               userStatuses={userStatuses}
@@ -178,7 +178,7 @@ export default function Dashboard({ userStatuses, userData, listOfUsers }) {
             />
           ) : null}
           {selectedView === 'records' ? (
-            <DashboardRecords
+            <DashboardRecordsView
               records={records}
               userStatuses={userStatuses}
               selectedDate={selectedDate}
@@ -190,7 +190,7 @@ export default function Dashboard({ userStatuses, userData, listOfUsers }) {
             />
           ) : null}
           {selectedView === 'managers' ? (
-            <DashboardManagers
+            <DashboardManagersView
               listOfUsers={listOfUsers}
               records={records}
               apiStatus={apiStatus}

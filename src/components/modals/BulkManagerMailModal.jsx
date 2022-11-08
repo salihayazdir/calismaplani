@@ -5,11 +5,11 @@ import { Fragment, useState, useRef } from 'react';
 import { startOfISOWeek, format } from 'date-fns';
 import { XMarkIcon, UserIcon, EnvelopeIcon } from '@heroicons/react/24/outline';
 
-export default function ManagerMailModal({
+export default function BulkManagerMailModal({
   isOpen,
   setIsOpen,
-  managerMailProps,
   selectedDate,
+  mailList,
 }) {
   const [mailStatus, setMailStatus] = useState({
     isLoading: false,
@@ -18,28 +18,7 @@ export default function ManagerMailModal({
     message: '',
   });
   const { isLoading, isSent, isError, message } = mailStatus;
-  const { name, mail, type } = managerMailProps;
   const [mailMessageInput, setMailMessageInput] = useState('');
-
-  const modalTitle = () => {
-    if (type === 'edit') return 'Kayıt Düzenleme İsteği';
-    if (type === 'reminder') return 'Hatırlatma E-postası';
-    return 'E-posta';
-  };
-
-  const mailSubject = () => {
-    if (type === 'reminder')
-      return `${format(
-        startOfISOWeek(selectedDate),
-        'dd/MM/yyyy'
-      )} haftası personel kayıt çizelgesi için hatırlatma.`;
-
-    if (type === 'edit')
-      return `${format(
-        startOfISOWeek(selectedDate),
-        'dd/MM/yyyy'
-      )} haftası personel kayıt çizelgesi için düzenleme isteği.`;
-  };
 
   const handleEmailFormSubmit = (e) => {
     e.preventDefault();
@@ -51,9 +30,12 @@ export default function ManagerMailModal({
     });
 
     axios
-      .post(`${process.env.NEXT_PUBLIC_DOMAIN}/api/mail/single`, {
-        mailReceiver: mail,
-        mailSubject: mailSubject(),
+      .post(`${process.env.NEXT_PUBLIC_DOMAIN}/api/mail/bulk`, {
+        mailReceivers: mailList,
+        mailSubject: `${format(
+          startOfISOWeek(selectedDate),
+          'dd/MM/yyyy'
+        )} haftası personel kayıt çizelgesi için hatırlatma.`,
         mailTextField: mailMessageInput,
       })
       .then((res) => {
@@ -85,13 +67,6 @@ export default function ManagerMailModal({
   };
 
   const handleClose = () => {
-    // setMailStatus({
-    //   isLoading: false,
-    //   isSent: false,
-    //   isError: false,
-    //   message: '',
-    // });
-    // setMailMessageInput('');
     setIsOpen(false);
   };
 
@@ -135,7 +110,7 @@ export default function ManagerMailModal({
                       as='h3'
                       className='py-3 text-lg font-bold text-gray-900'
                     >
-                      {modalTitle()}
+                      Tüm Yöneticilere Hatırlat
                     </Dialog.Title>
                     <button
                       onClick={handleClose}
@@ -146,25 +121,28 @@ export default function ManagerMailModal({
                   </div>
 
                   <div className='flex flex-col gap-6 p-6'>
-                    <div>
+                    {/* <div>
                       <div className='flex  flex-col rounded-lg border border-gray-200 bg-gray-50 text-gray-600 '>
                         <span className='inline-flex items-center gap-4 border-b border-gray-200 px-4 py-[6px] font-medium '>
                           <UserIcon className='h-5 w-5' />
-                          {name}
+                          "name"
                         </span>
                         <span className='inline-flex items-center gap-4 py-[6px] px-4 font-light'>
                           <EnvelopeIcon className='h-5 w-5' />
-                          {mail}
+                          "mail"
                         </span>
                       </div>
-                    </div>
+                    </div> */}
                     <form
                       className='flex flex-col gap-6'
                       onSubmit={handleEmailFormSubmit}
                     >
                       <div className='flex flex-col rounded-lg border border-gray-200'>
                         <h3 className='border-b border-gray-200 px-4 py-2 font-medium text-gray-600'>
-                          {mailSubject()}
+                          {`${format(
+                            startOfISOWeek(selectedDate),
+                            'dd/MM/yyyy'
+                          )} haftası personel kayıt çizelgesi için hatırlatma.`}
                         </h3>
                         <textarea
                           ref={messageFieldRef}

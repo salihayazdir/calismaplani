@@ -39,7 +39,7 @@ export default function WeekPicker({
       customInput={<CustomInput />}
       dayClassName={(date) =>
         isSameISOWeek(date, selectedDate)
-          ? 'react-datepicker__day--selected'
+          ? 'react-datepicker__day--selected pointer-events-none'
           : ''
       }
       popperPlacement='top-end'

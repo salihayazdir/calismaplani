@@ -1,10 +1,10 @@
 import RecordsTable from '../table/RecordsTable';
-import { ExclamationCircleIcon } from '@heroicons/react/24/outline';
 import NoRecords from '../skeletons/NoRecords';
 import TableSkeleton from '../skeletons/TableSkeleton';
 import { Transition } from '@headlessui/react';
+import SelectWeeklyViewWarning from './SelectWeeklyViewWarning';
 
-export default function DashboardRecords({
+export default function DashboardRecordsView({
   records,
   userStatuses,
   selectedDate,
@@ -49,19 +49,7 @@ export default function DashboardRecords({
           </Transition>
         )
       ) : (
-        <div className='inline-flex items-center justify-center gap-4 py-6 text-center text-lg font-medium text-gray-400'>
-          <ExclamationCircleIcon className='h-8 w-8' />
-          <div>
-            <span>Bu ekranı görüntülemek için</span>
-            <span
-              onClick={() => setSelectedDateRange('week')}
-              className='cursor-pointer rounded-md py-1 text-blue-600 hover:mx-2 hover:bg-blue-100 hover:px-2 '
-            >
-              {` haftalık `}
-            </span>
-            <span>görünüm seçmelisiniz.</span>
-          </div>
-        </div>
+        <SelectWeeklyViewWarning setSelectedDateRange={setSelectedDateRange} />
       )}
     </>
   );

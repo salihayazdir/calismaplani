@@ -4,51 +4,6 @@ import { addDays, format } from 'date-fns';
 import * as XLSX from 'xlsx';
 import { ArrowDownTrayIcon } from '@heroicons/react/24/outline';
 
-function DefaultColumnFilter({
-  column: { filterValue, preFilteredRows, setFilter },
-}) {
-  // const count = preFilteredRows.length;
-  return (
-    <input
-      className='mt-1 rounded-md py-1 px-2 text-gray-500 focus:outline-blue-300'
-      value={filterValue || ''}
-      onChange={(e) => {
-        setFilter(e.target.value || undefined);
-      }}
-      placeholder={`Ara...`}
-    />
-  );
-}
-
-function SelectColumnFilter({
-  column: { filterValue, setFilter, preFilteredRows, id },
-}) {
-  const options = useMemo(() => {
-    const options = new Set();
-    preFilteredRows.forEach((row) => {
-      options.add(row.values[id]);
-    });
-    return [...options.values()];
-  }, [id, preFilteredRows]);
-
-  return (
-    <select
-      className='mt-1 rounded-md py-1 px-2 text-gray-500 focus:outline-blue-300'
-      value={filterValue}
-      onChange={(e) => {
-        setFilter(e.target.value || undefined);
-      }}
-    >
-      <option value=''>Tüm Bölümler</option>
-      {options.map((option, i) => (
-        <option key={i} value={option}>
-          {option}
-        </option>
-      ))}
-    </select>
-  );
-}
-
 export default function DashboardTable({
   records,
   userStatuses,
@@ -314,5 +269,50 @@ export default function DashboardTable({
         </tbody>
       </table>
     </div>
+  );
+}
+
+function DefaultColumnFilter({
+  column: { filterValue, preFilteredRows, setFilter },
+}) {
+  // const count = preFilteredRows.length;
+  return (
+    <input
+      className='mt-1 rounded-md py-1 px-2 text-gray-500 focus:outline-blue-300'
+      value={filterValue || ''}
+      onChange={(e) => {
+        setFilter(e.target.value || undefined);
+      }}
+      placeholder={`Ara...`}
+    />
+  );
+}
+
+function SelectColumnFilter({
+  column: { filterValue, setFilter, preFilteredRows, id },
+}) {
+  const options = useMemo(() => {
+    const options = new Set();
+    preFilteredRows.forEach((row) => {
+      options.add(row.values[id]);
+    });
+    return [...options.values()];
+  }, [id, preFilteredRows]);
+
+  return (
+    <select
+      className='mt-1 rounded-md py-1 px-2 text-gray-500 focus:outline-blue-300'
+      value={filterValue}
+      onChange={(e) => {
+        setFilter(e.target.value || undefined);
+      }}
+    >
+      <option value=''>Tüm Bölümler</option>
+      {options.map((option, i) => (
+        <option key={i} value={option}>
+          {option}
+        </option>
+      ))}
+    </select>
   );
 }

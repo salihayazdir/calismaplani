@@ -8,9 +8,9 @@ import { Transition } from '@headlessui/react';
 import { ArrowDownTrayIcon } from '@heroicons/react/24/outline';
 import { useState } from 'react';
 import UpdateUsersModal from '../modals/UpdateUsersModal';
-import exportStats from '../exportStats';
+import exportStats from '../../utils/exportStats';
 
-export default function DashboardStats({
+export default function DashboardStatsView({
   records,
   apiStatus,
   userStatuses,
@@ -87,7 +87,7 @@ export default function DashboardStats({
               />
             ) : null}
 
-            <div className='flex justify-between gap-10 '>
+            <div className='flex justify-between gap-6 '>
               <div className=' w-1/5 rounded-lg border border-gray-200 bg-white '>
                 <DoughnutChart records={records} userStatuses={userStatuses} />
               </div>

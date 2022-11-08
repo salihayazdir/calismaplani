@@ -7,7 +7,7 @@ import { startOfISOWeek, endOfISOWeek, addDays, format } from 'date-fns';
 import Layout from '../components/layout/Layout';
 import WeekPicker from '../components/datepickers/WeekPicker';
 import NewRecordsModal from '../components/modals/NewRecordsModal';
-import DashboardRecords from '../components/dashboardViews/DashboardRecords';
+import DashboardRecordsView from '../components/dashboardViews/DashboardRecordsView';
 import ViewRadio from '../components/radio/ViewRadio';
 import { ArrowPathIcon } from '@heroicons/react/24/outline';
 import { Transition } from '@headlessui/react';
@@ -183,7 +183,7 @@ export default function Home({ directReports, userStatuses, userData }) {
           ) : null}
 
           {selectedView === 'records' ? (
-            <DashboardRecords
+            <DashboardRecordsView
               records={records}
               userStatuses={userStatuses}
               selectedDate={selectedDate}

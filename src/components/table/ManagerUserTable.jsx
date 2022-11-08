@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useTable, useExpanded } from 'react-table';
 import ManagerMailModal from '../modals/ManagerMailModal';
+import BulkManagerMailModal from '../modals/BulkManagerMailModal';
 import {
   CheckIcon,
   ChevronRightIcon,
@@ -14,6 +15,8 @@ export default function ManagerUserTable({
   records,
   selectedDate,
 }) {
+  const [bulkManagerMailModalIsOpen, setBulkManagerMailModalIsOpen] =
+    useState(false);
   const [managerMailModalIsOpen, setManagerMailModalIsOpen] = useState(false);
   const [managerMailProps, setManagerMailProps] = useState({
     name: null,
@@ -41,6 +44,10 @@ export default function ManagerUserTable({
       };
     });
   }, []);
+
+  const bulkReminderMailList = tableData
+    .filter((manager) => !manager.didSendRecords)
+    .map((manager) => manager.mail);
 
   const columns = useMemo(
     () => [
@@ -196,6 +203,19 @@ export default function ManagerUserTable({
   return (
     <>
       <div className={`overflow-x-auto overflow-y-visible text-xs`}>
+        <div className='flex w-full items-center justify-between px-4 pb-4'>
+          <h2 className='rounded-md bg-blue-50 px-4 py-2 text-sm font-medium text-blue-700 '></h2>
+          <button
+            onClick={() => setBulkManagerMailModalIsOpen(true)}
+            className='flex-end inline-flex gap-3 rounded-md bg-gray-600 px-4 py-2 text-sm font-medium text-white shadow-md  hover:bg-blue-600 '
+          >
+            <span>{'Tümüne Hatırlat'}</span>
+            <span>
+              <EnvelopeIcon className='h-5 w-5' />
+            </span>
+          </button>
+        </div>
+
         <table
           {...getTableProps()}
           className='w-full border-collapse rounded-lg'
@@ -247,6 +267,14 @@ export default function ManagerUserTable({
           setIsOpen={setManagerMailModalIsOpen}
           managerMailProps={managerMailProps}
           selectedDate={selectedDate}
+        />
+      ) : null}
+      {bulkManagerMailModalIsOpen ? (
+        <BulkManagerMailModal
+          isOpen={bulkManagerMailModalIsOpen}
+          setIsOpen={setBulkManagerMailModalIsOpen}
+          selectedDate={selectedDate}
+          mailList={bulkReminderMailList}
         />
       ) : null}
     </>
