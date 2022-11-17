@@ -1,5 +1,5 @@
 import verifyToken from '../../../backend/verifyToken';
-import { getAllRecordsByDate } from '../../../database/dbOps';
+import { getAllRecordsByDate, addLog } from '../../../database/dbOps';
 import { parse, isValid } from 'date-fns';
 
 export default async function handler(req, response) {
@@ -30,7 +30,12 @@ export default async function handler(req, response) {
     });
   } catch (err) {
     console.error(`Error: ${err}`);
-
-    return response.status(500).json({ success: false, message: err });
+    response.status(500).json({ success: false, message: err });
+    addLog({
+      type: 'api',
+      isError: true,
+      username: userData.username || null,
+      info: `api/records/get-all-records ${err}`,
+    });
   }
 }

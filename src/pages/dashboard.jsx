@@ -8,7 +8,11 @@ import {
   format,
   endOfMonth,
 } from 'date-fns';
-import { getUserStatuses, getUsersWithManagers } from '../database/dbOps';
+import {
+  getUserStatuses,
+  getUsersWithManagers,
+  getAuthorizedPersonnel,
+} from '../database/dbOps';
 import Layout from '../components/layout/Layout';
 import DayPicker from '../components/datepickers/DayPicker';
 import WeekPicker from '../components/datepickers/WeekPicker';
@@ -21,7 +25,12 @@ import DashboardRecordsView from '../components/dashboardViews/DashboardRecordsV
 import { ArrowPathIcon } from '@heroicons/react/24/outline';
 import { useRouter } from 'next/router';
 
-export default function Dashboard({ userStatuses, userData, listOfUsers }) {
+export default function Dashboard({
+  userStatuses,
+  userData,
+  listOfUsers,
+  authorizedPersonnel,
+}) {
   const [selectedDate, setSelectedDate] = useState(startOfISOWeek(new Date()));
   const [selectedDateRange, setSelectedDateRange] = useState('week');
   const [selectedView, setSelectedView] = useState('stats');
@@ -43,7 +52,7 @@ export default function Dashboard({ userStatuses, userData, listOfUsers }) {
   };
 
   useEffect(() => {
-    if (apiStatus.isError === true) signOut();
+    if (apiStatus.isError !== false) signOut();
   }, [apiStatus]);
 
   useEffect(() => {
@@ -122,6 +131,7 @@ export default function Dashboard({ userStatuses, userData, listOfUsers }) {
               selected={selectedView}
               setSelected={setSelectedView}
               views={views}
+              setSelectedDate={setSelectedDate}
             />
             <div className='flex gap-4'>
               <DateRangeRadio
@@ -182,6 +192,7 @@ export default function Dashboard({ userStatuses, userData, listOfUsers }) {
               records={records}
               userStatuses={userStatuses}
               selectedDate={selectedDate}
+              setSelectedDate={setSelectedDate}
               apiStatus={apiStatus}
               selectedDateRange={selectedDateRange}
               setSelectedDateRange={setSelectedDateRange}
@@ -195,8 +206,10 @@ export default function Dashboard({ userStatuses, userData, listOfUsers }) {
               records={records}
               apiStatus={apiStatus}
               selectedDate={selectedDate}
+              setSelectedDate={setSelectedDate}
               selectedDateRange={selectedDateRange}
               setSelectedDateRange={setSelectedDateRange}
+              authorizedPersonnel={authorizedPersonnel}
             />
           ) : null}
         </div>
@@ -218,28 +231,32 @@ export async function getServerSideProps(context) {
   const userData = await verifyToken(context.req.headers.cookie);
   console.log(userData);
 
-  if (!userData)
+  const authorizedPersonnel = await (await getAuthorizedPersonnel()).result;
+
+  try {
+    if (!userData) throw '/giris';
+
+    if (userData.is_hr !== true) throw '/';
+
+    const userStatuses = await getUserStatuses();
+    const listOfUsers = await getUsersWithManagers();
+
+    return {
+      props: { userStatuses, userData, listOfUsers, authorizedPersonnel },
+    };
+  } catch (err) {
+    if (err === '/giris' || err === '/' || err === '/dashboard')
+      return {
+        redirect: {
+          permanent: false,
+          destination: err,
+        },
+      };
     return {
       redirect: {
         permanent: false,
-        destination: '/giris',
+        destination: '/500',
       },
-      props: {},
     };
-
-  if (userData.is_hr !== true)
-    return {
-      redirect: {
-        permanent: false,
-        destination: '/',
-      },
-      props: {},
-    };
-
-  const userStatuses = await getUserStatuses();
-  const listOfUsers = await getUsersWithManagers();
-
-  return {
-    props: { userStatuses, userData, listOfUsers },
-  };
+  }
 }

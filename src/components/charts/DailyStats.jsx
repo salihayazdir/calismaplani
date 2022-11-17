@@ -51,9 +51,9 @@ export default function DailyStats({ records, userStatuses, selectedDate }) {
               leaveFrom='opacity-100'
               leaveTo='opacity-0'
             >
-              {/* Your content goes here*/}
               <ul className='flex flex-col gap-2 p-4 text-xs'>
                 {dayStats.map((status) => {
+                  if (status.count === 0) return;
                   return (
                     <li
                       key={status.user_status_id}

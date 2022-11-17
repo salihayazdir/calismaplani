@@ -54,6 +54,10 @@ body {
 .react-datepicker__week {
   @apply flex justify-around
 }
+/* 
+.react-datepicker__week:hover {
+  @apply bg-blue-50
+} */
 
 .react-datepicker__day-names {
   @apply flex justify-around text-gray-400 font-medium text-center text-xs

@@ -3,13 +3,19 @@ import axios from 'axios';
 import Loader from '../skeletons/Loader';
 import { Fragment, useState, useRef } from 'react';
 import { startOfISOWeek, format } from 'date-fns';
-import { XMarkIcon, UserIcon, EnvelopeIcon } from '@heroicons/react/24/outline';
+import {
+  XMarkIcon,
+  UserIcon,
+  EnvelopeIcon,
+  InformationCircleIcon,
+} from '@heroicons/react/24/outline';
 
 export default function ManagerMailModal({
   isOpen,
   setIsOpen,
   managerMailProps,
   selectedDate,
+  authorizedPersonnelMailList,
 }) {
   const [mailStatus, setMailStatus] = useState({
     isLoading: false,
@@ -20,6 +26,10 @@ export default function ManagerMailModal({
   const { isLoading, isSent, isError, message } = mailStatus;
   const { name, mail, type } = managerMailProps;
   const [mailMessageInput, setMailMessageInput] = useState('');
+
+  const doesHaveAuthorizedPersonnel = Boolean(
+    authorizedPersonnelMailList.length > 0
+  );
 
   const modalTitle = () => {
     if (type === 'edit') return 'Kayıt Düzenleme İsteği';
@@ -51,8 +61,8 @@ export default function ManagerMailModal({
     });
 
     axios
-      .post(`${process.env.NEXT_PUBLIC_DOMAIN}/api/mail/single`, {
-        mailReceiver: mail,
+      .post(`${process.env.NEXT_PUBLIC_DOMAIN}/api/mail/bulk`, {
+        mailReceivers: [mail, ...authorizedPersonnelMailList],
         mailSubject: mailSubject(),
         mailTextField: mailMessageInput,
       })
@@ -147,17 +157,18 @@ export default function ManagerMailModal({
 
                   <div className='flex flex-col gap-6 p-6'>
                     <div>
-                      <div className='flex  flex-col rounded-lg border border-gray-200 bg-gray-50 text-gray-600 '>
-                        <span className='inline-flex items-center gap-4 border-b border-gray-200 px-4 py-[6px] font-medium '>
+                      <div className='flex  flex-col divide-y rounded-lg border border-gray-200 bg-gray-50 text-gray-600 '>
+                        <div className='inline-flex items-center gap-4 px-4 py-1.5 font-medium '>
                           <UserIcon className='h-5 w-5' />
                           {name}
-                        </span>
-                        <span className='inline-flex items-center gap-4 py-[6px] px-4 font-light'>
+                        </div>
+                        <div className='inline-flex items-center gap-4 py-1.5 px-4 font-light'>
                           <EnvelopeIcon className='h-5 w-5' />
                           {mail}
-                        </span>
+                        </div>
                       </div>
                     </div>
+
                     <form
                       className='flex flex-col gap-6'
                       onSubmit={handleEmailFormSubmit}
@@ -198,6 +209,18 @@ export default function ManagerMailModal({
                       {isLoading === true ? (
                         <div className='flex w-full justify-center text-center '>
                           <Loader />
+                        </div>
+                      ) : null}
+
+                      {doesHaveAuthorizedPersonnel === true &&
+                      isSent === false &&
+                      isLoading === false ? (
+                        <div className='inline-flex items-center gap-4 px-4 text-sm font-light text-gray-500'>
+                          <InformationCircleIcon className='h-10 w-10 text-green-500' />
+                          <span>
+                            E-posta, yöneticinin tanımlamış olduğu yetkili
+                            kullanıcılara da iletilecektir.
+                          </span>
                         </div>
                       ) : null}
 

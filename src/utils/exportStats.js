@@ -13,18 +13,18 @@ export default function exportStats({
     if (selectedDateRange === 'week') range = 'Haftalık';
     if (selectedDateRange === 'month') range = 'Aylık';
 
-    const startDate = format(selectedDate, 'dd_MM_yy');
+    const startDate = format(selectedDate, 'dd-MM-yy');
 
     let endDate;
     if (selectedDateRange === 'day') endDate = '';
     if (selectedDateRange === 'week')
-      endDate = format(addDays(selectedDate, 5), 'dd_MM_yy');
+      endDate = format(addDays(selectedDate, 5), 'dd-MM-yy');
     if (selectedDateRange === 'month')
-      endDate = format(endOfMonth(selectedDate), 'dd_MM_yy');
+      endDate = format(endOfMonth(selectedDate), 'dd-MM-yy');
 
-    return `${startDate}-${endDate}${
-      selectedDateRange !== 'day' ? '-' : ''
-    }${range}-Bolumler-Personel-Devam-Kayitlari.xlsx`;
+    return `${startDate}_${endDate}${
+      selectedDateRange !== 'day' ? '_' : ''
+    }${range}_Bolumler_Personel_Devam_Kayitlari.xlsx`;
   };
 
   const descriptions = [
@@ -33,7 +33,7 @@ export default function exportStats({
 
   const divisionsData = descriptions.map((description, descriptionIdx) => {
     const statusCounts = userStatuses.map((status, statusIdx) => {
-      const count = records.reduce(
+      const statusCount = records.reduce(
         (acc, record) =>
           acc +
           Boolean(
@@ -43,7 +43,7 @@ export default function exportStats({
         0
       );
       return {
-        [status.user_status_name]: count,
+        [status.user_status_name]: statusCount,
       };
     });
 
@@ -52,31 +52,59 @@ export default function exportStats({
       statusColumns = { ...statusColumns, ...statusCounts[i] };
     }
 
+    const personnelCount = [
+      ...new Set(
+        records
+          .filter((record) => record.description === description)
+          .map((record) => record.username)
+      ),
+    ].length;
+
     return {
       Bölüm: description,
+      Personel_Sayısı: personnelCount,
       ...statusColumns,
     };
   });
 
+  const totalPersonnelCount = divisionsData.reduce(
+    (acc, division) => acc + division.Personel_Sayısı,
+    0
+  );
+
   const totalStatusCounts = userStatuses.map((status, statusIdx) => {
-    const count = records.reduce(
-      (acc, record) =>
-        acc + Boolean(record.user_status_id === status.user_status_id),
+    const count = divisionsData.reduce(
+      (acc, division) => acc + division[status.user_status_name],
       0
     );
     return {
       [status.user_status_name]: count,
     };
   });
+
+  // const totalStatusCounts = userStatuses.map((status, statusIdx) => {
+  //   const count = records.reduce(
+  //     (acc, record) =>
+  //       acc + Boolean(record.user_status_id === status.user_status_id),
+  //     0
+  //   );
+  //   return {
+  //     [status.user_status_name]: count,
+  //   };
+  // });
+
   let totalsRowColumns;
   for (let i = 0; i < totalStatusCounts.length; i++) {
     totalsRowColumns = { ...totalsRowColumns, ...totalStatusCounts[i] };
   }
 
-  const totalsRow = { Bölüm: 'Toplam', ...totalsRowColumns };
+  const totalsRow = {
+    Bölüm: 'Toplam',
+    Personel_Sayısı: totalPersonnelCount,
+    ...totalsRowColumns,
+  };
 
-  const excelData = [totalsRow, ...divisionsData];
-  console.log(excelData);
+  const excelData = [...divisionsData, totalsRow];
 
   var workBook = XLSX.utils.book_new();
   var workSheetRecords = XLSX.utils.json_to_sheet(excelData);

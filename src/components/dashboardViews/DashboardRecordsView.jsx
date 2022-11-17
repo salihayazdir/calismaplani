@@ -8,6 +8,7 @@ export default function DashboardRecordsView({
   records,
   userStatuses,
   selectedDate,
+  setSelectedDate,
   apiStatus,
   selectedDateRange,
   setSelectedDateRange,
@@ -38,18 +39,22 @@ export default function DashboardRecordsView({
             leaveFrom='opacity-100'
             leaveTo='opacity-0'
           >
-            <div className='flex flex-col rounded-xl border border-gray-200 bg-white py-4'>
+            <div className='flex flex-col rounded-xl border border-gray-200 bg-white pt-4'>
               <RecordsTable
                 records={records}
                 userStatuses={userStatuses}
                 selectedDate={selectedDate}
                 selectedDateRange={selectedDateRange}
+                isDashboard={isDashboard}
               />
             </div>
           </Transition>
         )
       ) : (
-        <SelectWeeklyViewWarning setSelectedDateRange={setSelectedDateRange} />
+        <SelectWeeklyViewWarning
+          setSelectedDateRange={setSelectedDateRange}
+          setSelectedDate={setSelectedDate}
+        />
       )}
     </>
   );

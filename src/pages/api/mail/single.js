@@ -1,11 +1,12 @@
 import verifyToken from '../../../backend/verifyToken';
 import sendMail from '../../../backend/sendMail';
+import { addLog } from '../../../database/dbOps';
 
 export default async function handler(req, response) {
+  const userData = await verifyToken(req.headers.cookie);
   try {
     if (req.method !== 'POST') throw 'Http metodu POST olmalıdır.';
 
-    const userData = await verifyToken(req.headers.cookie);
     if (userData.is_hr !== true)
       throw 'Bu işlem için yetkiniz bulunmamaktadır.';
 
@@ -15,12 +16,12 @@ export default async function handler(req, response) {
     if (!mailSubject) throw '"mailSubject alanı zorunludur."';
     // if (!mailTextField) throw '"mailTextField" alanı zorunludur.';
 
-    const html = `<p>${mailTextField}</p>`;
+    const content = `<p>${mailTextField}</p>`;
 
     const mailResult = await sendMail({
       mailTo: mailReceiver,
       subject: mailSubject,
-      html,
+      content,
     });
 
     if (mailResult.success !== true)
@@ -34,6 +35,12 @@ export default async function handler(req, response) {
     });
   } catch (err) {
     console.error(`Error: ${err}`);
-    return response.status(200).json({ success: false, message: `${err}` });
+    response.status(200).json({ success: false, message: `${err}` });
+    addLog({
+      type: 'api',
+      isError: true,
+      username: userData.username || null,
+      info: `api/mail/singe ${err}`,
+    });
   }
 }

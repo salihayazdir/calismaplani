@@ -1,26 +1,42 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import verifyToken from '../backend/verifyToken';
-import { getDirectReports, getUserStatuses } from '../database/dbOps';
+import {
+  getAuthorizedPersonnelByManager,
+  getDirectReports,
+  getUserStatuses,
+} from '../database/dbOps';
 import NewRecordTable from '../components/table/NewRecordTable';
 import { startOfISOWeek, endOfISOWeek, addDays, format } from 'date-fns';
 import Layout from '../components/layout/Layout';
 import WeekPicker from '../components/datepickers/WeekPicker';
 import NewRecordsModal from '../components/modals/NewRecordsModal';
+import AuthorizedPersonnelModal from '../components/modals/AuthorizedPersonnelModal';
 import DashboardRecordsView from '../components/dashboardViews/DashboardRecordsView';
 import ViewRadio from '../components/radio/ViewRadio';
-import { ArrowPathIcon } from '@heroicons/react/24/outline';
+import { ArrowPathIcon, UsersIcon } from '@heroicons/react/24/outline';
 import { Transition } from '@headlessui/react';
 import { useRouter } from 'next/router';
 
-export default function Home({ directReports, userStatuses, userData }) {
+export default function Home({
+  directReports,
+  userStatuses,
+  userData,
+  initialAuthorizedPersonnel,
+  isAuthorizedPersonnel,
+}) {
   const days = ['Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma'];
   const [selectedDate, setSelectedDate] = useState(
     startOfISOWeek(addDays(new Date(), 7))
   );
-  const [modalIsOpen, setModalIsOpen] = useState(false);
   const [selectedView, setSelectedView] = useState('newrecord');
   const [records, setRecords] = useState([]);
+  const [newRecordModalIsOpen, setNewRecordModalIsOpen] = useState(false);
+  const [authorizedPersonnelModalIsOpen, setAuthorizedPersonnelModalIsOpen] =
+    useState(false);
+  const [authorizedPersonnel, setAuthorizedPersonnel] = useState(
+    initialAuthorizedPersonnel
+  );
   const [apiStatus, setApiStatus] = useState({
     isLoading: true,
     isError: false,
@@ -69,7 +85,9 @@ export default function Home({ directReports, userStatuses, userData }) {
       .post(
         `${process.env.NEXT_PUBLIC_DOMAIN}/api/records/get-records-by-manager`,
         {
-          managerUsername: userData.username,
+          managerUsername: isAuthorizedPersonnel
+            ? userData.manager_username
+            : userData.username,
           startDate: startDate,
           endDate: endDate,
         }
@@ -102,7 +120,7 @@ export default function Home({ directReports, userStatuses, userData }) {
 
   useEffect(() => {
     fetchTableData();
-  }, [selectedDate, modalIsOpen]);
+  }, [selectedDate, newRecordModalIsOpen]);
 
   const views = [
     {
@@ -114,6 +132,10 @@ export default function Home({ directReports, userStatuses, userData }) {
       value: 'records',
     },
   ];
+
+  const directReportsWithoutManager = directReports.filter(
+    (user) => user.username !== userData.username
+  );
 
   return (
     <>
@@ -127,6 +149,15 @@ export default function Home({ directReports, userStatuses, userData }) {
               setSelectedDate={setSelectedDate}
             />
             <div className='flex gap-4'>
+              {userData.is_manager ? (
+                <button
+                  onClick={() => setAuthorizedPersonnelModalIsOpen(true)}
+                  className='inline-flex items-center gap-3 rounded-lg border border-gray-200  px-4 py-2 text-center text-xs font-medium text-gray-500 hover:bg-white hover:text-blue-600 '
+                >
+                  <span>Yetkili Kullanıcılar</span>
+                  <UsersIcon className='h-4 w-4' />
+                </button>
+              ) : null}
               <div className='flex rounded-lg border border-gray-200 bg-white'>
                 <span className='flex items-center rounded-l-lg border-r px-4 text-sm font-semibold text-gray-500'>
                   Hafta
@@ -171,10 +202,11 @@ export default function Home({ directReports, userStatuses, userData }) {
                   setNewRecords={setNewRecords}
                   userStatuses={userStatuses}
                   selectedDate={selectedDate}
+                  authorizedPersonnel={authorizedPersonnel}
                 />
                 <button
                   className='self-end rounded-lg bg-green-500 px-8 py-3 font-semibold text-white hover:bg-green-600 '
-                  onClick={() => setModalIsOpen(true)}
+                  onClick={() => setNewRecordModalIsOpen(true)}
                 >
                   Tümünü Gönder
                 </button>
@@ -194,13 +226,24 @@ export default function Home({ directReports, userStatuses, userData }) {
           ) : null}
         </div>
       </Layout>
-      {modalIsOpen ? (
+
+      {newRecordModalIsOpen ? (
         <NewRecordsModal
-          isOpen={modalIsOpen}
-          setIsOpen={setModalIsOpen}
+          isOpen={newRecordModalIsOpen}
+          setIsOpen={setNewRecordModalIsOpen}
           newRecords={newRecords}
           selectedDate={selectedDate}
           records={records}
+        />
+      ) : null}
+
+      {authorizedPersonnelModalIsOpen ? (
+        <AuthorizedPersonnelModal
+          isOpen={authorizedPersonnelModalIsOpen}
+          setIsOpen={setAuthorizedPersonnelModalIsOpen}
+          authorizedPersonnel={authorizedPersonnel}
+          setAuthorizedPersonnel={setAuthorizedPersonnel}
+          directReportsWithoutManager={directReportsWithoutManager}
         />
       ) : null}
     </>
@@ -208,29 +251,63 @@ export default function Home({ directReports, userStatuses, userData }) {
 }
 
 export async function getServerSideProps(context) {
-  if (!context.req.headers.cookie)
+  try {
+    if (!context.req.headers.cookie) throw '/giris';
+
+    const userData = await verifyToken(context.req.headers.cookie);
+
+    let authorizedPersonnelRequest;
+    if (userData.is_manager === true)
+      authorizedPersonnelRequest = await getAuthorizedPersonnelByManager(
+        userData.username
+      );
+    if (userData.isAuthorizedPersonnel === true)
+      authorizedPersonnelRequest = await getAuthorizedPersonnelByManager(
+        userData.manager_username
+      );
+
+    if (!Array.isArray(authorizedPersonnelRequest.result)) throw '/giris';
+
+    const authorizedPersonnel = authorizedPersonnelRequest.result.map(
+      (user) => user.username
+    );
+
+    if (
+      !userData ||
+      (userData.is_manager === false &&
+        userData.isAuthorizedPersonnel === false)
+    )
+      throw '/giris';
+
+    let directReports;
+    if (userData.is_manager === true)
+      directReports = await getDirectReports(userData.username);
+    if (userData.isAuthorizedPersonnel === true)
+      directReports = await getDirectReports(userData.manager_username);
+    const userStatuses = await getUserStatuses();
+
+    return {
+      props: {
+        directReports,
+        userStatuses,
+        userData,
+        initialAuthorizedPersonnel: authorizedPersonnel,
+        isAuthorizedPersonnel: userData.isAuthorizedPersonnel,
+      },
+    };
+  } catch (err) {
+    if (err === '/giris' || err === '/' || err === '/dashboard')
+      return {
+        redirect: {
+          permanent: false,
+          destination: err,
+        },
+      };
     return {
       redirect: {
         permanent: false,
-        destination: '/giris',
+        destination: '/500',
       },
     };
-
-  const userData = await verifyToken(context.req.headers.cookie);
-  console.log(userData);
-
-  if (!userData || userData.is_manager === false)
-    return {
-      redirect: {
-        permanent: false,
-        destination: '/giris',
-      },
-    };
-
-  const directReports = await getDirectReports(userData.username);
-  const userStatuses = await getUserStatuses();
-
-  return {
-    props: { directReports, userStatuses, userData },
-  };
+  }
 }

@@ -1,10 +1,10 @@
 const ldap = require('ldapjs');
 import verifyToken from '../../../backend/verifyToken';
-import { addUser } from '../../../database/dbOps';
+import { addUser, addLog } from '../../../database/dbOps';
 
 export default async function handler(req, response) {
+  const userData = await verifyToken(req.headers.cookie);
   try {
-    const userData = await verifyToken(req.headers.cookie);
     if (userData.is_hr !== true)
       throw 'Bu işlem için yetkiniz bulunmamaktadır.';
 
@@ -74,17 +74,44 @@ export default async function handler(req, response) {
 
         const userData = ldapData.map((user) => {
           if (user.mail === null || user.mail === undefined) return;
-          if (user.manager === undefined) return;
-          if (user.sAMAccountName === 'murhak') return;
-          if (user.sAMAccountName.length !== 6) return;
+          // if (user.manager === undefined || user.manager === null) return;
+
+          let isManager = false;
+          if (user.manager !== undefined)
+            isManager = Boolean(user.manager.includes('OU=Genel Mud. Yrd.'));
+
+          //////// MEHMET KANTEMİR DIRECT REPORTS TANIMLANANA KADAR /////
+          //////// MEHMET KANTEMİR DIRECT REPORTS TANIMLANANA KADAR /////
+          const managerExceptions = [
+            'omeung',
+            'mehoge',
+            'musbed',
+            'mehyas',
+            'baryon',
+            'tunotu',
+            'ozghel',
+            'kaaata',
+            'alpoze',
+          ];
+          if (managerExceptions.indexOf(user.sAMAccountName) !== -1)
+            isManager = true;
+          //////// MEHMET KANTEMİR DIRECT REPORTS TANIMLANANA KADAR /////
+          //////// MEHMET KANTEMİR DIRECT REPORTS TANIMLANANA KADAR /////
+
+          let isHr = false;
+          if (
+            user.dn.includes('OU=Genel Mud. Yrd.') ||
+            user.sAMAccountName === 'murhak' ||
+            user.description === 'İnsan Kaynakları Bölümü'
+          )
+            isHr = true;
 
           return {
             username: user.sAMAccountName,
             display_name: user.name || null,
             mail: user.mail,
-            // is_manager: Boolean(user.directReports),
-            is_manager: Boolean(user.manager.includes('OU=Genel Mud. Yrd.')),
-            is_hr: Boolean(user.description === 'İnsan Kaynakları Bölümü'),
+            is_manager: isManager,
+            is_hr: isHr,
             user_dn: user.dn || null,
             title: user.title || null,
             description: user.description || null,
@@ -98,7 +125,6 @@ export default async function handler(req, response) {
 
         const filteredData = userData.filter((user) => user !== undefined);
 
-        // filteredData.forEach((user) => addUser(user));
         const dbResults = filteredData.map(async (user) => await addUser(user));
         const results = await Promise.all(dbResults);
 
@@ -123,6 +149,7 @@ export default async function handler(req, response) {
         response.status(200).json({
           success: true,
           message: message(),
+          ldapData,
         });
       });
     });
@@ -131,6 +158,12 @@ export default async function handler(req, response) {
     response.status(200).json({
       success: false,
       message: err,
+    });
+    addLog({
+      type: 'api',
+      isError: true,
+      username: userData.username || null,
+      info: `api/users/update ${err}`,
     });
   }
 }

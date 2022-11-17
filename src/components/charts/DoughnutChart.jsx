@@ -4,18 +4,20 @@ import { Doughnut } from 'react-chartjs-2';
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 export default function DoughnutChart({ records, userStatuses }) {
-  const chartData = userStatuses.map((status) => {
-    const count = records.reduce(
-      (acc, record) =>
-        acc + Boolean(record.user_status_id === status.user_status_id),
-      0
-    );
-    return {
-      user_status_id: status.user_status_id,
-      user_status_name: status.user_status_name,
-      count,
-    };
-  });
+  const chartData = userStatuses
+    .map((status) => {
+      const count = records.reduce(
+        (acc, record) =>
+          acc + Boolean(record.user_status_id === status.user_status_id),
+        0
+      );
+      return {
+        user_status_id: status.user_status_id,
+        user_status_name: status.user_status_name,
+        count,
+      };
+    })
+    .filter((status) => status.count !== 0);
 
   const statusLabels = chartData.map((status) => status.user_status_name);
   const statusCounts = chartData.map((status) => status.count);
@@ -27,7 +29,22 @@ export default function DoughnutChart({ records, userStatuses }) {
       {
         label: 'Personel Statüleri',
         data: statusCounts,
-        backgroundColor: ['#22c55e', '#3b82f6', '#facc15', '#ef4444'],
+        backgroundColor: [
+          '#22c55e',
+          '#3b82f6',
+          '#facc15',
+          '#ef4444',
+          '#ef4444',
+          '#ef4444',
+          '#ef4444',
+          '#ef4444',
+          '#ef4444',
+          '#ef4444',
+          '#ef4444',
+          '#ef4444',
+          '#ef4444',
+          '#ef4444',
+        ],
       },
     ],
   };
@@ -44,6 +61,7 @@ export default function DoughnutChart({ records, userStatuses }) {
         </div>
         <ul className='flex w-full flex-col gap-2 border-b  border-gray-200 p-4 text-xs text-gray-700'>
           {chartData.map((status) => {
+            if (status.count === 0) return;
             return (
               <li
                 key={status.user_status_id}

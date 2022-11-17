@@ -11,6 +11,7 @@ export default function BulkManagerMailModal({
   selectedDate,
   mailList,
 }) {
+  console.log(mailList);
   const [mailStatus, setMailStatus] = useState({
     isLoading: false,
     isSent: false,

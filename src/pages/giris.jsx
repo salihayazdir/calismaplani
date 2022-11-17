@@ -98,7 +98,6 @@ export default function Giris() {
           });
         }
       })
-
       .catch((err) => {
         console.error(err);
         setLoginStatus({
@@ -148,28 +147,34 @@ export default function Giris() {
 }
 
 export async function getServerSideProps(context) {
-  if (context.req.headers.cookie) {
-    const userData = await verifyToken(context.req.headers.cookie);
-    if (userData) {
-      if (userData.is_hr === true)
-        return {
-          redirect: {
-            permanent: false,
-            destination: '/dashboard',
-          },
-          props: {},
-        };
-      else if (userData.is_manager === true)
-        return {
-          redirect: {
-            permanent: false,
-            destination: '/',
-          },
-          props: {},
-        };
+  try {
+    if (context.req.headers.cookie) {
+      const userData = await verifyToken(context.req.headers.cookie);
+      if (userData) {
+        if (userData.is_hr === true) throw '/dashboard';
+        else if (
+          userData.is_manager === true ||
+          userData.isAuthorizedPersonnel === true
+        )
+          throw '/';
+      }
     }
+    return {
+      props: {},
+    };
+  } catch (err) {
+    if (err === '/giris' || err === '/' || err === '/dashboard')
+      return {
+        redirect: {
+          permanent: false,
+          destination: err,
+        },
+      };
+    return {
+      redirect: {
+        permanent: false,
+        destination: '/500',
+      },
+    };
   }
-  return {
-    props: {},
-  };
 }

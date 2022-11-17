@@ -6,6 +6,7 @@ module.exports = {
   ],
   theme: {
     extend: {
+      visibility: ['group-hover'],
       fontFamily: {
         sans: [
           'Inter',

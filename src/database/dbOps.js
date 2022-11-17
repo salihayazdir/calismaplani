@@ -40,10 +40,16 @@ export async function getLoginInfo(username) {
       .input('username', sql.NVarChar, username)
       .execute('PKDS.GetLoginInfo');
     // console.log(result);
-    return result.recordset;
+    return {
+      success: true,
+      result: result.recordset,
+    };
   } catch (err) {
     console.error(err);
-    return err;
+    return {
+      success: false,
+      result: err,
+    };
   }
 }
 
@@ -183,5 +189,107 @@ export async function getUsersWithManagers() {
   } catch (err) {
     console.error(err);
     return err;
+  }
+}
+
+export async function addLog({ type, info, username, isError }) {
+  try {
+    const pool = await sql.connect(dbConfig);
+    const result = await pool
+      .request()
+      .input('type', sql.NVarChar, type)
+      .input('info', sql.NVarChar, info)
+      .input('username', sql.NVarChar, username)
+      .input('is_error', sql.Bit, isError)
+      .execute('PKDS.AddLog');
+    // console.log(result);
+    return { success: true, message: 'Log başarılı.' };
+  } catch (err) {
+    console.error(err);
+    return {
+      success: false,
+      message: `${err.name}: ${err.message} Code: ${err.code}`,
+    };
+  }
+}
+
+export async function getAuthorizedPersonnel() {
+  try {
+    const pool = await sql.connect(dbConfig);
+    const result = await pool.request().execute('PKDS.GetAuthorizedPersonnel');
+    return {
+      success: true,
+      result: result.recordset,
+    };
+  } catch (err) {
+    console.error(err);
+    return {
+      success: false,
+      result: err,
+    };
+  }
+}
+
+export async function getAuthorizedPersonnelByManager(manager_username) {
+  try {
+    const pool = await sql.connect(dbConfig);
+    const result = await pool
+      .request()
+      .input('manager_username', sql.NVarChar, manager_username)
+      .execute('PKDS.GetAuthorizedPersonnelByManager');
+    return {
+      success: true,
+      // result: result.recordset,
+      result: result.recordset,
+    };
+  } catch (err) {
+    console.error(err);
+    return {
+      success: false,
+      result: err,
+    };
+  }
+}
+
+export async function addAuthorizedPersonnel({ username, manager_username }) {
+  try {
+    const pool = await sql.connect(dbConfig);
+    const result = await pool
+      .request()
+      .input('username', sql.NVarChar, username)
+      .input('manager_username', sql.NVarChar, manager_username)
+      .execute('PKDS.AddAuthorizedPersonnel');
+    // console.log(result);
+    return {
+      success: true,
+      result,
+    };
+  } catch (err) {
+    console.error(err);
+    return {
+      success: false,
+      result: err,
+    };
+  }
+}
+
+export async function deleteAuthorizedPersonnel(username) {
+  try {
+    const pool = await sql.connect(dbConfig);
+    const result = await pool
+      .request()
+      .input('username', sql.NVarChar, username)
+      .execute('PKDS.DeleteAuthorizedPersonnel');
+    // console.log(result);
+    return {
+      success: true,
+      result,
+    };
+  } catch (err) {
+    console.error(err);
+    return {
+      success: false,
+      result: err,
+    };
   }
 }

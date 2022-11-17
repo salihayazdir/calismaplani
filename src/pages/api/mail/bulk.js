@@ -1,11 +1,12 @@
 import verifyToken from '../../../backend/verifyToken';
 import sendMail from '../../../backend/sendMail';
+import { addLog } from '../../../database/dbOps';
 
 export default async function handler(req, response) {
+  const userData = await verifyToken(req.headers.cookie);
   try {
     if (req.method !== 'POST') throw 'Http metodu POST olmalıdır.';
 
-    const userData = await verifyToken(req.headers.cookie);
     if (userData.is_hr !== true)
       throw 'Bu işlem için yetkiniz bulunmamaktadır.';
 
@@ -15,45 +16,75 @@ export default async function handler(req, response) {
     if (!mailSubject) throw '"mailSubject alanı zorunludur."';
     // if (!mailTextField) throw '"mailTextField" alanı zorunludur.';
 
-    const html = `<p>${mailTextField}</p>`;
+    const content = `<p>${mailTextField}</p>`;
 
     const mailResults = mailReceivers.map(
       async (receiver) =>
         await sendMail({
           mailTo: receiver,
           subject: mailSubject,
-          html,
+          content,
         })
     );
 
-    const results = await Promise.all(mailResults);
+    const results = await Promise.allSettled(mailResults);
 
-    const successfulMails = results.filter((result) => result.success);
-    const errorMails = results.filter((result) => !result.success);
+    const successfulMails = results.filter(
+      (result) => result.status === 'fulfilled'
+    );
+    const errorMails = results.filter(
+      (result) => result.status !== 'fulfilled'
+    );
 
     const createResponseMessage = (results) => {
       if (results.length === successfulMails.length)
-        return 'Tüm kayıtlar başarıyla aktarıldı.';
-      if (successfulMails.length === 0) return 'Kayıtlar aktarılamadı.';
-      return `${successfulMails.length} başarılı, ${errorMails.length} başarısız kayıt.`;
+        return 'E-postalar başarıyla gönderildi.';
+      if (successfulMails.length === 0)
+        return `E-postalar gönderilemedi. Hata: ${
+          errorMails[0].reason.response || 'Bağlantı hatası.'
+        }`;
+      return `${successfulMails.length} başarılı, ${
+        errorMails.length
+      } başarısız e-posta. Hata: ${
+        errorMails[0].reason.response || 'Bağlantı hatası.'
+      } `;
+    };
+
+    const responseData = {
+      message: createResponseMessage(results),
+      results: {
+        successful: {
+          count: successfulMails.length,
+          data: successfulMails,
+        },
+        error: {
+          count: errorMails.length,
+          data: errorMails,
+        },
+      },
     };
 
     response.status(200).json({
       success: true,
-      message: createResponseMessage(results),
-      results: {
-        successful: {
-          count: successfulEntries.length,
-          data: successfulEntries,
-        },
-        error: {
-          count: errorEntries.length,
-          data: errorEntries,
-        },
-      },
+      ...responseData,
     });
+
+    if (errorMails.length !== 0) {
+      addLog({
+        type: 'bulkmail',
+        isError: Boolean(successfulMails.length === 0),
+        username: userData.username || null,
+        info: `${JSON.stringify(responseData)}`,
+      });
+    }
   } catch (err) {
     console.error(`Error: ${err}`);
-    return response.status(200).json({ success: false, message: `${err}` });
+    response.status(200).json({ success: false, message: `${err}` });
+    addLog({
+      type: 'api',
+      isError: true,
+      username: userData.username || null,
+      info: `api/mail/bulk ${err}`,
+    });
   }
 }

@@ -61,13 +61,16 @@ export default function NewRecordsModal({
       .flat();
 
     const indexOfOffPersonnelRecord = recordsToSend.findIndex(
-      (record) => record.user_status_id === 4
+      (record) => record.user_status_id > 3
     );
     if (indexOfOffPersonnelRecord !== -1) setOffPersonnelExists(true);
 
     axios
       .post(`${process.env.NEXT_PUBLIC_DOMAIN}/api/records/add-record`, {
         records: recordsToSend,
+        recordsStartDate: format(selectedDate, 'd MMMM yyyy'),
+        recordsEndDate: format(addDays(selectedDate, 4), 'd MMMM yyyy'),
+        prevRecordsExist: Boolean(prevRecordsExist),
       })
       .then((res) => {
         // console.log(res);
@@ -177,79 +180,83 @@ export default function NewRecordsModal({
                         </div>
                       ) : null}
 
-                      {isSent === true ? (
-                        <p
-                          className={`rounded-lg border px-6 py-3 text-sm ${
-                            isError
-                              ? 'border-red-200 bg-red-100 text-red-700'
-                              : 'border-green-200 bg-green-100 text-green-700'
-                          }`}
-                        >
-                          {message
-                            ? message
-                            : isError
-                            ? 'Bir hata meydana geldi.'
-                            : 'Kayıtlar başarıyla gönderildi.'}
-                        </p>
-                      ) : null}
-
-                      {isSent === true && offPersonnelExists === true ? (
-                        <div className='flex flex-col gap-2 rounded-lg bg-gray-100 px-6 py-3 text-sm leading-[18px] text-gray-700'>
-                          <h3 className='inline-flex items-center gap-2 text-base font-medium text-amber-600'>
-                            <span>
-                              <ExclamationCircleIcon className='h-5 w-5' />
-                            </span>
-                            <span>Uyarı</span>
-                          </h3>
-                          <p>
-                            Gönderilen kayıtlar arasında izinli personel
-                            bulunuyor. Lütfen HR uygulaması üzerinden izin kaydı
-                            girmeyi unutmayın.
-                          </p>
-                        </div>
-                      ) : null}
-
-                      {isSent === false && prevRecordsExist === true ? (
-                        <div className='flex flex-col gap-2 rounded-lg border border-amber-200 bg-amber-100 px-6 py-3 text-sm leading-[18px] text-amber-700'>
-                          <h3 className='inline-flex items-center gap-2 text-base font-medium'>
-                            <span>
-                              <ExclamationCircleIcon className='h-5 w-5' />
-                            </span>
-                            <span>Uyarı</span>
-                          </h3>
-                          <p>
-                            Seçilen tarihlerde mevcut kayıt bulunmaktadır.
-                            Onaylamanız halinde kayıtlar değiştirilecektir.
-                          </p>
-                        </div>
-                      ) : null}
-
-                      {isSent === false ? (
+                      {isLoading === false ? (
                         <>
-                          <button
-                            onClick={sendRecords}
-                            type='button'
-                            className='inline-flex justify-center rounded-md border border-transparent bg-green-600 px-4 py-3 text-sm font-medium text-white hover:bg-green-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-200'
-                          >
-                            Onayla ve Gönder
-                          </button>
-                          <button
-                            onClick={handleClose}
-                            type='button'
-                            className='-mt-4 -mb-2 inline-flex justify-center rounded-md border border-transparent px-4 py-2 text-sm font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-200'
-                          >
-                            İptal
-                          </button>
+                          {isSent === true ? (
+                            <p
+                              className={`rounded-lg border px-6 py-3 text-sm ${
+                                isError
+                                  ? 'border-red-200 bg-red-100 text-red-700'
+                                  : 'border-green-200 bg-green-100 text-green-700'
+                              }`}
+                            >
+                              {message
+                                ? message
+                                : isError
+                                ? 'Bir hata meydana geldi.'
+                                : 'Kayıtlar başarıyla gönderildi.'}
+                            </p>
+                          ) : null}
+
+                          {isSent === true && offPersonnelExists === true ? (
+                            <div className='flex flex-col gap-2 rounded-lg bg-gray-100 px-6 py-3 text-sm leading-[18px] text-gray-700'>
+                              <h3 className='inline-flex items-center gap-2 text-base font-medium text-amber-600'>
+                                <span>
+                                  <ExclamationCircleIcon className='h-5 w-5' />
+                                </span>
+                                <span>Uyarı</span>
+                              </h3>
+                              <p>
+                                Gönderilen kayıtlar arasında izinli personel
+                                bulunuyor. Lütfen HR uygulaması üzerinden izin
+                                kaydı girmeyi unutmayın.
+                              </p>
+                            </div>
+                          ) : null}
+
+                          {isSent === false && prevRecordsExist === true ? (
+                            <div className='flex flex-col gap-2 rounded-lg border border-amber-200 bg-amber-100 px-6 py-3 text-sm leading-[18px] text-amber-700'>
+                              <h3 className='inline-flex items-center gap-2 text-base font-medium'>
+                                <span>
+                                  <ExclamationCircleIcon className='h-5 w-5' />
+                                </span>
+                                <span>Uyarı</span>
+                              </h3>
+                              <p>
+                                Seçilen tarihlerde mevcut kayıt bulunmaktadır.
+                                Onaylamanız halinde kayıtlar değiştirilecektir.
+                              </p>
+                            </div>
+                          ) : null}
+
+                          {isSent === false ? (
+                            <>
+                              <button
+                                onClick={sendRecords}
+                                type='button'
+                                className='inline-flex justify-center rounded-md border border-transparent bg-green-600 px-4 py-3 text-sm font-medium text-white hover:bg-green-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-200'
+                              >
+                                Onayla ve Gönder
+                              </button>
+                              <button
+                                onClick={handleClose}
+                                type='button'
+                                className='-mt-4 -mb-2 inline-flex justify-center rounded-md border border-transparent px-4 py-2 text-sm font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-200'
+                              >
+                                İptal
+                              </button>
+                            </>
+                          ) : (
+                            <button
+                              className='inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-3 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-200'
+                              type='button'
+                              onClick={handleClose}
+                            >
+                              Tamam
+                            </button>
+                          )}
                         </>
-                      ) : (
-                        <button
-                          className='inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-3 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-200'
-                          type='button'
-                          onClick={handleClose}
-                        >
-                          Tamam
-                        </button>
-                      )}
+                      ) : null}
                     </div>
                   </div>
                 </Dialog.Panel>

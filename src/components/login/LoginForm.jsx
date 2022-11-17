@@ -15,7 +15,7 @@ export default function LoginForm({
           type='text'
           required
           disabled={isLoading}
-          pattern='^[A-Za-z]{6}$'
+          pattern='^[A-Za-z]{5,7}$'
           value={loginFormData.username}
           onChange={handleLoginFormChange}
           className='peer block w-full appearance-none rounded-lg border border-gray-300 bg-transparent p-4 text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-0 disabled:text-gray-500 '

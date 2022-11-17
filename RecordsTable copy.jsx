@@ -1,14 +1,8 @@
 import { useMemo } from 'react';
-import { useTable, useFilters, usePagination } from 'react-table';
+import { useTable, useFilters } from 'react-table';
 import { addDays, format } from 'date-fns';
 import * as XLSX from 'xlsx';
-import {
-  ArrowDownTrayIcon,
-  ChevronDoubleLeftIcon,
-  ChevronDoubleRightIcon,
-  ChevronLeftIcon,
-  ChevronRightIcon,
-} from '@heroicons/react/24/outline';
+import { ArrowDownTrayIcon } from '@heroicons/react/24/outline';
 
 export default function DashboardTable({
   records,
@@ -160,39 +154,24 @@ export default function DashboardTable({
     hooks.visibleColumns.push((columns) => [...columns, ...statusColumns]);
   };
 
-  const {
-    getTableProps,
-    getTableBodyProps,
-    headerGroups,
-    page,
-    prepareRow,
-    canPreviousPage,
-    canNextPage,
-    pageOptions,
-    pageCount,
-    gotoPage,
-    nextPage,
-    previousPage,
-    setPageSize,
-    state: { pageIndex, pageSize },
-  } = useTable(
-    {
-      columns,
-      data: tableData,
-      defaultColumn,
-      filterTypes,
-      initialState: {
-        hiddenColumns: [
-          'username',
-          !isDashboard && 'description',
-          !isDashboard && 'manager_display_name',
-        ],
+  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
+    useTable(
+      {
+        columns,
+        data: tableData,
+        defaultColumn,
+        filterTypes,
+        initialState: {
+          hiddenColumns: [
+            'username',
+            !isDashboard && 'description',
+            !isDashboard && 'manager_display_name',
+          ],
+        },
       },
-    },
-    useFilters,
-    usePagination,
-    tableHooks
-  );
+      useFilters,
+      tableHooks
+    );
 
   const exportToExcel = () => {
     const excelRecords = tableData.map((row) => {
@@ -274,7 +253,7 @@ export default function DashboardTable({
           ))}
         </thead>
         <tbody {...getTableBodyProps()} className='text-gray-800'>
-          {page.map((row, idx) => {
+          {rows.map((row, idx) => {
             prepareRow(row);
             return (
               <tr
@@ -298,81 +277,6 @@ export default function DashboardTable({
           })}
         </tbody>
       </table>
-      <div className='flex justify-end gap-6 p-6'>
-        {/* <div className='flex w-20 flex-col gap-1'>
-          <span className='whitespace-nowrap font-medium text-gray-600'>
-            Sayfaya Git
-          </span>
-          <input
-            type='number'
-            defaultValue={pageIndex + 1}
-            onChange={(e) => {
-              const page = e.target.value ? Number(e.target.value) - 1 : 0;
-              gotoPage(page);
-            }}
-            className='rounded-md py-2 px-3 text-gray-500 shadow focus:outline-blue-300'
-          />
-        </div> */}
-        <div className='rounded-m flex items-center gap-2'>
-          <div className='flex whitespace-nowrap text-sm font-medium text-gray-400'>
-            Sayfa Boyutu
-          </div>
-          <select
-            className='rounded-md bg-white py-2 px-1 text-sm font-medium text-gray-500 shadow focus:outline-blue-300'
-            value={pageSize}
-            onChange={(e) => {
-              setPageSize(Number(e.target.value));
-            }}
-          >
-            {[20, 50, 100].map((pageSize) => (
-              <option key={pageSize} value={pageSize}>
-                {pageSize}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div></div>
-
-        <div className='flex items-center justify-center gap-2.5'>
-          <button
-            onClick={() => gotoPage(0)}
-            disabled={!canPreviousPage}
-            className=' rounded-md bg-gray-50 p-2.5 text-gray-500 shadow hover:bg-blue-50  hover:text-blue-600 disabled:text-gray-300 disabled:shadow-none disabled:hover:bg-gray-50 disabled:hover:text-gray-300'
-          >
-            <ChevronDoubleLeftIcon className='h-4 w-4' />
-          </button>
-          <button
-            onClick={() => previousPage()}
-            disabled={!canPreviousPage}
-            className=' rounded-md bg-gray-50 p-2.5 text-gray-500 shadow hover:bg-blue-50  hover:text-blue-600 disabled:text-gray-300 disabled:shadow-none disabled:hover:bg-gray-50 disabled:hover:text-gray-300'
-          >
-            <ChevronLeftIcon className='h-4 w-4' />
-          </button>
-
-          <div className='rounded-md bg-white p-2 text-sm  font-semibold text-gray-400 focus:outline-blue-300'>
-            <span className='flex gap-2 '>
-              <span className='text-blue-600'>{`${pageIndex + 1}`}</span>
-              <span>{`/`}</span>
-              <span>{`${pageOptions.length}`}</span>
-            </span>
-          </div>
-
-          <button
-            onClick={() => nextPage()}
-            disabled={!canNextPage}
-            className=' rounded-md bg-gray-50 p-2.5 text-gray-500 shadow hover:bg-blue-50  hover:text-blue-600 disabled:text-gray-300 disabled:shadow-none disabled:hover:bg-gray-50 disabled:hover:text-gray-300'
-          >
-            <ChevronRightIcon className='h-4 w-4' />
-          </button>
-          <button
-            onClick={() => gotoPage(pageCount - 1)}
-            disabled={!canNextPage}
-            className=' rounded-md bg-gray-50 p-2.5 text-gray-500 shadow hover:bg-blue-50 hover:text-blue-600 disabled:text-gray-300 disabled:shadow-none disabled:hover:bg-gray-50 disabled:hover:text-gray-300'
-          >
-            <ChevronDoubleRightIcon className='h-4 w-4' />
-          </button>
-        </div>
-      </div>
     </div>
   );
 }

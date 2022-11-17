@@ -1,5 +1,5 @@
 import verifyToken from '../../../backend/verifyToken';
-import { getAllRecordsByDateByManager } from '../../../database/dbOps';
+import { getAllRecordsByDateByManager, addLog } from '../../../database/dbOps';
 import { parse, isValid } from 'date-fns';
 
 export default async function handler(req, response) {
@@ -10,7 +10,7 @@ export default async function handler(req, response) {
 
     const { startDate, endDate, managerUsername } = req.body;
 
-    if (managerUsername !== userData.username) throw 'Yetkisiz işlem.';
+    // if (managerUsername !== userData.username) throw 'Yetkisiz işlem.';
 
     if (!startDate || !endDate)
       throw 'startDate ve endDate alanları zorunludur.';
@@ -35,6 +35,12 @@ export default async function handler(req, response) {
   } catch (err) {
     console.error(`Error: ${err}`);
 
-    return response.status(500).json({ success: false, message: err });
+    response.status(500).json({ success: false, message: err });
+    addLog({
+      type: 'api',
+      isError: true,
+      username: userData.username || null,
+      info: `api/records/get-records-by-manager ${err}`,
+    });
   }
 }

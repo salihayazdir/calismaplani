@@ -25,7 +25,7 @@ export default function UpdateUsersModal({ isOpen, setIsOpen }) {
     axios
       .get(`${process.env.NEXT_PUBLIC_DOMAIN}/api/users/update`)
       .then((res) => {
-        console.log(res);
+        // console.log(res);
         if (res.data.success === true) {
           setApiStatus({
             isLoading: false,

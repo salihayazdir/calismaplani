@@ -48,9 +48,9 @@ export default function BarChart({ records, userStatuses }) {
     return {
       label: status.user_status_name,
       data,
-      backgroundColor: statusColors[idx],
-      borderRadius: 5,
-      stack: `Stack ${idx}`,
+      backgroundColor: idx < 4 ? statusColors[idx] : statusColors[3],
+      borderRadius: 3,
+      stack: idx < 4 ? `Stack ${idx}` : `Stack 3`,
     };
   });
 

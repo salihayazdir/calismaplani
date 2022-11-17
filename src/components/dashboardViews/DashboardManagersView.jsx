@@ -9,8 +9,10 @@ export default function DashboardManagersView({
   records,
   apiStatus,
   selectedDate,
+  setSelectedDate,
   selectedDateRange,
   setSelectedDateRange,
+  authorizedPersonnel,
 }) {
   return (
     <>
@@ -28,17 +30,21 @@ export default function DashboardManagersView({
             leaveFrom='opacity-100'
             leaveTo='opacity-0'
           >
-            <div className='flex flex-col rounded-xl border border-gray-200 bg-white py-4'>
+            <div className='flex flex-col rounded-xl border border-gray-200 bg-white pt-4'>
               <ManagerUserTable
                 listOfUsers={listOfUsers}
                 records={records}
                 selectedDate={selectedDate}
+                authorizedPersonnel={authorizedPersonnel}
               />
             </div>
           </Transition>
         )
       ) : (
-        <SelectWeeklyViewWarning setSelectedDateRange={setSelectedDateRange} />
+        <SelectWeeklyViewWarning
+          setSelectedDateRange={setSelectedDateRange}
+          setSelectedDate={setSelectedDate}
+        />
       )}
     </>
   );

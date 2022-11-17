@@ -1,5 +1,11 @@
 import bcrypt from 'bcrypt';
-import { getOtp, deleteOtp, getLoginInfo } from '../../../database/dbOps';
+import {
+  getOtp,
+  deleteOtp,
+  getLoginInfo,
+  getAuthorizedPersonnel,
+  addLog,
+} from '../../../database/dbOps';
 import cookie from 'cookie';
 
 const jwt = require('jsonwebtoken');
@@ -25,11 +31,31 @@ export default async function handler(req, res) {
     );
     if (!match) throw 'Kod doğrulanamadı.';
 
-    const loginInfoArray = await getLoginInfo(usernameFromRequest);
+    const loginInfoResult = await getLoginInfo(usernameFromRequest);
+    if (loginInfoResult.success !== true || loginInfoResult.result.length !== 1)
+      throw 'Kullanıcı bulunamadı.';
 
-    if (loginInfoArray.length !== 1) throw 'Kullanıcı bulunamadı.';
+    const loginInfo = loginInfoResult.result[0];
 
-    const tokenData = loginInfoArray[0];
+    const checkIsAuthorized = async () => {
+      const authorizedPersonnel = await getAuthorizedPersonnel();
+      const authorizedPersonnelUsernames = authorizedPersonnel.result.map(
+        (user) => user.username
+      );
+      const isAuthorizedPersonnel = Boolean(
+        authorizedPersonnelUsernames.indexOf(loginInfo.username) !== -1
+      );
+      return isAuthorizedPersonnel;
+    };
+
+    let isAuthorizedPersonnel = false;
+    if (loginInfo.is_manager !== true) {
+      isAuthorizedPersonnel = await checkIsAuthorized();
+    }
+
+    const tokenData = { ...loginInfo, isAuthorizedPersonnel };
+
+    console.log(tokenData);
 
     var currentTime = new Date();
     var tokenCreatedAt =
@@ -62,14 +88,20 @@ export default async function handler(req, res) {
         cookie.serialize('token', token, {
           httpOnly: true,
           secure: false,
-          maxAge: 60 * 60,
+          maxAge: 24 * 60 * 60,
           sameSite: true,
           path: '/',
         })
       )
-      .json({ success: true });
+      .json({ success: true, username });
   } catch (err) {
     console.error(err);
     res.status(200).json({ success: false, message: err });
+    addLog({
+      type: 'api',
+      isError: true,
+      username: usernameFromRequest || null,
+      info: `api/auth/login ${err}`,
+    });
   }
 }

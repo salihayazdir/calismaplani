@@ -1,6 +1,6 @@
 const nodemailer = require('nodemailer');
 
-export default async function sendMail({ mailTo, subject, html }) {
+export default async function sendMail({ mailTo, subject, content }) {
   return new Promise((resolve, reject) => {
     try {
       let transport = nodemailer.createTransport({
@@ -21,7 +21,7 @@ export default async function sendMail({ mailTo, subject, html }) {
         // to: mailTo,
         to: 'salih.ayazdir@bilesim.net.tr',
         subject,
-        html,
+        html: content,
       };
 
       transport.sendMail(mailOptions, (err, info) => {
@@ -37,7 +37,7 @@ export default async function sendMail({ mailTo, subject, html }) {
         }
       });
     } catch (err) {
-      console.log(err);
+      console.error(err);
       return {
         success: false,
         info: err,
