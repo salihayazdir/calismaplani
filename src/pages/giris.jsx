@@ -170,11 +170,13 @@ export async function getServerSideProps(context) {
           destination: err,
         },
       };
-    return {
-      redirect: {
-        permanent: false,
-        destination: '/500',
-      },
-    };
+    else {
+      return {
+        redirect: {
+          permanent: false,
+          destination: '/500',
+        },
+      };
+    }
   }
 }

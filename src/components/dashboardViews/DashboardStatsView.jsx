@@ -9,6 +9,7 @@ import { ArrowDownTrayIcon } from '@heroicons/react/24/outline';
 import { useState } from 'react';
 import UpdateUsersModal from '../modals/UpdateUsersModal';
 import exportStats from '../../utils/exportStats';
+import FetchError from '../skeletons/FetchError';
 
 export default function DashboardStatsView({
   records,
@@ -30,6 +31,8 @@ export default function DashboardStatsView({
       selectedDateRange,
       selectedDate,
     });
+
+  if (isError) return <FetchError />;
 
   return (
     <>

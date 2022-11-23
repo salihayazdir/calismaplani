@@ -119,6 +119,7 @@ export async function getUserStatuses() {
     return result.recordset;
   } catch (err) {
     console.error(err);
+    return false;
     return err;
   }
 }
@@ -188,6 +189,7 @@ export async function getUsersWithManagers() {
     return result.recordset;
   } catch (err) {
     console.error(err);
+    return false;
     return err;
   }
 }

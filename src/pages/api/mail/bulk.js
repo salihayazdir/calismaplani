@@ -40,9 +40,10 @@ export default async function handler(req, response) {
       if (results.length === successfulMails.length)
         return 'E-postalar başarıyla gönderildi.';
       if (successfulMails.length === 0)
-        return `E-postalar gönderilemedi. Hata: ${
-          errorMails[0].reason.response || 'Bağlantı hatası.'
-        }`;
+        // return `E-postalar gönderilemedi. Hata: ${
+        //   errorMails[0].reason.response || 'Bağlantı hatası.'
+        // }`;
+        throw errorMails[0].reason.response || 'Bağlantı hatası.';
       return `${successfulMails.length} başarılı, ${
         errorMails.length
       } başarısız e-posta. Hata: ${
@@ -72,7 +73,7 @@ export default async function handler(req, response) {
     if (errorMails.length !== 0) {
       addLog({
         type: 'bulkmail',
-        isError: Boolean(successfulMails.length === 0),
+        isError: true,
         username: userData.username || null,
         info: `${JSON.stringify(responseData)}`,
       });

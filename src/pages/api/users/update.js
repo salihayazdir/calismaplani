@@ -82,19 +82,19 @@ export default async function handler(req, response) {
 
           //////// MEHMET KANTEMİR DIRECT REPORTS TANIMLANANA KADAR /////
           //////// MEHMET KANTEMİR DIRECT REPORTS TANIMLANANA KADAR /////
-          const managerExceptions = [
-            'omeung',
-            'mehoge',
-            'musbed',
-            'mehyas',
-            'baryon',
-            'tunotu',
-            'ozghel',
-            'kaaata',
-            'alpoze',
-          ];
-          if (managerExceptions.indexOf(user.sAMAccountName) !== -1)
-            isManager = true;
+          // const managerExceptions = [
+          //   'omeung',
+          //   'mehoge',
+          //   'musbed',
+          //   'mehyas',
+          //   'baryon',
+          //   'tunotu',
+          //   'ozghel',
+          //   'kaaata',
+          //   'alpoze',
+          // ];
+          // if (managerExceptions.indexOf(user.sAMAccountName) !== -1)
+          //   isManager = true;
           //////// MEHMET KANTEMİR DIRECT REPORTS TANIMLANANA KADAR /////
           //////// MEHMET KANTEMİR DIRECT REPORTS TANIMLANANA KADAR /////
 
@@ -126,25 +126,31 @@ export default async function handler(req, response) {
         const filteredData = userData.filter((user) => user !== undefined);
 
         const dbResults = filteredData.map(async (user) => await addUser(user));
-        const results = await Promise.all(dbResults);
+        const results = await Promise.allSettled(dbResults);
 
         const message = () => {
           const totalLength = results.length;
           const errorlength = results.filter(
-            (result) => result.returnValue !== 0
+            (result) => result.value.returnValue !== 0
           ).length;
           const successLength = totalLength - errorlength;
           if (errorlength === 0)
             return `${successLength} kullanıcı başarıyla güncellendi.`;
+
           if (errorlength === totalLength) return false;
+
+          if (errorlength !== 0)
+            addLog({
+              type: 'api',
+              isError: true,
+              username: userData.username || null,
+              info: `api/users/update ${successLength} kullanıcı başarıyla güncellendi. ${errorlength} kullanıcı güncellenirken hata oluştu.`,
+            });
+
           return `${successLength} kullanıcı başarıyla güncellendi. ${errorlength} kullanıcı güncellenirken hata oluştu.`;
         };
 
-        if (message() === false)
-          response.status(200).json({
-            success: false,
-            message: 'Kullanıcılar güncellenemedi',
-          });
+        if (message() === false) throw 'Kullanıcılar güncellenemedi.';
 
         response.status(200).json({
           success: true,

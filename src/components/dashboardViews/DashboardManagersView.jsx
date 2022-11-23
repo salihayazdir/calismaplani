@@ -3,6 +3,7 @@ import ManagerUserTable from '../table/ManagerUserTable';
 import TableSkeleton from '../skeletons/TableSkeleton';
 import { Transition } from '@headlessui/react';
 import SelectWeeklyViewWarning from './SelectWeeklyViewWarning';
+import FetchError from '../skeletons/FetchError';
 
 export default function DashboardManagersView({
   listOfUsers,
@@ -14,6 +15,8 @@ export default function DashboardManagersView({
   setSelectedDateRange,
   authorizedPersonnel,
 }) {
+  if (apiStatus.isError) return <FetchError />;
+
   return (
     <>
       {selectedDateRange === 'week' ? (

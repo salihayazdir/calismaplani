@@ -17,6 +17,7 @@ import ViewRadio from '../components/radio/ViewRadio';
 import { ArrowPathIcon, UsersIcon } from '@heroicons/react/24/outline';
 import { Transition } from '@headlessui/react';
 import { useRouter } from 'next/router';
+import { addLog } from '../database/dbOps';
 
 export default function Home({
   directReports,
@@ -253,8 +254,15 @@ export default function Home({
 export async function getServerSideProps(context) {
   try {
     if (!context.req.headers.cookie) throw '/giris';
-
     const userData = await verifyToken(context.req.headers.cookie);
+
+    if (
+      !userData ||
+      (userData.is_manager !== true && userData.isAuthorizedPersonnel !== true)
+    ) {
+      if (userData.is_hr === true) throw '/dashboard';
+      if (userData.is_hr !== true) throw '/giris';
+    }
 
     let authorizedPersonnelRequest;
     if (userData.is_manager === true)
@@ -266,18 +274,12 @@ export async function getServerSideProps(context) {
         userData.manager_username
       );
 
-    if (!Array.isArray(authorizedPersonnelRequest.result)) throw '/giris';
+    if (!Array.isArray(authorizedPersonnelRequest.result))
+      throw 'DB error (index/ authorizedPersonnelRequest.result)';
 
     const authorizedPersonnel = authorizedPersonnelRequest.result.map(
       (user) => user.username
     );
-
-    if (
-      !userData ||
-      (userData.is_manager === false &&
-        userData.isAuthorizedPersonnel === false)
-    )
-      throw '/giris';
 
     let directReports;
     if (userData.is_manager === true)
@@ -303,11 +305,19 @@ export async function getServerSideProps(context) {
           destination: err,
         },
       };
-    return {
-      redirect: {
-        permanent: false,
-        destination: '/500',
-      },
-    };
+    else {
+      addLog({
+        type: 'props',
+        isError: true,
+        username: userData.username ? userData.username : null,
+        info: `/index ${err}`,
+      });
+      return {
+        redirect: {
+          permanent: false,
+          destination: '/500',
+        },
+      };
+    }
   }
 }

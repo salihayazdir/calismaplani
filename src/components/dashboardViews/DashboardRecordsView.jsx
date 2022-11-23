@@ -3,6 +3,7 @@ import NoRecords from '../skeletons/NoRecords';
 import TableSkeleton from '../skeletons/TableSkeleton';
 import { Transition } from '@headlessui/react';
 import SelectWeeklyViewWarning from './SelectWeeklyViewWarning';
+import FetchError from '../skeletons/FetchError';
 
 export default function DashboardRecordsView({
   records,
@@ -17,6 +18,8 @@ export default function DashboardRecordsView({
 }) {
   const { isLoading, isError, message } = apiStatus;
   const isNoRecords = Boolean(isLoading === false && records.length === 0);
+
+  if (isError) return <FetchError />;
 
   return (
     <>

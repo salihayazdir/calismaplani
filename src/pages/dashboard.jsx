@@ -24,6 +24,7 @@ import DashboardManagersView from '../components/dashboardViews/DashboardManager
 import DashboardRecordsView from '../components/dashboardViews/DashboardRecordsView';
 import { ArrowPathIcon } from '@heroicons/react/24/outline';
 import { useRouter } from 'next/router';
+import { addLog } from '../database/dbOps';
 
 export default function Dashboard({
   userStatuses,
@@ -51,9 +52,9 @@ export default function Dashboard({
       });
   };
 
-  useEffect(() => {
-    if (apiStatus.isError !== false) signOut();
-  }, [apiStatus]);
+  // useEffect(() => {
+  //   if (apiStatus.isError !== false) signOut();
+  // }, [apiStatus]);
 
   useEffect(() => {
     fetchTableData();
@@ -219,32 +220,24 @@ export default function Dashboard({
 }
 
 export async function getServerSideProps(context) {
-  if (!context.req.headers.cookie)
-    return {
-      redirect: {
-        permanent: false,
-        destination: '/giris',
-      },
-      props: {},
-    };
-
-  const userData = await verifyToken(context.req.headers.cookie);
-  console.log(userData);
-
-  const authorizedPersonnel = await (await getAuthorizedPersonnel()).result;
-
   try {
-    if (!userData) throw '/giris';
+    if (!context.req.headers.cookie) throw '/giris';
 
+    const userData = await verifyToken(context.req.headers.cookie);
+    if (!userData) throw '/giris';
     if (userData.is_hr !== true) throw '/';
 
+    const authorizedPersonnel = await (await getAuthorizedPersonnel()).result;
     const userStatuses = await getUserStatuses();
     const listOfUsers = await getUsersWithManagers();
+
+    if (!authorizedPersonnel || !userStatuses || !listOfUsers) throw 'DB Error';
 
     return {
       props: { userStatuses, userData, listOfUsers, authorizedPersonnel },
     };
   } catch (err) {
+    console.error(err);
     if (err === '/giris' || err === '/' || err === '/dashboard')
       return {
         redirect: {
@@ -252,11 +245,21 @@ export async function getServerSideProps(context) {
           destination: err,
         },
       };
-    return {
-      redirect: {
-        permanent: false,
-        destination: '/500',
-      },
-    };
+    else {
+      const userData = await verifyToken(context.req.headers.cookie);
+      addLog({
+        type: 'props',
+        isError: true,
+        username: userData.username ? userData.username : null,
+        info: `/dashboard ${err}`,
+      });
+
+      return {
+        redirect: {
+          permanent: false,
+          destination: '/500',
+        },
+      };
+    }
   }
 }

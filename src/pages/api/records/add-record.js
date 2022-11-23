@@ -26,10 +26,14 @@ export default async function handler(req, response) {
       async (record) => await addRecord(record)
     );
 
-    const results = await Promise.all(recordEntryResults);
+    const results = await Promise.allSettled(recordEntryResults);
 
-    const successfulEntries = results.filter((result) => result.success);
-    const errorEntries = results.filter((result) => !result.success);
+    const successfulEntries = results.filter(
+      (result) => result.status === 'fulfilled' && result.value.success === true
+    );
+    const errorEntries = results.filter(
+      (result) => result.status !== 'fulfilled' || result.value.success !== true
+    );
 
     const createResponseMessage = (results) => {
       if (results.length === successfulEntries.length)
