@@ -7,18 +7,19 @@ export default async function sendMail({ mailTo, subject, content }) {
         host: process.env.MAIL_HOST,
         pool: true,
         secure: false,
-        port: 587,
-        auth: {
-          user: process.env.MAIL_USER,
-          pass: process.env.MAIL_PW,
-        },
+        port: 25,
+        // auth: {
+        //   user: process.env.MAIL_USER,
+        //   pass: process.env.MAIL_PW,
+        // },
         tls: {
           rejectUnauthorized: false,
         },
       });
 
       const mailOptions = {
-        from: process.env.MAIL_FROM,
+        // from: process.env.MAIL_FROM,
+        from: 'Haftalık Çalışma Planı <calismaplani@bilesim.net.tr>',
         // to: mailTo,
         to: 'salih.ayazdir@bilesim.net.tr',
         subject,
@@ -36,6 +37,7 @@ export default async function sendMail({ mailTo, subject, content }) {
             info,
           });
         }
+        transport.close();
       });
     } catch (err) {
       console.error(err);
