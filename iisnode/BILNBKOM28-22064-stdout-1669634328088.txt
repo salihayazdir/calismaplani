@@ -1,0 +1,495 @@
+info  - Loaded env from C:\Users\salaya\Desktop\calismaplani\.env
+event - compiled client and server successfully in 2.2s (497 modules)
+> Ready on http://localhost:\\.\pipe\0397af35-3bb6-45a1-923f-1146a84a7f1f
+wait  - compiling / (client and server)...
+event - compiled client and server successfully in 9.1s (1367 modules)
+wait  - compiling /giris (client and server)...
+event - compiled client and server successfully in 609 ms (1378 modules)
+wait  - compiling /test (client and server)...
+wait  - compiling /_error (client and server)...
+wait  - compiling...
+event - compiled client and server successfully in 10s (498 modules)
+wait  - compiling / (client and server)...
+wait  - compiling /404 (client and server)...
+event - compiled client and server successfully in 2.2s (1370 modules)
+event - compiled client and server successfully (1371 modules)
+wait  - compiling /giris (client and server)...
+wait  - compiling /test (client and server)...
+event - compiled client and server successfully in 625 ms (1385 modules)
+info  - Loaded env from C:\Users\salaya\Desktop\calismaplani\.env
+wait  - compiling...
+event - compiled client and server successfully in 573 ms (571 modules)
+info  - Loaded env from C:\Users\salaya\Desktop\calismaplani\.env
+wait  - compiling...
+event - compiled client and server successfully in 224 ms (571 modules)
+wait  - compiling /api/auth/login (client and server)...
+event - compiled successfully in 22 ms (61 modules)
+wait  - compiling...
+event - compiled client and server successfully in 554 ms (571 modules)
+wait  - compiling...
+event - compiled client and server successfully in 728 ms (571 modules)
+{
+  username: 'ahmegu',
+  display_name: 'Ahmet Murat Gürses',
+  department: 'Bilgi Sistemleri Yönetimi Grubu',
+  description: 'Yazılım ve Uygulama Yönetimi Bölümü',
+  mail: 'ahmet.gurses@bilesim.net.tr',
+  is_manager: false,
+  is_hr: false,
+  manager_username: null,
+  manager_display_name: null
+}
+wait  - compiling...
+event - compiled client and server successfully in 447 ms (571 modules)
+{
+  username: 'ahmegu',
+  display_name: 'Ahmet Murat Gürses',
+  department: 'Bilgi Sistemleri Yönetimi Grubu',
+  description: 'Yazılım ve Uygulama Yönetimi Bölümü',
+  mail: 'ahmet.gurses@bilesim.net.tr',
+  is_manager: false,
+  is_hr: false,
+  manager_username: null,
+  manager_display_name: null
+}
+wait  - compiling /_error (client and server)...
+event - compiled client and server successfully in 120 ms (572 modules)
+wait  - compiling...
+event - compiled client and server successfully in 530 ms (566 modules)
+wait  - compiling /test (client and server)...
+event - compiled client and server successfully in 276 ms (578 modules)
+{
+  username: 'ahmegu',
+  display_name: 'Ahmet Murat Gürses',
+  department: 'Bilgi Sistemleri Yönetimi Grubu',
+  description: 'Yazılım ve Uygulama Yönetimi Bölümü',
+  mail: 'ahmet.gurses@bilesim.net.tr',
+  is_manager: false,
+  is_hr: false,
+  manager_username: null,
+  manager_display_name: null
+}
+{
+  username: 'ahmegu',
+  display_name: 'Ahmet Murat Gürses',
+  department: 'Bilgi Sistemleri Yönetimi Grubu',
+  description: 'Yazılım ve Uygulama Yönetimi Bölümü',
+  mail: 'ahmet.gurses@bilesim.net.tr',
+  is_manager: false,
+  is_hr: false,
+  manager_username: null,
+  manager_display_name: null
+}
+wait  - compiling...
+event - compiled client and server successfully in 360 ms (577 modules)
+{
+  username: 'ahmegu',
+  display_name: 'Ahmet Murat Gürses',
+  department: 'Bilgi Sistemleri Yönetimi Grubu',
+  description: 'Yazılım ve Uygulama Yönetimi Bölümü',
+  mail: 'ahmet.gurses@bilesim.net.tr',
+  is_manager: false,
+  is_hr: false,
+  manager_username: null,
+  manager_display_name: null
+}
+wait  - compiling...
+wait  - compiling /giris (client and server)...
+event - compiled client and server successfully in 525 ms (566 modules)
+wait  - compiling...
+event - compiled client and server successfully in 46 ms (577 modules)
+{
+  username: 'ahmegu',
+  display_name: 'Ahmet Murat Gürses',
+  department: 'Bilgi Sistemleri Yönetimi Grubu',
+  description: 'Yazılım ve Uygulama Yönetimi Bölümü',
+  mail: 'ahmet.gurses@bilesim.net.tr',
+  is_manager: false,
+  is_hr: false,
+  manager_username: null,
+  manager_display_name: null
+}
+wait  - compiling...
+wait  - compiling /giris (client and server)...
+event - compiled client and server successfully in 475 ms (566 modules)
+wait  - compiling...
+event - compiled client and server successfully in 47 ms (577 modules)
+{
+  username: 'ahmegu',
+  display_name: 'Ahmet Murat Gürses',
+  department: 'Bilgi Sistemleri Yönetimi Grubu',
+  description: 'Yazılım ve Uygulama Yönetimi Bölümü',
+  mail: 'ahmet.gurses@bilesim.net.tr',
+  is_manager: false,
+  is_hr: false,
+  manager_username: null,
+  manager_display_name: null
+}
+wait  - compiling...
+event - compiled client and server successfully in 351 ms (577 modules)
+{
+  username: 'ahmegu',
+  display_name: 'Ahmet Murat Gürses',
+  department: 'Bilgi Sistemleri Yönetimi Grubu',
+  description: 'Yazılım ve Uygulama Yönetimi Bölümü',
+  mail: 'ahmet.gurses@bilesim.net.tr',
+  is_manager: false,
+  is_hr: false,
+  manager_username: null,
+  manager_display_name: null
+}
+wait  - compiling...
+event - compiled client and server successfully in 319 ms (509 modules)
+wait  - compiling /giris (client and server)...
+event - compiled client and server successfully in 229 ms (577 modules)
+{
+  username: 'ahmegu',
+  display_name: 'Ahmet Murat Gürses',
+  department: 'Bilgi Sistemleri Yönetimi Grubu',
+  description: 'Yazılım ve Uygulama Yönetimi Bölümü',
+  mail: 'ahmet.gurses@bilesim.net.tr',
+  is_manager: false,
+  is_hr: false,
+  manager_username: null,
+  manager_display_name: null
+}
+wait  - compiling...
+event - compiled client and server successfully in 296 ms (509 modules)
+wait  - compiling /giris (client and server)...
+event - compiled client and server successfully in 175 ms (577 modules)
+{
+  username: 'ahmegu',
+  display_name: 'Ahmet Murat Gürses',
+  department: 'Bilgi Sistemleri Yönetimi Grubu',
+  description: 'Yazılım ve Uygulama Yönetimi Bölümü',
+  mail: 'ahmet.gurses@bilesim.net.tr',
+  is_manager: false,
+  is_hr: false,
+  manager_username: null,
+  manager_display_name: null
+}
+wait  - compiling...
+event - compiled client and server successfully in 550 ms (577 modules)
+{
+  username: 'ahmegu',
+  display_name: 'Ahmet Murat Gürses',
+  department: 'Bilgi Sistemleri Yönetimi Grubu',
+  description: 'Yazılım ve Uygulama Yönetimi Bölümü',
+  mail: 'ahmet.gurses@bilesim.net.tr',
+  is_manager: false,
+  is_hr: false,
+  manager_username: null,
+  manager_display_name: null
+}
+wait  - compiling...
+event - compiled client and server successfully in 453 ms (571 modules)
+{
+  username: 'ahmegu',
+  display_name: 'Ahmet Murat Gürses',
+  department: 'Bilgi Sistemleri Yönetimi Grubu',
+  description: 'Yazılım ve Uygulama Yönetimi Bölümü',
+  mail: 'ahmet.gurses@bilesim.net.tr',
+  is_manager: false,
+  is_hr: false,
+  manager_username: null,
+  manager_display_name: null
+}
+{
+  username: 'ahmegu',
+  display_name: 'Ahmet Murat Gürses',
+  department: 'Bilgi Sistemleri Yönetimi Grubu',
+  description: 'Yazılım ve Uygulama Yönetimi Bölümü',
+  mail: 'ahmet.gurses@bilesim.net.tr',
+  is_manager: false,
+  is_hr: false,
+  manager_username: null,
+  manager_display_name: null
+}
+{
+  username: 'ahmegu',
+  display_name: 'Ahmet Murat Gürses',
+  department: 'Bilgi Sistemleri Yönetimi Grubu',
+  description: 'Yazılım ve Uygulama Yönetimi Bölümü',
+  mail: 'ahmet.gurses@bilesim.net.tr',
+  is_manager: false,
+  is_hr: false,
+  manager_username: null,
+  manager_display_name: null
+}
+wait  - compiling...
+event - compiled client and server successfully in 313 ms (577 modules)
+{
+  username: 'ahmegu',
+  display_name: 'Ahmet Murat Gürses',
+  department: 'Bilgi Sistemleri Yönetimi Grubu',
+  description: 'Yazılım ve Uygulama Yönetimi Bölümü',
+  mail: 'ahmet.gurses@bilesim.net.tr',
+  is_manager: false,
+  is_hr: false,
+  manager_username: null,
+  manager_display_name: null
+}
+wait  - compiling /api/auth/login (client and server)...
+event - compiled successfully in 48 ms (61 modules)
+{
+  username: 'ahmegu',
+  display_name: 'Ahmet Murat Gürses',
+  department: 'Bilgi Sistemleri Yönetimi Grubu',
+  description: 'Yazılım ve Uygulama Yönetimi Bölümü',
+  mail: 'ahmet.gurses@bilesim.net.tr',
+  is_manager: false,
+  is_hr: false,
+  manager_username: null,
+  manager_display_name: null
+}
+{
+  username: 'ahmegu',
+  display_name: 'Ahmet Murat Gürses',
+  department: 'Bilgi Sistemleri Yönetimi Grubu',
+  description: 'Yazılım ve Uygulama Yönetimi Bölümü',
+  mail: 'ahmet.gurses@bilesim.net.tr',
+  is_manager: false,
+  is_hr: false,
+  manager_username: null,
+  manager_display_name: null
+}
+wait  - compiling...
+event - compiled client and server successfully in 294 ms (577 modules)
+{
+  username: 'ahmegu',
+  display_name: 'Ahmet Murat Gürses',
+  department: 'Bilgi Sistemleri Yönetimi Grubu',
+  description: 'Yazılım ve Uygulama Yönetimi Bölümü',
+  mail: 'ahmet.gurses@bilesim.net.tr',
+  is_manager: false,
+  is_hr: false,
+  manager_username: null,
+  manager_display_name: null
+}
+wait  - compiling...
+event - compiled client and server successfully in 326 ms (571 modules)
+{
+  username: 'ahmegu',
+  display_name: 'Ahmet Murat Gürses',
+  department: 'Bilgi Sistemleri Yönetimi Grubu',
+  description: 'Yazılım ve Uygulama Yönetimi Bölümü',
+  mail: 'ahmet.gurses@bilesim.net.tr',
+  is_manager: false,
+  is_hr: false,
+  manager_username: null,
+  manager_display_name: null
+}
+wait  - compiling...
+event - compiled client and server successfully in 325 ms (503 modules)
+{
+  username: 'ahmegu',
+  display_name: 'Ahmet Murat Gürses',
+  department: 'Bilgi Sistemleri Yönetimi Grubu',
+  description: 'Yazılım ve Uygulama Yönetimi Bölümü',
+  mail: 'ahmet.gurses@bilesim.net.tr',
+  is_manager: false,
+  is_hr: false,
+  manager_username: null,
+  manager_display_name: null
+}
+wait  - compiling...
+event - compiled client and server successfully in 321 ms (503 modules)
+{
+  username: 'ahmegu',
+  display_name: 'Ahmet Murat Gürses',
+  department: 'Bilgi Sistemleri Yönetimi Grubu',
+  description: 'Yazılım ve Uygulama Yönetimi Bölümü',
+  mail: 'ahmet.gurses@bilesim.net.tr',
+  is_manager: false,
+  is_hr: false,
+  manager_username: null,
+  manager_display_name: null
+}
+wait  - compiling...
+event - compiled client and server successfully in 379 ms (503 modules)
+{
+  username: 'ahmegu',
+  display_name: 'Ahmet Murat Gürses',
+  department: 'Bilgi Sistemleri Yönetimi Grubu',
+  description: 'Yazılım ve Uygulama Yönetimi Bölümü',
+  mail: 'ahmet.gurses@bilesim.net.tr',
+  is_manager: false,
+  is_hr: false,
+  manager_username: null,
+  manager_display_name: null
+}
+wait  - compiling...
+event - compiled client and server successfully in 461 ms (503 modules)
+{
+  username: 'ahmegu',
+  display_name: 'Ahmet Murat Gürses',
+  department: 'Bilgi Sistemleri Yönetimi Grubu',
+  description: 'Yazılım ve Uygulama Yönetimi Bölümü',
+  mail: 'ahmet.gurses@bilesim.net.tr',
+  is_manager: false,
+  is_hr: false,
+  manager_username: null,
+  manager_display_name: null
+}
+wait  - compiling...
+event - compiled client and server successfully in 306 ms (503 modules)
+{
+  username: 'ahmegu',
+  display_name: 'Ahmet Murat Gürses',
+  department: 'Bilgi Sistemleri Yönetimi Grubu',
+  description: 'Yazılım ve Uygulama Yönetimi Bölümü',
+  mail: 'ahmet.gurses@bilesim.net.tr',
+  is_manager: false,
+  is_hr: false,
+  manager_username: null,
+  manager_display_name: null
+}
+{
+  username: 'ahmegu',
+  display_name: 'Ahmet Murat Gürses',
+  department: 'Bilgi Sistemleri Yönetimi Grubu',
+  description: 'Yazılım ve Uygulama Yönetimi Bölümü',
+  mail: 'ahmet.gurses@bilesim.net.tr',
+  is_manager: false,
+  is_hr: false,
+  manager_username: null,
+  manager_display_name: null
+}
+{
+  username: 'ahmegu',
+  display_name: 'Ahmet Murat Gürses',
+  department: 'Bilgi Sistemleri Yönetimi Grubu',
+  description: 'Yazılım ve Uygulama Yönetimi Bölümü',
+  mail: 'ahmet.gurses@bilesim.net.tr',
+  is_manager: false,
+  is_hr: false,
+  manager_username: null,
+  manager_display_name: null
+}
+{
+  username: 'ahmegu',
+  display_name: 'Ahmet Murat Gürses',
+  department: 'Bilgi Sistemleri Yönetimi Grubu',
+  description: 'Yazılım ve Uygulama Yönetimi Bölümü',
+  mail: 'ahmet.gurses@bilesim.net.tr',
+  is_manager: false,
+  is_hr: false,
+  manager_username: null,
+  manager_display_name: null
+}
+{
+  username: 'ahmegu',
+  display_name: 'Ahmet Murat Gürses',
+  department: 'Bilgi Sistemleri Yönetimi Grubu',
+  description: 'Yazılım ve Uygulama Yönetimi Bölümü',
+  mail: 'ahmet.gurses@bilesim.net.tr',
+  is_manager: false,
+  is_hr: false,
+  manager_username: null,
+  manager_display_name: null
+}
+{
+  username: 'ahmegu',
+  display_name: 'Ahmet Murat Gürses',
+  department: 'Bilgi Sistemleri Yönetimi Grubu',
+  description: 'Yazılım ve Uygulama Yönetimi Bölümü',
+  mail: 'ahmet.gurses@bilesim.net.tr',
+  is_manager: false,
+  is_hr: false,
+  manager_username: null,
+  manager_display_name: null
+}
+{
+  username: 'ahmegu',
+  display_name: 'Ahmet Murat Gürses',
+  department: 'Bilgi Sistemleri Yönetimi Grubu',
+  description: 'Yazılım ve Uygulama Yönetimi Bölümü',
+  mail: 'ahmet.gurses@bilesim.net.tr',
+  is_manager: false,
+  is_hr: false,
+  manager_username: null,
+  manager_display_name: null
+}
+wait  - compiling...
+event - compiled client and server successfully in 269 ms (503 modules)
+wait  - compiling...
+event - compiled client and server successfully in 317 ms (503 modules)
+wait  - compiling /404 (client and server)...
+event - compiled client and server successfully in 106 ms (506 modules)
+wait  - compiling / (client and server)...
+event - compiled client and server successfully in 3.6s (1373 modules)
+wait  - compiling /giris (client and server)...
+event - compiled client and server successfully in 309 ms (1384 modules)
+wait  - compiling /_error (client and server)...
+event - compiled client and server successfully in 135 ms (1385 modules)
+wait  - compiling...
+event - compiled client and server successfully in 328 ms (1385 modules)
+wait  - compiling...
+event - compiled client and server successfully in 406 ms (498 modules)
+wait  - compiling...
+event - compiled successfully in 355 ms (467 modules)
+wait  - compiling...
+event - compiled successfully in 285 ms (467 modules)
+wait  - compiling...
+event - compiled successfully in 265 ms (467 modules)
+wait  - compiling...
+event - compiled successfully in 284 ms (467 modules)
+wait  - compiling...
+event - compiled successfully in 262 ms (467 modules)
+wait  - compiling...
+event - compiled successfully in 231 ms (467 modules)
+wait  - compiling...
+event - compiled successfully in 241 ms (467 modules)
+wait  - compiling...
+event - compiled successfully in 260 ms (467 modules)
+wait  - compiling...
+event - compiled successfully in 263 ms (467 modules)
+wait  - compiling...
+event - compiled successfully in 305 ms (467 modules)
+wait  - compiling...
+event - compiled successfully in 242 ms (467 modules)
+wait  - compiling...
+event - compiled successfully in 273 ms (467 modules)
+wait  - compiling...
+event - compiled successfully in 256 ms (467 modules)
+wait  - compiling...
+event - compiled successfully in 301 ms (467 modules)
+wait  - compiling /test (client and server)...
+event - compiled client and server successfully in 280 ms (504 modules)
+{
+  username: 'ahmegu',
+  display_name: 'Ahmet Murat Gürses',
+  department: 'Bilgi Sistemleri Yönetimi Grubu',
+  description: 'Yazılım ve Uygulama Yönetimi Bölümü',
+  mail: 'ahmet.gurses@bilesim.net.tr',
+  is_manager: false,
+  is_hr: false,
+  manager_username: null,
+  manager_display_name: null
+}
+{
+  username: 'ahmegu',
+  display_name: 'Ahmet Murat Gürses',
+  department: 'Bilgi Sistemleri Yönetimi Grubu',
+  description: 'Yazılım ve Uygulama Yönetimi Bölümü',
+  mail: 'ahmet.gurses@bilesim.net.tr',
+  is_manager: false,
+  is_hr: false,
+  manager_username: null,
+  manager_display_name: null
+}
+wait  - compiling / (client and server)...
+event - compiled client and server successfully in 3s (1371 modules)
+wait  - compiling /giris (client and server)...
+event - compiled client and server successfully in 135 ms (1382 modules)
+{
+  username: 'ahmegu',
+  display_name: 'Ahmet Murat Gürses',
+  department: 'Bilgi Sistemleri Yönetimi Grubu',
+  description: 'Yazılım ve Uygulama Yönetimi Bölümü',
+  mail: 'ahmet.gurses@bilesim.net.tr',
+  is_manager: false,
+  is_hr: false,
+  manager_username: null,
+  manager_display_name: null
+}

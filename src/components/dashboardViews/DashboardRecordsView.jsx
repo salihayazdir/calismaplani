@@ -24,10 +24,7 @@ export default function DashboardRecordsView({
   return (
     <>
       {isNoRecords ? (
-        <NoRecords
-          isDashboard={isDashboard}
-          setSelectedView={setSelectedView}
-        />
+        <NoRecords />
       ) : selectedDateRange === 'week' ? (
         isLoading ? (
           <TableSkeleton />

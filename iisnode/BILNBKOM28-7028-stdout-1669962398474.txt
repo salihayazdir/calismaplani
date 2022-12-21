@@ -1,0 +1,1 @@
+info  - Loaded env from C:\Users\salaya\Desktop\calismaplani\.env

@@ -1,0 +1,361 @@
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename 'C:\Users\salaya\Desktop\calismaplani\.next\cache\webpack\client-development\11.pack_' -> 'C:\Users\salaya\Desktop\calismaplani\.next\cache\webpack\client-development\11.pack'
+error - ./src/pages/test.jsx:2:0
+Module not found: Can't resolve './src/database/dbOps'
+[0m [90m 1 | [39m[36mimport[39m [33mReact[39m [36mfrom[39m [32m'react'[39m[33m;[39m[0m
+[0m[31m[1m>[22m[39m[90m 2 | [39m[36mimport[39m { getUsersWithManagers } [36mfrom[39m [32m'./src/database/dbOps'[39m[33m;[39m[0m
+[0m [90m 3 | [39m[0m
+[0m [90m 4 | [39m[36mexport[39m [36mdefault[39m [36mfunction[39m test({ listOfUsers }) {[0m
+[0m [90m 5 | [39m  [90m// const data = ldapData.filter((user) => user.sAMAccountName.length !== 6);[39m[0m
+
+https://nextjs.org/docs/messages/module-not-found
+error - ./src/pages/test.jsx:2:0
+Module not found: Can't resolve './src/database/dbOps'
+[0m [90m 1 | [39m[36mimport[39m [33mReact[39m [36mfrom[39m [32m'react'[39m[33m;[39m[0m
+[0m[31m[1m>[22m[39m[90m 2 | [39m[36mimport[39m { getUsersWithManagers } [36mfrom[39m [32m'./src/database/dbOps'[39m[33m;[39m[0m
+[0m [90m 3 | [39m[0m
+[0m [90m 4 | [39m[36mexport[39m [36mdefault[39m [36mfunction[39m test({ listOfUsers }) {[0m
+[0m [90m 5 | [39m  [90m// const data = ldapData.filter((user) => user.sAMAccountName.length !== 6);[39m[0m
+
+https://nextjs.org/docs/messages/module-not-found
+error - ./src/pages/test.jsx:2:0
+Module not found: Can't resolve './src/database/dbOps'
+[0m [90m 1 | [39m[36mimport[39m [33mReact[39m [36mfrom[39m [32m'react'[39m[33m;[39m[0m
+[0m[31m[1m>[22m[39m[90m 2 | [39m[36mimport[39m { getUsersWithManagers } [36mfrom[39m [32m'./src/database/dbOps'[39m[33m;[39m[0m
+[0m [90m 3 | [39m[0m
+[0m [90m 4 | [39m[36mexport[39m [36mdefault[39m [36mfunction[39m test({ listOfUsers }) {[0m
+[0m [90m 5 | [39m  [90m// const data = ldapData.filter((user) => user.sAMAccountName.length !== 6);[39m[0m
+
+https://nextjs.org/docs/messages/module-not-found
+warn  - Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/basic-features/fast-refresh#how-it-works
+Error: Failed to fetch update manifest Internal Server Error
+    at http://localhost/_next/static/chunks/webpack.js?ts=1669634351933:1188:37
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename 'C:\Users\salaya\Desktop\calismaplani\.next\cache\webpack\client-development\1.pack_' -> 'C:\Users\salaya\Desktop\calismaplani\.next\cache\webpack\client-development\1.pack'
+warn  - Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/basic-features/fast-refresh#how-it-works
+warn  - Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/basic-features/fast-refresh#how-it-works
+Warning: Each child in a list should have a unique "key" prop.
+
+Check the top-level render call using <div>. See https://reactjs.org/link/warning-keys for more information.
+    at div
+    at test (webpack-internal:///./src/pages/test.jsx:14:17)
+    at ErrorBoundary (webpack-internal:///./src/components/ErrorBoundry.jsx:19:9)
+    at WithRouterWrapper (C:\Users\salaya\Desktop\calismaplani\node_modules\next\dist\client\with-router.js:12:34)
+    at MyApp (webpack-internal:///./src/pages/_app.js:19:18)
+    at StyleRegistry (C:\Users\salaya\Desktop\calismaplani\node_modules\styled-jsx\dist\index\index.js:448:36)
+    at AppContainer (C:\Users\salaya\Desktop\calismaplani\node_modules\next\dist\server\render.js:298:29)
+    at AppContainerWithIsomorphicFiberStructure (C:\Users\salaya\Desktop\calismaplani\node_modules\next\dist\server\render.js:327:57)
+    at div
+    at Body (C:\Users\salaya\Desktop\calismaplani\node_modules\next\dist\server\render.js:614:21)
+Warning: data for page "/test" is 168 kB which exceeds the threshold of 128 kB, this amount of data can reduce performance.
+See more info here: https://nextjs.org/docs/messages/large-page-data
+Warning: data for page "/test" is 168 kB which exceeds the threshold of 128 kB, this amount of data can reduce performance.
+See more info here: https://nextjs.org/docs/messages/large-page-data
+warn  - Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/basic-features/fast-refresh#how-it-works
+Error: Aborted because ./src/pages/test.jsx is not accepted
+Update propagation: ./src/pages/test.jsx -> ./node_modules/next/dist/build/webpack/loaders/next-client-pages-loader.js?absolutePagePath=C%3A%5CUsers%5Csalaya%5CDesktop%5Ccalismaplani%5Csrc%5Cpages%5Ctest.jsx&page=%2Ftest!
+    at applyHandler (http://localhost/_next/static/chunks/webpack.js?ts=1669634462136:881:31)
+    at http://localhost/_next/static/chunks/webpack.js?ts=1669634462136:564:21
+    at Array.map (<anonymous>)
+Warning: data for page "/test" is 168 kB which exceeds the threshold of 128 kB, this amount of data can reduce performance.
+See more info here: https://nextjs.org/docs/messages/large-page-data
+warn  - Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/basic-features/fast-refresh#how-it-works
+Error: Aborted because ./src/pages/test.jsx is not accepted
+Update propagation: ./src/pages/test.jsx -> ./node_modules/next/dist/build/webpack/loaders/next-client-pages-loader.js?absolutePagePath=C%3A%5CUsers%5Csalaya%5CDesktop%5Ccalismaplani%5Csrc%5Cpages%5Ctest.jsx&page=%2Ftest!
+    at applyHandler (http://localhost/_next/static/chunks/webpack.js?ts=1669634630185:881:31)
+    at http://localhost/_next/static/chunks/webpack.js?ts=1669634630185:564:21
+    at Array.map (<anonymous>)
+Warning: data for page "/test" is 168 kB which exceeds the threshold of 128 kB, this amount of data can reduce performance.
+See more info here: https://nextjs.org/docs/messages/large-page-data
+warn  - Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/basic-features/fast-refresh#how-it-works
+Error: Aborted because ./src/pages/test.jsx is not accepted
+Update propagation: ./src/pages/test.jsx -> ./node_modules/next/dist/build/webpack/loaders/next-client-pages-loader.js?absolutePagePath=C%3A%5CUsers%5Csalaya%5CDesktop%5Ccalismaplani%5Csrc%5Cpages%5Ctest.jsx&page=%2Ftest!
+    at applyHandler (http://localhost/_next/static/chunks/webpack.js?ts=1669634693399:881:31)
+    at http://localhost/_next/static/chunks/webpack.js?ts=1669634693399:564:21
+    at Array.map (<anonymous>)
+ReferenceError: personnelCountByDepartment is not defined
+    at test (webpack-internal:///./src/pages/test.jsx:56:31)
+    at renderWithHooks (C:\Users\salaya\Desktop\calismaplani\node_modules\react-dom\cjs\react-dom-server.browser.development.js:5658:16)
+    at renderIndeterminateComponent (C:\Users\salaya\Desktop\calismaplani\node_modules\react-dom\cjs\react-dom-server.browser.development.js:5731:15)
+    at renderElement (C:\Users\salaya\Desktop\calismaplani\node_modules\react-dom\cjs\react-dom-server.browser.development.js:5946:7)
+    at renderNodeDestructiveImpl (C:\Users\salaya\Desktop\calismaplani\node_modules\react-dom\cjs\react-dom-server.browser.development.js:6104:11)
+    at renderNodeDestructive (C:\Users\salaya\Desktop\calismaplani\node_modules\react-dom\cjs\react-dom-server.browser.development.js:6076:14)
+    at finishClassComponent (C:\Users\salaya\Desktop\calismaplani\node_modules\react-dom\cjs\react-dom-server.browser.development.js:5688:3)
+    at renderClassComponent (C:\Users\salaya\Desktop\calismaplani\node_modules\react-dom\cjs\react-dom-server.browser.development.js:5696:3)
+    at renderElement (C:\Users\salaya\Desktop\calismaplani\node_modules\react-dom\cjs\react-dom-server.browser.development.js:5943:7)
+    at renderNodeDestructiveImpl (C:\Users\salaya\Desktop\calismaplani\node_modules\react-dom\cjs\react-dom-server.browser.development.js:6104:11)
+error - src\pages\test.jsx (40:11) @ test
+error - ReferenceError: personnelCountByDepartment is not defined
+    at test (webpack-internal:///./src/pages/test.jsx:56:31)
+    at renderWithHooks (C:\Users\salaya\Desktop\calismaplani\node_modules\react-dom\cjs\react-dom-server.browser.development.js:5658:16)
+    at renderIndeterminateComponent (C:\Users\salaya\Desktop\calismaplani\node_modules\react-dom\cjs\react-dom-server.browser.development.js:5731:15)
+    at renderElement (C:\Users\salaya\Desktop\calismaplani\node_modules\react-dom\cjs\react-dom-server.browser.development.js:5946:7)
+    at renderNodeDestructiveImpl (C:\Users\salaya\Desktop\calismaplani\node_modules\react-dom\cjs\react-dom-server.browser.development.js:6104:11)
+    at renderNodeDestructive (C:\Users\salaya\Desktop\calismaplani\node_modules\react-dom\cjs\react-dom-server.browser.development.js:6076:14)
+    at finishClassComponent (C:\Users\salaya\Desktop\calismaplani\node_modules\react-dom\cjs\react-dom-server.browser.development.js:5688:3)
+    at renderClassComponent (C:\Users\salaya\Desktop\calismaplani\node_modules\react-dom\cjs\react-dom-server.browser.development.js:5696:3)
+    at renderElement (C:\Users\salaya\Desktop\calismaplani\node_modules\react-dom\cjs\react-dom-server.browser.development.js:5943:7)
+    at renderNodeDestructiveImpl (C:\Users\salaya\Desktop\calismaplani\node_modules\react-dom\cjs\react-dom-server.browser.development.js:6104:11) {
+  page: '/test'
+}
+[0m [90m 38 | [39m        [33m<[39m[33mh1[39m className[33m=[39m[32m' text-lg font-bold'[39m[33m>[39m[33mDB[39m[33m<[39m[33m/[39m[33mh1[39m[33m>[39m[0m
+[0m [90m 39 | [39m        [33m<[39m[33mul[39m className[33m=[39m[32m'flex flex-col gap-2 divide-y text-xs'[39m[33m>[39m[0m
+[0m[31m[1m>[22m[39m[90m 40 | [39m          {personnelCountByDepartment[33m.[39mmap((department) [33m=>[39m ([0m
+[0m [90m    | [39m          [31m[1m^[22m[39m[0m
+[0m [90m 41 | [39m            [33m<[39m[33mli[39m className[33m=[39m[32m'flex justify-between'[39m[33m>[39m[0m
+[0m [90m 42 | [39m              [33m<[39m[33mspan[39m className[33m=[39m[32m''[39m[33m>[39m{[32m`${department.name}`[39m}[33m<[39m[33m/[39m[33mspan[39m[33m>[39m[0m
+[0m [90m 43 | [39m              [33m<[39m[33mspan[39m className[33m=[39m[32m'font-bold'[39m[33m>[39m{[32m`${department.count}`[39m}[33m<[39m[33m/[39m[33mspan[39m[33m>[39m[0m
+warn  - Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/basic-features/fast-refresh#how-it-works
+warn  - Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/basic-features/fast-refresh#how-it-works
+Warning: Each child in a list should have a unique "key" prop.
+
+Check the top-level render call using <ul>. See https://reactjs.org/link/warning-keys for more information.
+    at li
+    at test (webpack-internal:///./src/pages/test.jsx:14:17)
+    at ErrorBoundary (webpack-internal:///./src/components/ErrorBoundry.jsx:19:9)
+    at WithRouterWrapper (C:\Users\salaya\Desktop\calismaplani\node_modules\next\dist\client\with-router.js:12:34)
+    at MyApp (webpack-internal:///./src/pages/_app.js:19:18)
+    at StyleRegistry (C:\Users\salaya\Desktop\calismaplani\node_modules\styled-jsx\dist\index\index.js:448:36)
+    at AppContainer (C:\Users\salaya\Desktop\calismaplani\node_modules\next\dist\server\render.js:298:29)
+    at AppContainerWithIsomorphicFiberStructure (C:\Users\salaya\Desktop\calismaplani\node_modules\next\dist\server\render.js:327:57)
+    at div
+    at Body (C:\Users\salaya\Desktop\calismaplani\node_modules\next\dist\server\render.js:614:21)
+Warning: data for page "/test" is 168 kB which exceeds the threshold of 128 kB, this amount of data can reduce performance.
+See more info here: https://nextjs.org/docs/messages/large-page-data
+Warning: data for page "/test" is 168 kB which exceeds the threshold of 128 kB, this amount of data can reduce performance.
+See more info here: https://nextjs.org/docs/messages/large-page-data
+warn  - Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/basic-features/fast-refresh#how-it-works
+Error: Aborted because ./src/pages/test.jsx is not accepted
+Update propagation: ./src/pages/test.jsx -> ./node_modules/next/dist/build/webpack/loaders/next-client-pages-loader.js?absolutePagePath=C%3A%5CUsers%5Csalaya%5CDesktop%5Ccalismaplani%5Csrc%5Cpages%5Ctest.jsx&page=%2Ftest!
+    at applyHandler (http://localhost/_next/static/chunks/webpack.js?ts=1669634864109:881:31)
+    at http://localhost/_next/static/chunks/webpack.js?ts=1669634864109:564:21
+    at Array.map (<anonymous>)
+Warning: data for page "/test" is 168 kB which exceeds the threshold of 128 kB, this amount of data can reduce performance.
+See more info here: https://nextjs.org/docs/messages/large-page-data
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename 'C:\Users\salaya\Desktop\calismaplani\.next\cache\webpack\client-development\5.pack_' -> 'C:\Users\salaya\Desktop\calismaplani\.next\cache\webpack\client-development\5.pack'
+warn  - Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/basic-features/fast-refresh#how-it-works
+Error: Aborted because ./src/pages/test.jsx is not accepted
+Update propagation: ./src/pages/test.jsx -> ./node_modules/next/dist/build/webpack/loaders/next-client-pages-loader.js?absolutePagePath=C%3A%5CUsers%5Csalaya%5CDesktop%5Ccalismaplani%5Csrc%5Cpages%5Ctest.jsx&page=%2Ftest!
+    at applyHandler (http://localhost/_next/static/chunks/webpack.js?ts=1669634903595:881:31)
+    at http://localhost/_next/static/chunks/webpack.js?ts=1669634903595:564:21
+    at Array.map (<anonymous>)
+Warning: data for page "/test" is 168 kB which exceeds the threshold of 128 kB, this amount of data can reduce performance.
+See more info here: https://nextjs.org/docs/messages/large-page-data
+warn  - Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/basic-features/fast-refresh#how-it-works
+Error: Aborted because ./src/pages/test.jsx is not accepted
+Update propagation: ./src/pages/test.jsx -> ./node_modules/next/dist/build/webpack/loaders/next-client-pages-loader.js?absolutePagePath=C%3A%5CUsers%5Csalaya%5CDesktop%5Ccalismaplani%5Csrc%5Cpages%5Ctest.jsx&page=%2Ftest!
+    at applyHandler (http://localhost/_next/static/chunks/webpack.js?ts=1669635312295:881:31)
+    at http://localhost/_next/static/chunks/webpack.js?ts=1669635312295:564:21
+    at Array.map (<anonymous>)
+Warning: data for page "/test" is 168 kB which exceeds the threshold of 128 kB, this amount of data can reduce performance.
+See more info here: https://nextjs.org/docs/messages/large-page-data
+warn  - Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/basic-features/fast-refresh#how-it-works
+Error: Aborted because ./src/pages/test.jsx is not accepted
+Update propagation: ./src/pages/test.jsx -> ./node_modules/next/dist/build/webpack/loaders/next-client-pages-loader.js?absolutePagePath=C%3A%5CUsers%5Csalaya%5CDesktop%5Ccalismaplani%5Csrc%5Cpages%5Ctest.jsx&page=%2Ftest!
+    at applyHandler (http://localhost/_next/static/chunks/webpack.js?ts=1669635351907:881:31)
+    at http://localhost/_next/static/chunks/webpack.js?ts=1669635351907:564:21
+    at Array.map (<anonymous>)
+Warning: data for page "/test" is 168 kB which exceeds the threshold of 128 kB, this amount of data can reduce performance.
+See more info here: https://nextjs.org/docs/messages/large-page-data
+warn  - Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/basic-features/fast-refresh#how-it-works
+Error: Aborted because ./src/pages/test.jsx is not accepted
+Update propagation: ./src/pages/test.jsx -> ./node_modules/next/dist/build/webpack/loaders/next-client-pages-loader.js?absolutePagePath=C%3A%5CUsers%5Csalaya%5CDesktop%5Ccalismaplani%5Csrc%5Cpages%5Ctest.jsx&page=%2Ftest!
+    at applyHandler (http://localhost/_next/static/chunks/webpack.js?ts=1669635371085:881:31)
+    at http://localhost/_next/static/chunks/webpack.js?ts=1669635371085:564:21
+    at Array.map (<anonymous>)
+Warning: data for page "/test" is 168 kB which exceeds the threshold of 128 kB, this amount of data can reduce performance.
+See more info here: https://nextjs.org/docs/messages/large-page-data
+warn  - Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/basic-features/fast-refresh#how-it-works
+Error: Aborted because ./src/pages/test.jsx is not accepted
+Update propagation: ./src/pages/test.jsx -> ./node_modules/next/dist/build/webpack/loaders/next-client-pages-loader.js?absolutePagePath=C%3A%5CUsers%5Csalaya%5CDesktop%5Ccalismaplani%5Csrc%5Cpages%5Ctest.jsx&page=%2Ftest!
+    at applyHandler (http://localhost/_next/static/chunks/webpack.js?ts=1669635473310:881:31)
+    at http://localhost/_next/static/chunks/webpack.js?ts=1669635473310:564:21
+    at Array.map (<anonymous>)
+Warning: data for page "/test" is 168 kB which exceeds the threshold of 128 kB, this amount of data can reduce performance.
+See more info here: https://nextjs.org/docs/messages/large-page-data
+warn  - Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/basic-features/fast-refresh#how-it-works
+Error: Aborted because ./src/pages/test.jsx is not accepted
+Update propagation: ./src/pages/test.jsx -> ./node_modules/next/dist/build/webpack/loaders/next-client-pages-loader.js?absolutePagePath=C%3A%5CUsers%5Csalaya%5CDesktop%5Ccalismaplani%5Csrc%5Cpages%5Ctest.jsx&page=%2Ftest!
+    at applyHandler (http://localhost/_next/static/chunks/webpack.js?ts=1669635587370:881:31)
+    at http://localhost/_next/static/chunks/webpack.js?ts=1669635587370:564:21
+    at Array.map (<anonymous>)
+Warning: data for page "/test" is 168 kB which exceeds the threshold of 128 kB, this amount of data can reduce performance.
+See more info here: https://nextjs.org/docs/messages/large-page-data
+warn  - Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/basic-features/fast-refresh#how-it-works
+Error: Aborted because ./src/pages/test.jsx is not accepted
+Update propagation: ./src/pages/test.jsx -> ./node_modules/next/dist/build/webpack/loaders/next-client-pages-loader.js?absolutePagePath=C%3A%5CUsers%5Csalaya%5CDesktop%5Ccalismaplani%5Csrc%5Cpages%5Ctest.jsx&page=%2Ftest!
+    at applyHandler (http://localhost/_next/static/chunks/webpack.js?ts=1669636018485:881:31)
+    at http://localhost/_next/static/chunks/webpack.js?ts=1669636018485:564:21
+    at Array.map (<anonymous>)
+Could not find files for /test in .next/build-manifest.json
+Could not find files for /test in .next/build-manifest.json
+Warning: data for page "/test" is 168 kB which exceeds the threshold of 128 kB, this amount of data can reduce performance.
+See more info here: https://nextjs.org/docs/messages/large-page-data
+Could not find files for /test in .next/build-manifest.json
+Could not find files for /test in .next/build-manifest.json
+Warning: data for page "/test" is 168 kB which exceeds the threshold of 128 kB, this amount of data can reduce performance.
+See more info here: https://nextjs.org/docs/messages/large-page-data
+Could not find files for /test in .next/build-manifest.json
+Could not find files for /test in .next/build-manifest.json
+Warning: data for page "/test" is 168 kB which exceeds the threshold of 128 kB, this amount of data can reduce performance.
+See more info here: https://nextjs.org/docs/messages/large-page-data
+Could not find files for /test in .next/build-manifest.json
+Could not find files for /test in .next/build-manifest.json
+Warning: data for page "/test" is 168 kB which exceeds the threshold of 128 kB, this amount of data can reduce performance.
+See more info here: https://nextjs.org/docs/messages/large-page-data
+Could not find files for /test in .next/build-manifest.json
+Could not find files for /test in .next/build-manifest.json
+Warning: data for page "/test" is 168 kB which exceeds the threshold of 128 kB, this amount of data can reduce performance.
+See more info here: https://nextjs.org/docs/messages/large-page-data
+Could not find files for /test in .next/build-manifest.json
+Could not find files for /test in .next/build-manifest.json
+Warning: data for page "/test" is 168 kB which exceeds the threshold of 128 kB, this amount of data can reduce performance.
+See more info here: https://nextjs.org/docs/messages/large-page-data
+Warning: data for page "/test" is 168 kB which exceeds the threshold of 128 kB, this amount of data can reduce performance.
+See more info here: https://nextjs.org/docs/messages/large-page-data
+warn  - Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/basic-features/fast-refresh#how-it-works
+Error: Aborted because ./src/pages/test.jsx is not accepted
+Update propagation: ./src/pages/test.jsx -> ./node_modules/next/dist/build/webpack/loaders/next-client-pages-loader.js?absolutePagePath=C%3A%5CUsers%5Csalaya%5CDesktop%5Ccalismaplani%5Csrc%5Cpages%5Ctest.jsx&page=%2Ftest!
+    at applyHandler (http://localhost/_next/static/chunks/webpack.js?ts=1669636127319:881:31)
+    at http://localhost/_next/static/chunks/webpack.js?ts=1669636127319:564:21
+    at Array.map (<anonymous>)
+Warning: data for page "/test" is 168 kB which exceeds the threshold of 128 kB, this amount of data can reduce performance.
+See more info here: https://nextjs.org/docs/messages/large-page-data
+warn  - Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/basic-features/fast-refresh#how-it-works
+Error: Aborted because ./src/pages/test.jsx is not accepted
+Update propagation: ./src/pages/test.jsx -> ./node_modules/next/dist/build/webpack/loaders/next-client-pages-loader.js?absolutePagePath=C%3A%5CUsers%5Csalaya%5CDesktop%5Ccalismaplani%5Csrc%5Cpages%5Ctest.jsx&page=%2Ftest!
+    at applyHandler (http://localhost/_next/static/chunks/webpack.js?ts=1669636134213:881:31)
+    at http://localhost/_next/static/chunks/webpack.js?ts=1669636134213:564:21
+    at Array.map (<anonymous>)
+Warning: data for page "/test" is 168 kB which exceeds the threshold of 128 kB, this amount of data can reduce performance.
+See more info here: https://nextjs.org/docs/messages/large-page-data
+warn  - Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/basic-features/fast-refresh#how-it-works
+Error: Aborted because ./src/pages/test.jsx is not accepted
+Update propagation: ./src/pages/test.jsx -> ./node_modules/next/dist/build/webpack/loaders/next-client-pages-loader.js?absolutePagePath=C%3A%5CUsers%5Csalaya%5CDesktop%5Ccalismaplani%5Csrc%5Cpages%5Ctest.jsx&page=%2Ftest!
+    at applyHandler (http://localhost/_next/static/chunks/webpack.js?ts=1669636145797:881:31)
+    at http://localhost/_next/static/chunks/webpack.js?ts=1669636145797:564:21
+    at Array.map (<anonymous>)
+Warning: data for page "/test" is 168 kB which exceeds the threshold of 128 kB, this amount of data can reduce performance.
+See more info here: https://nextjs.org/docs/messages/large-page-data
+warn  - Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/basic-features/fast-refresh#how-it-works
+Error: Aborted because ./src/pages/test.jsx is not accepted
+Update propagation: ./src/pages/test.jsx -> ./node_modules/next/dist/build/webpack/loaders/next-client-pages-loader.js?absolutePagePath=C%3A%5CUsers%5Csalaya%5CDesktop%5Ccalismaplani%5Csrc%5Cpages%5Ctest.jsx&page=%2Ftest!
+    at applyHandler (http://localhost/_next/static/chunks/webpack.js?ts=1669636191284:881:31)
+    at http://localhost/_next/static/chunks/webpack.js?ts=1669636191284:564:21
+    at Array.map (<anonymous>)
+Warning: data for page "/test" is 168 kB which exceeds the threshold of 128 kB, this amount of data can reduce performance.
+See more info here: https://nextjs.org/docs/messages/large-page-data
+warn  - Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/basic-features/fast-refresh#how-it-works
+Error: Aborted because ./src/pages/test.jsx is not accepted
+Update propagation: ./src/pages/test.jsx -> ./node_modules/next/dist/build/webpack/loaders/next-client-pages-loader.js?absolutePagePath=C%3A%5CUsers%5Csalaya%5CDesktop%5Ccalismaplani%5Csrc%5Cpages%5Ctest.jsx&page=%2Ftest!
+    at applyHandler (http://localhost/_next/static/chunks/webpack.js?ts=1669636209968:881:31)
+    at http://localhost/_next/static/chunks/webpack.js?ts=1669636209968:564:21
+    at Array.map (<anonymous>)
+Warning: data for page "/test" is 168 kB which exceeds the threshold of 128 kB, this amount of data can reduce performance.
+See more info here: https://nextjs.org/docs/messages/large-page-data
+warn  - Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/basic-features/fast-refresh#how-it-works
+Error: Aborted because ./src/pages/test.jsx is not accepted
+Update propagation: ./src/pages/test.jsx -> ./node_modules/next/dist/build/webpack/loaders/next-client-pages-loader.js?absolutePagePath=C%3A%5CUsers%5Csalaya%5CDesktop%5Ccalismaplani%5Csrc%5Cpages%5Ctest.jsx&page=%2Ftest!
+    at applyHandler (http://localhost/_next/static/chunks/webpack.js?ts=1669636259421:881:31)
+    at http://localhost/_next/static/chunks/webpack.js?ts=1669636259421:564:21
+    at Array.map (<anonymous>)
+Could not find files for /test in .next/build-manifest.json
+Could not find files for /test in .next/build-manifest.json
+Warning: data for page "/test" is 168 kB which exceeds the threshold of 128 kB, this amount of data can reduce performance.
+See more info here: https://nextjs.org/docs/messages/large-page-data
+Could not find files for /test in .next/build-manifest.json
+Could not find files for /test in .next/build-manifest.json
+Warning: data for page "/test" is 168 kB which exceeds the threshold of 128 kB, this amount of data can reduce performance.
+See more info here: https://nextjs.org/docs/messages/large-page-data
+Could not find files for /test in .next/build-manifest.json
+Could not find files for /test in .next/build-manifest.json
+Warning: data for page "/test" is 168 kB which exceeds the threshold of 128 kB, this amount of data can reduce performance.
+See more info here: https://nextjs.org/docs/messages/large-page-data
+Could not find files for /test in .next/build-manifest.json
+Could not find files for /test in .next/build-manifest.json
+Warning: data for page "/test" is 168 kB which exceeds the threshold of 128 kB, this amount of data can reduce performance.
+See more info here: https://nextjs.org/docs/messages/large-page-data
+Could not find files for /test in .next/build-manifest.json
+Could not find files for /test in .next/build-manifest.json
+Warning: data for page "/test" is 168 kB which exceeds the threshold of 128 kB, this amount of data can reduce performance.
+See more info here: https://nextjs.org/docs/messages/large-page-data
+Could not find files for /test in .next/build-manifest.json
+Could not find files for /test in .next/build-manifest.json
+Warning: data for page "/test" is 168 kB which exceeds the threshold of 128 kB, this amount of data can reduce performance.
+See more info here: https://nextjs.org/docs/messages/large-page-data
+Could not find files for /test in .next/build-manifest.json
+Could not find files for /test in .next/build-manifest.json
+Warning: data for page "/test" is 168 kB which exceeds the threshold of 128 kB, this amount of data can reduce performance.
+See more info here: https://nextjs.org/docs/messages/large-page-data
+error - Error: ENOENT: no such file or directory, open 'C:\Users\salaya\Desktop\calismaplani\.next\server\pages\test.js'
+    at Object.openSync (node:fs:594:3)
+    at Object.readFileSync (node:fs:462:35)
+    at Object.Module._extensions..js (node:internal/modules/cjs/loader:1143:18)
+    at Module.load (node:internal/modules/cjs/loader:1004:32)
+    at Function.Module._load (node:internal/modules/cjs/loader:839:12)
+    at Module.require (node:internal/modules/cjs/loader:1028:19)
+    at require (node:internal/modules/cjs/helpers:102:18)
+    at Object.requirePage (C:\Users\salaya\Desktop\calismaplani\node_modules\next\dist\server\require.js:58:12)
+    at C:\Users\salaya\Desktop\calismaplani\node_modules\next\dist\server\load-components.js:61:73
+    at async Object.loadComponents (C:\Users\salaya\Desktop\calismaplani\node_modules\next\dist\server\load-components.js:61:26) {
+  errno: -4058,
+  syscall: 'open',
+  code: 'ENOENT',
+  path: 'C:\\Users\\salaya\\Desktop\\calismaplani\\.next\\server\\pages\\test.js',
+  page: '/test'
+}
+error - Error: ENOENT: no such file or directory, open 'C:\Users\salaya\Desktop\calismaplani\.next\server\pages\test.js'
+    at Object.openSync (node:fs:594:3)
+    at Object.readFileSync (node:fs:462:35)
+    at Object.Module._extensions..js (node:internal/modules/cjs/loader:1143:18)
+    at Module.load (node:internal/modules/cjs/loader:1004:32)
+    at Function.Module._load (node:internal/modules/cjs/loader:839:12)
+    at Module.require (node:internal/modules/cjs/loader:1028:19)
+    at require (node:internal/modules/cjs/helpers:102:18)
+    at Object.requirePage (C:\Users\salaya\Desktop\calismaplani\node_modules\next\dist\server\require.js:58:12)
+    at C:\Users\salaya\Desktop\calismaplani\node_modules\next\dist\server\load-components.js:61:73
+    at async Object.loadComponents (C:\Users\salaya\Desktop\calismaplani\node_modules\next\dist\server\load-components.js:61:26) {
+  errno: -4058,
+  syscall: 'open',
+  code: 'ENOENT',
+  path: 'C:\\Users\\salaya\\Desktop\\calismaplani\\.next\\server\\pages\\test.js',
+  page: '/test'
+}
+error - Error: ENOENT: no such file or directory, open 'C:\Users\salaya\Desktop\calismaplani\.next\server\pages\test.js'
+    at Object.openSync (node:fs:594:3)
+    at Object.readFileSync (node:fs:462:35)
+    at Object.Module._extensions..js (node:internal/modules/cjs/loader:1143:18)
+    at Module.load (node:internal/modules/cjs/loader:1004:32)
+    at Function.Module._load (node:internal/modules/cjs/loader:839:12)
+    at Module.require (node:internal/modules/cjs/loader:1028:19)
+    at require (node:internal/modules/cjs/helpers:102:18)
+    at Object.requirePage (C:\Users\salaya\Desktop\calismaplani\node_modules\next\dist\server\require.js:58:12)
+    at C:\Users\salaya\Desktop\calismaplani\node_modules\next\dist\server\load-components.js:61:73
+    at async Object.loadComponents (C:\Users\salaya\Desktop\calismaplani\node_modules\next\dist\server\load-components.js:61:26) {
+  errno: -4058,
+  syscall: 'open',
+  code: 'ENOENT',
+  path: 'C:\\Users\\salaya\\Desktop\\calismaplani\\.next\\server\\pages\\test.js',
+  page: '/test'
+}
+error - Error: ENOENT: no such file or directory, open 'C:\Users\salaya\Desktop\calismaplani\.next\server\pages\test.js'
+    at Object.openSync (node:fs:594:3)
+    at Object.readFileSync (node:fs:462:35)
+    at Object.Module._extensions..js (node:internal/modules/cjs/loader:1143:18)
+    at Module.load (node:internal/modules/cjs/loader:1004:32)
+    at Function.Module._load (node:internal/modules/cjs/loader:839:12)
+    at Module.require (node:internal/modules/cjs/loader:1028:19)
+    at require (node:internal/modules/cjs/helpers:102:18)
+    at Object.requirePage (C:\Users\salaya\Desktop\calismaplani\node_modules\next\dist\server\require.js:58:12)
+    at C:\Users\salaya\Desktop\calismaplani\node_modules\next\dist\server\load-components.js:61:73
+    at async Object.loadComponents (C:\Users\salaya\Desktop\calismaplani\node_modules\next\dist\server\load-components.js:61:26) {
+  errno: -4058,
+  syscall: 'open',
+  code: 'ENOENT',
+  path: 'C:\\Users\\salaya\\Desktop\\calismaplani\\.next\\server\\pages\\test.js',
+  page: '/test'
+}
+Warning: data for page "/test" is 168 kB which exceeds the threshold of 128 kB, this amount of data can reduce performance.
+See more info here: https://nextjs.org/docs/messages/large-page-data
+Warning: data for page "/test" is 168 kB which exceeds the threshold of 128 kB, this amount of data can reduce performance.
+See more info here: https://nextjs.org/docs/messages/large-page-data
+Warning: data for page "/test" is 168 kB which exceeds the threshold of 128 kB, this amount of data can reduce performance.
+See more info here: https://nextjs.org/docs/messages/large-page-data

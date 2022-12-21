@@ -45,19 +45,19 @@ export default async function handler(req, response) {
 
     sendMail({
       mailTo: requestedUserInfo.mail,
-      subject: `PKDS | Yetki Tanımlaması`,
+      subject: `Çalışma Planı | Yetki Tanımlaması`,
       content: `Yöneticiniz ${userData.display_name} tarafından haftalık personel devam kaydı girişi yetkiniz kaldırıldı.`,
     });
 
     sendMail({
       mailTo: userData.mail,
-      subject: `PKDS | Yetki Tanımlaması`,
+      subject: `Çalışma Planı | Yetki Tanımlaması`,
       content: `${requestedUserInfo.display_name} isimli personelin, adınıza haftalık personel devam kaydı girişi yetkisini kaldırdınız.`,
     });
 
     sendMail({
       mailTo: process.env.NOTIFICATION_MAIL,
-      subject: `PKDS | Yetki Tanımlaması`,
+      subject: `Çalışma Planı | Yetki Tanımlaması`,
       content: `Yönetici ${userData.display_name}, ${requestedUserInfo.display_name} isimli personelin haftalık personel devam kaydı girişi yetkisini kaldırdı.`,
     });
   } catch (err) {

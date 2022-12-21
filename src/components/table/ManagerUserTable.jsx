@@ -176,7 +176,7 @@ export default function ManagerUserTable({
         ),
       },
       {
-        Header: 'GMY',
+        Header: 'Yönetici',
         accessor: 'manager_display_name',
         Cell: ({ value }) => (
           <span className=' text-gray-500'>

@@ -15,13 +15,23 @@ export default function SelectWeeklyViewWarning({
       <div>
         <span>Bu ekranı görüntülemek için</span>
         <span
+          // onClick={handleViewChange}
+          className=' text-blue-600'
+        >
+          {` haftalık `}
+        </span>
+        <span>görünüm seçmelisiniz.</span>
+      </div>
+      {/* <div>
+        <span>Bu ekranı görüntülemek için</span>
+        <span
           onClick={handleViewChange}
           className='cursor-pointer rounded-md py-1 text-blue-600 hover:mx-2 hover:bg-blue-100 hover:px-2 '
         >
           {` haftalık `}
         </span>
         <span>görünüm seçmelisiniz.</span>
-      </div>
+      </div> */}
     </div>
   );
 }

@@ -72,11 +72,11 @@ export default async function handler(req, response) {
 
     let mailSubject;
     if (userData.isAuthorizedPersonnel) {
-      mailSubject = `PKDS | ${
+      mailSubject = `Çalışma Planı | ${
         prevRecordsExist ? 'Kayıt Düzenleme' : 'Yeni Kayıt'
       } | ${userData.display_name} (${userData.manager_display_name})`;
     } else {
-      mailSubject = `PKDS | ${
+      mailSubject = `Çalışma Planı | ${
         prevRecordsExist ? 'Kayıt Düzenleme' : 'Yeni Kayıt'
       } | ${userData.display_name}`;
     }

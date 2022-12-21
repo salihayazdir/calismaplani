@@ -1,0 +1,2 @@
+info  - Loaded env from C:\Users\salaya\Desktop\calismaplani\.env
+> Ready on http://localhost:\\.\pipe\7ccbfd12-86ad-498f-b00a-f3f3fd51ffae

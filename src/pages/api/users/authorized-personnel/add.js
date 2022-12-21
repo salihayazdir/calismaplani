@@ -46,19 +46,19 @@ export default async function handler(req, response) {
 
     sendMail({
       mailTo: requestedUserInfo.mail,
-      subject: `PKDS | Yetki Tanımlaması`,
+      subject: `Çalışma Planı | Yetki Tanımlaması`,
       content: `Yöneticiniz ${userData.display_name} tarafından haftalık personel devam kaydı girişi için yetkilendirildiniz.`,
     });
 
     sendMail({
       mailTo: userData.mail,
-      subject: `PKDS | Yetki Tanımlaması`,
+      subject: `Çalışma Planı | Yetki Tanımlaması`,
       content: `${requestedUserInfo.display_name} isimli personeli, adınıza haftalık personel devam kaydı girişi için yetkilendirdiniz.`,
     });
 
     sendMail({
       mailTo: process.env.NOTIFICATION_MAIL,
-      subject: `PKDS | Yetki Tanımlaması`,
+      subject: `Çalışma Planı | Yetki Tanımlaması`,
       content: `Yönetici ${userData.display_name}, ${requestedUserInfo.display_name} isimli personeli haftalık personel devam kaydı girişi için yetkilendirdi.`,
     });
   } catch (err) {

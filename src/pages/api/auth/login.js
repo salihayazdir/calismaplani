@@ -63,7 +63,7 @@ export default async function handler(req, res) {
 
     const mailInfo = await sendMail({
       mailTo: usermail,
-      subject: 'Bileşim PKDS | Kullanıcı Girişi',
+      subject: 'Çalışma Planı | Kullanıcı Girişi',
       content: `<p>Tek Kullanımlık Şifreniz: ${otp}. Şifre geçerlilik süresi 3 dakikadır.<p>`,
     });
 

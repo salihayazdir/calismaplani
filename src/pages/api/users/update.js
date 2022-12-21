@@ -80,23 +80,13 @@ export default async function handler(req, response) {
           if (user.manager !== undefined)
             isManager = Boolean(user.manager.includes('OU=Genel Mud. Yrd.'));
 
-          //////// MEHMET KANTEMİR DIRECT REPORTS TANIMLANANA KADAR /////
-          //////// MEHMET KANTEMİR DIRECT REPORTS TANIMLANANA KADAR /////
-          // const managerExceptions = [
-          //   'omeung',
-          //   'mehoge',
-          //   'musbed',
-          //   'mehyas',
-          //   'baryon',
-          //   'tunotu',
-          //   'ozghel',
-          //   'kaaata',
-          //   'alpoze',
-          // ];
-          // if (managerExceptions.indexOf(user.sAMAccountName) !== -1)
-          //   isManager = true;
-          //////// MEHMET KANTEMİR DIRECT REPORTS TANIMLANANA KADAR /////
-          //////// MEHMET KANTEMİR DIRECT REPORTS TANIMLANANA KADAR /////
+          ////// GENEL MÜDÜRE BAĞLI YÖNETİCİLER /////
+          ////// GENEL MÜDÜRE BAĞLI YÖNETİCİLER /////
+          const managerExceptions = ['endavc', 'omeung'];
+          if (managerExceptions.indexOf(user.sAMAccountName) !== -1)
+            isManager = true;
+          ////// GENEL MÜDÜRE BAĞLI YÖNETİCİLER /////
+          ////// GENEL MÜDÜRE BAĞLI YÖNETİCİLER /////
 
           let isHr = false;
           if (

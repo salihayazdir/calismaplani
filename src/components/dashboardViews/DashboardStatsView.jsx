@@ -60,7 +60,7 @@ export default function DashboardStatsView({
         </div>
       </div>
       {isNoRecords ? (
-        <NoRecords isDashboard setSelectedView={setSelectedView} />
+        <NoRecords />
       ) : isLoading ? (
         <div className='flex gap-6'>
           <div className='flex-1'>

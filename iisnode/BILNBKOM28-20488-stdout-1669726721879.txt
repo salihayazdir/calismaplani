@@ -1,0 +1,61 @@
+info  - Loaded env from C:\Users\salaya\Desktop\calismaplani\.env
+event - compiled client and server successfully in 2.2s (497 modules)
+> Ready on http://localhost:\\.\pipe\85d1deda-149e-498e-94bf-5b56a466d88d
+wait  - compiling / (client and server)...
+event - compiled client and server successfully in 2.6s (1367 modules)
+wait  - compiling /test (client and server)...
+event - compiled client and server successfully in 216 ms (503 modules)
+{
+  username: 'ahmegu',
+  display_name: 'Ahmet Murat Gürses',
+  department: 'Bilgi Sistemleri Yönetimi Grubu',
+  description: 'Yazılım ve Uygulama Yönetimi Bölümü',
+  mail: 'ahmet.gurses@bilesim.net.tr',
+  is_manager: false,
+  is_hr: false,
+  manager_username: null,
+  manager_display_name: null
+}
+wait  - compiling / (client and server)...
+event - compiled client and server successfully in 528 ms (1370 modules)
+wait  - compiling /giris (client and server)...
+event - compiled client and server successfully in 375 ms (1381 modules)
+{
+  username: 'ahmegu',
+  display_name: 'Ahmet Murat Gürses',
+  department: 'Bilgi Sistemleri Yönetimi Grubu',
+  description: 'Yazılım ve Uygulama Yönetimi Bölümü',
+  mail: 'ahmet.gurses@bilesim.net.tr',
+  is_manager: false,
+  is_hr: false,
+  manager_username: null,
+  manager_display_name: null
+}
+wait  - compiling /api/users/authorized-personnel/get-by-manager (client and server)...
+event - compiled successfully in 62 ms (95 modules)
+wait  - compiling...
+event - compiled client and server successfully in 5s (503 modules)
+wait  - compiling...
+event - compiled client and server successfully in 31 ms (503 modules)
+{
+  username: 'ahmegu',
+  display_name: 'Ahmet Murat Gürses',
+  department: 'Bilgi Sistemleri Yönetimi Grubu',
+  description: 'Yazılım ve Uygulama Yönetimi Bölümü',
+  mail: 'ahmet.gurses@bilesim.net.tr',
+  is_manager: false,
+  is_hr: false,
+  manager_username: null,
+  manager_display_name: null
+}
+{
+  username: 'ahmegu',
+  display_name: 'Ahmet Murat Gürses',
+  department: 'Bilgi Sistemleri Yönetimi Grubu',
+  description: 'Yazılım ve Uygulama Yönetimi Bölümü',
+  mail: 'ahmet.gurses@bilesim.net.tr',
+  is_manager: false,
+  is_hr: false,
+  manager_username: null,
+  manager_display_name: null
+}

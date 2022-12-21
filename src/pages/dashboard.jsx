@@ -125,7 +125,10 @@ export default function Dashboard({
 
   return (
     <>
-      <Layout title='PDKS | Dashboard' displayName={userData.display_name}>
+      <Layout
+        title='Çalışma Planı | Dashboard'
+        displayName={userData.display_name}
+      >
         <div className='flex  flex-col gap-6 px-10 py-6'>
           <div className='flex items-center justify-between'>
             <ViewRadio

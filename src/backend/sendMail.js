@@ -5,6 +5,7 @@ export default async function sendMail({ mailTo, subject, content }) {
     try {
       let transport = nodemailer.createTransport({
         host: process.env.MAIL_HOST,
+        pool: true,
         secure: false,
         port: 587,
         auth: {
