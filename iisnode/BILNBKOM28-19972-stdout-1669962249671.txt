@@ -1,7 +1,0 @@
-info  - Loaded env from C:\Users\salaya\Desktop\calismaplani\.env
-event - compiled client and server successfully in 1056 ms (497 modules)
-> Ready on http://localhost:\\.\pipe\0e6e1662-fa71-4306-baeb-8498a496b493
-wait  - compiling / (client and server)...
-event - compiled client and server successfully in 1260 ms (1367 modules)
-wait  - compiling /giris (client and server)...
-event - compiled client and server successfully in 354 ms (1378 modules)
