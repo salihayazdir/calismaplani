@@ -20,8 +20,8 @@ export default async function sendMail({ mailTo, subject, content }) {
       const mailOptions = {
         // from: process.env.MAIL_FROM,
         from: 'Haftalık Çalışma Planı <calismaplani@bilesim.net.tr>',
-        // to: mailTo,
-        to: 'salih.ayazdir@bilesim.net.tr',
+         to: mailTo,
+        // to: 'salih.ayazdir@bilesim.net.tr',
         subject,
         html: content,
       };
