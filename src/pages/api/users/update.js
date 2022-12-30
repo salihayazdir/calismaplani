@@ -13,12 +13,23 @@ export default async function handler(req, response) {
     });
 
     client.bind(process.env.LDAP_USER, process.env.LDAP_PW, (err) => {
-      if (err) throw `LDAP Bind Error : ${err}`;
+      // if (err) throw `LDAP Bind Error : ${err}`;
+      if (err) {
+        console.error('Hata: ' + err);
+        response.status(200).json({
+          success: false,
+          message: `LDAP Bind Error : ${err}`,
+        });
+        addLog({
+          type: 'api',
+          isError: true,
+          username: userData.username || null,
+          info: `api/users/update ${err}`,
+        });
+      }
     });
 
     const opts = {
-      // filter: `(&(objectCategory=CN=Person,CN=Schema,CN=Configuration,DC=bilesim,DC=net,DC=tr)(${req.body.filter}))`,
-      // filter: `${req.body.filter}`,
       filter: `objectCategory=CN=Person,CN=Schema,CN=Configuration,DC=bilesim,DC=net,DC=tr`,
       scope: 'sub',
       attributes: [
@@ -65,7 +76,6 @@ export default async function handler(req, response) {
         client.unbind((err) => {
           if (err) throw `Unbind Error : ${err}`;
         });
-        // console.log("status: " + result);
 
         if (result.status !== 0) throw `LDAP Error: ${result.errorMessage}`;
 
@@ -74,18 +84,15 @@ export default async function handler(req, response) {
 
         const userData = ldapData.map((user) => {
           if (user.mail === null || user.mail === undefined) return;
-          // if (user.manager === undefined || user.manager === null) return;
 
           let isManager = false;
           if (user.manager !== undefined)
             isManager = Boolean(user.manager.includes('OU=Genel Mud. Yrd.'));
 
           ////// GENEL MÜDÜRE BAĞLI YÖNETİCİLER /////
-          ////// GENEL MÜDÜRE BAĞLI YÖNETİCİLER /////
-          const managerExceptions = ['endavc', 'omeung'];
+          const managerExceptions = ['endavc', 'omeung', 'selkat'];
           if (managerExceptions.indexOf(user.sAMAccountName) !== -1)
             isManager = true;
-          ////// GENEL MÜDÜRE BAĞLI YÖNETİCİLER /////
           ////// GENEL MÜDÜRE BAĞLI YÖNETİCİLER /////
 
           let isHr = false;

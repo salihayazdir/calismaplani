@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { useTable, useFilters, usePagination } from 'react-table';
 import { addDays, format } from 'date-fns';
 import * as XLSX from 'xlsx';
+import _ from 'lodash';
 import {
   ArrowDownTrayIcon,
   ChevronDoubleLeftIcon,
@@ -76,11 +77,24 @@ export default function DashboardTable({
       usersInRecords,
       JSON.stringify
     );
-    return uniqUsersInRecords;
+    return _.sortBy(uniqUsersInRecords, 'display_name');
   }, [records]);
 
   const columns = useMemo(
     () => [
+      {
+        Header: '',
+        id: 'index',
+        maxWidth: 40,
+        width: 20,
+        Filter: false,
+        accessor: (_row, i) => i + 1,
+        Cell: ({ value }) => (
+          <span className='font-medium text-gray-400'>
+            {value === undefined ? null : String(value + '.')}
+          </span>
+        ),
+      },
       {
         Header: 'Personel',
         accessor: 'display_name',
@@ -263,8 +277,10 @@ export default function DashboardTable({
               {headerGroup.headers.map((column, idx) => (
                 <th
                   key={idx}
-                  {...column.getHeaderProps()}
-                  className='whitespace-nowrap px-3 py-2 text-left align-baseline font-semibold first-of-type:pl-10'
+                  {...column.getHeaderProps({
+                    style: { minWidth: column.minWidth, width: column.width },
+                  })}
+                  className='whitespace-nowrap px-3 py-2 text-left align-baseline font-semibold first-of-type:pl-6 first-of-type:pr-3'
                 >
                   {column.render('Header')}
                   <div>{column.canFilter ? column.render('Filter') : null}</div>
@@ -286,8 +302,13 @@ export default function DashboardTable({
                   return (
                     <td
                       key={idx}
-                      {...cell.getCellProps()}
-                      className='py-2 pl-3 pr-5 first-of-type:pl-10 '
+                      {...cell.getCellProps({
+                        style: {
+                          minWidth: cell.column.minWidth,
+                          width: cell.column.width,
+                        },
+                      })}
+                      className='py-2 pl-3 pr-5 first-of-type:pl-6 first-of-type:pr-3 '
                     >
                       {cell.render('Cell')}
                     </td>

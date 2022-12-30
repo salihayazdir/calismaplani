@@ -13,6 +13,7 @@ import WeekPicker from '../components/datepickers/WeekPicker';
 import NewRecordsModal from '../components/modals/NewRecordsModal';
 import AuthorizedPersonnelModal from '../components/modals/AuthorizedPersonnelModal';
 import DashboardRecordsView from '../components/dashboardViews/DashboardRecordsView';
+import DailyStats from '../components/charts/DailyStats';
 import ViewRadio from '../components/radio/ViewRadio';
 import { ArrowPathIcon, UsersIcon } from '@heroicons/react/24/outline';
 import { Transition } from '@headlessui/react';
@@ -144,7 +145,7 @@ export default function Home({
         title='Çalışma Planı | Anasayfa'
         displayName={userData.display_name}
       >
-        <div className='flex  flex-col gap-6 px-10 py-6'>
+        <div className='flex flex-col gap-8 py-8 px-10'>
           <div className='flex items-center justify-between'>
             <ViewRadio
               selected={selectedView}
@@ -219,14 +220,23 @@ export default function Home({
           ) : null}
 
           {selectedView === 'records' ? (
-            <DashboardRecordsView
-              records={records}
-              userStatuses={userStatuses}
-              selectedDate={selectedDate}
-              apiStatus={apiStatus}
-              selectedDateRange='week'
-              isDashboard={false}
-            />
+            <>
+              <DashboardRecordsView
+                records={records}
+                userStatuses={userStatuses}
+                selectedDate={selectedDate}
+                apiStatus={apiStatus}
+                selectedDateRange='week'
+                isDashboard={false}
+              />
+              {records.length !== 0 ? (
+                <DailyStats
+                  records={records}
+                  userStatuses={userStatuses}
+                  selectedDate={selectedDate}
+                />
+              ) : null}
+            </>
           ) : null}
         </div>
       </Layout>

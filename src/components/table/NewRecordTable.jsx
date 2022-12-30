@@ -4,6 +4,7 @@ import StatusSelect from './StatusSelect';
 import NewRecordBulkActions from './NewRecordBulkActions';
 import { addDays, format } from 'date-fns';
 import { CheckIcon } from '@heroicons/react/24/outline';
+import _ from 'lodash';
 
 const IndeterminateCheckbox = forwardRef(({ indeterminate, ...rest }, ref) => {
   const defaultRef = useRef();
@@ -29,19 +30,34 @@ export default function NewRecordTable({
 }) {
   const tableData = useMemo(
     () =>
-      newRecords[0].data.map((user) => ({
-        username: user.username,
-        display_name: user.display_name,
-        user_status_id: user.user_status_id,
-        isAuthorized: Boolean(
-          authorizedPersonnel.indexOf(user.username) !== -1
-        ),
-      })),
+      _.sortBy(
+        newRecords[0].data.map((user) => ({
+          username: user.username,
+          display_name: user.display_name,
+          user_status_id: user.user_status_id,
+          isAuthorized: Boolean(
+            authorizedPersonnel.indexOf(user.username) !== -1
+          ),
+        })),
+        'display_name'
+      ),
     [selectedDate, authorizedPersonnel]
   );
 
   const columns = useMemo(
     () => [
+      {
+        Header: '',
+        id: 'index',
+        maxWidth: 40,
+        width: 20,
+        accessor: (_row, i) => i + 1,
+        Cell: ({ value }) => (
+          <span className='font-medium text-gray-400'>
+            {value === undefined ? null : String(value + '.')}
+          </span>
+        ),
+      },
       {
         Header: 'Personel',
         accessor: 'display_name',
@@ -108,6 +124,8 @@ export default function NewRecordTable({
     hooks.visibleColumns.push((columns) => [
       {
         id: 'selection',
+        maxWidth: 40,
+        width: 20,
         Header: ({ getToggleAllRowsSelectedProps }) => (
           <div className='flex items-center'>
             <IndeterminateCheckbox {...getToggleAllRowsSelectedProps()} />
@@ -173,7 +191,9 @@ export default function NewRecordTable({
                 {headerGroup.headers.map((column, idx) => (
                   <th
                     key={idx}
-                    {...column.getHeaderProps()}
+                    {...column.getHeaderProps({
+                      style: { minWidth: column.minWidth, width: column.width },
+                    })}
                     className='whitespace-nowrap px-3 py-3 text-left font-semibold first-of-type:pl-6'
                   >
                     {column.render('Header')}
@@ -195,7 +215,12 @@ export default function NewRecordTable({
                     return (
                       <td
                         key={idx}
-                        {...cell.getCellProps()}
+                        {...cell.getCellProps({
+                          style: {
+                            minWidth: cell.column.minWidth,
+                            width: cell.column.width,
+                          },
+                        })}
                         className='w-44 py-4 pl-3 pr-5 first-of-type:w-20 first-of-type:pl-6 '
                       >
                         {cell.render('Cell')}

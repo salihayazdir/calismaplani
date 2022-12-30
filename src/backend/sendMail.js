@@ -20,10 +20,13 @@ export default async function sendMail({ mailTo, subject, content }) {
       const mailOptions = {
         // from: process.env.MAIL_FROM,
         from: 'Haftalık Çalışma Planı <calismaplani@bilesim.net.tr>',
-         to: mailTo,
-        // to: 'salih.ayazdir@bilesim.net.tr',
+        to:
+          process.env.NODE_ENV === 'development'
+            ? 'salih.ayazdir@bilesim.net.tr'
+            : mailTo,
         subject,
-        html: content,
+        // html: content,
+        html: `<div>${content}<br/><a href="https://calismaplani.bilesim.net.tr">calismaplani.bilesim.net.tr</a></div>`,
       };
 
       transport.sendMail(mailOptions, (err, info) => {
