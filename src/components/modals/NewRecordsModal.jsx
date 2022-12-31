@@ -14,7 +14,6 @@ export default function NewRecordsModal({
 }) {
   const [offPersonnelExists, setOffPersonnelExists] = useState(false);
   const [prevRecordsExist, setPrevRecordsExist] = useState(false);
-  // console.log(prevRecordsExist);
 
   const [apiStatus, setApiStatus] = useState({
     isLoading: false,
@@ -68,6 +67,7 @@ export default function NewRecordsModal({
     axios
       .post(`${process.env.NEXT_PUBLIC_DOMAIN}/api/records/add-record`, {
         records: recordsToSend,
+        rawRecords: newRecords,
         recordsStartDate: format(selectedDate, 'd MMMM yyyy'),
         recordsEndDate: format(addDays(selectedDate, 4), 'd MMMM yyyy'),
         prevRecordsExist: Boolean(prevRecordsExist),

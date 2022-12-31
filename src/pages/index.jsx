@@ -66,6 +66,7 @@ export default function Home({
       data: directReports.map((user) => ({
         username: user.username,
         display_name: user.display_name,
+        mail: user.mail,
         user_status_id: 1,
         day: dayIdx,
         record_status_id: 2,
