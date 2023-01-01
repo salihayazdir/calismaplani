@@ -34,7 +34,7 @@ export default function StatusSelect({
   return (
     <Listbox value={selectedId} onChange={handleSelectOnChange}>
       <div className='absolute -mt-3.5 min-w-[7rem] text-gray-600'>
-        <Listbox.Button className='relative w-36 cursor-pointer rounded-lg  bg-white py-1.5 pl-3 pr-10 text-left shadow focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300'>
+        <Listbox.Button className='relative w-32 cursor-pointer rounded-lg  bg-white py-1.5 pl-3 pr-10 text-left shadow focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300'>
           <span className='block truncate'>
             {
               userStatuses.filter(

@@ -72,6 +72,7 @@ export default function DashboardTable({
       manager_username: record.manager_username,
       department: record.department,
       description: record.description,
+      physicalDeliveryOfficeName: record.physicalDeliveryOfficeName,
     }));
     const uniqUsersInRecords = removeDuplicateObjects(
       usersInRecords,
@@ -123,9 +124,21 @@ export default function DashboardTable({
         Header: 'Bölüm',
         accessor: 'description',
         Filter: SelectColumnFilter,
-        Cell: ({ value }) => (
-          <span className=' text-gray-500'>{String(value)}</span>
-        ),
+        Cell: ({ value }) => {
+          return value ? (
+            <span className=' text-gray-500'>{String(value)}</span>
+          ) : null;
+        },
+      },
+      {
+        Header: 'Servis',
+        accessor: 'physicalDeliveryOfficeName',
+        Filter: SelectColumnFilter,
+        Cell: ({ value }) => {
+          return value ? (
+            <span className=' text-gray-500'>{String(value)}</span>
+          ) : null;
+        },
       },
     ],
     []
@@ -200,6 +213,7 @@ export default function DashboardTable({
           'username',
           !isDashboard && 'description',
           !isDashboard && 'manager_display_name',
+          isDashboard && 'physicalDeliveryOfficeName',
         ],
       },
     },
@@ -280,7 +294,7 @@ export default function DashboardTable({
                   {...column.getHeaderProps({
                     style: { minWidth: column.minWidth, width: column.width },
                   })}
-                  className='whitespace-nowrap px-3 py-2 text-left align-baseline font-semibold first-of-type:pl-6 first-of-type:pr-3'
+                  className='px-3 py-2 text-left align-baseline font-semibold first-of-type:pl-6 first-of-type:pr-3'
                 >
                   {column.render('Header')}
                   <div>{column.canFilter ? column.render('Filter') : null}</div>
@@ -433,7 +447,7 @@ function SelectColumnFilter({
         setFilter(e.target.value || undefined);
       }}
     >
-      <option value=''>Tüm Bölümler</option>
+      <option value=''>Tümü</option>
       {options.map((option, i) => (
         <option key={i} value={option}>
           {option}

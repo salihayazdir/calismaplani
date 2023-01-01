@@ -1,5 +1,5 @@
 import { useMemo, useRef, forwardRef, useEffect } from 'react';
-import { useTable, useRowSelect } from 'react-table';
+import { useTable, useRowSelect, useFilters } from 'react-table';
 import StatusSelect from './StatusSelect';
 import NewRecordBulkActions from './NewRecordBulkActions';
 import { addDays, format } from 'date-fns';
@@ -28,12 +28,36 @@ export default function NewRecordTable({
   selectedDate,
   authorizedPersonnel,
 }) {
+  const filterTypes = useMemo(
+    () => ({
+      text: (rows, id, filterValue) => {
+        return rows.filter((row) => {
+          const rowValue = row.values[id];
+          return rowValue !== undefined
+            ? String(rowValue)
+                .toLowerCase()
+                .startsWith(String(filterValue).toLowerCase())
+            : true;
+        });
+      },
+    }),
+    []
+  );
+
+  const defaultColumn = useMemo(
+    () => ({
+      Filter: DefaultColumnFilter,
+    }),
+    []
+  );
+
   const tableData = useMemo(
     () =>
       _.sortBy(
         newRecords[0].data.map((user) => ({
           username: user.username,
           display_name: user.display_name,
+          physicalDeliveryOfficeName: user.physicalDeliveryOfficeName,
           user_status_id: user.user_status_id,
           isAuthorized: Boolean(
             authorizedPersonnel.indexOf(user.username) !== -1
@@ -51,6 +75,7 @@ export default function NewRecordTable({
         id: 'index',
         maxWidth: 40,
         width: 20,
+        Filter: false,
         accessor: (_row, i) => i + 1,
         Cell: ({ value }) => (
           <span className='font-medium text-gray-400'>
@@ -68,8 +93,21 @@ export default function NewRecordTable({
         ),
       },
       {
+        Header: 'Servis',
+        accessor: 'physicalDeliveryOfficeName',
+        Filter: SelectColumnFilter,
+        Cell: ({ value }) => (
+          <span className='font-light text-gray-400'>
+            {value === undefined ? null : String(value)}
+          </span>
+        ),
+      },
+      {
         Header: 'Yetki',
         accessor: 'isAuthorized',
+        Filter: false,
+        maxWidth: 40,
+        width: 20,
         Cell: ({ value }) => {
           if (value === true)
             return (
@@ -95,9 +133,9 @@ export default function NewRecordTable({
       const day = addDays(selectedDate, dayIdx);
       const formattedDay = format(day, 'd MMMM');
       return (
-        <div className='inline-flex w-full items-center gap-4'>
+        <div className='w-20 '>
           <div>{dayName}</div>
-          <div className='rounded-lg text-gray-400'>{formattedDay}</div>
+          <div className='mt-2 rounded-lg text-gray-400'>{formattedDay}</div>
         </div>
       );
     },
@@ -155,8 +193,11 @@ export default function NewRecordTable({
     {
       columns,
       data: tableData,
+      defaultColumn,
+      filterTypes,
       initialState: { hiddenColumns: ['username'] },
     },
+    useFilters,
     useRowSelect,
     tableHooks
   );
@@ -194,9 +235,13 @@ export default function NewRecordTable({
                     {...column.getHeaderProps({
                       style: { minWidth: column.minWidth, width: column.width },
                     })}
-                    className='whitespace-nowrap px-3 py-3 text-left font-semibold first-of-type:pl-6'
+                    // className='whitespace-nowrap px-3 py-3 text-left font-semibold first-of-type:pl-6'
+                    className='px-3 py-2 text-left align-baseline font-semibold first-of-type:pl-6 first-of-type:align-middle'
                   >
                     {column.render('Header')}
+                    <div>
+                      {column.canFilter ? column.render('Filter') : null}
+                    </div>
                   </th>
                 ))}
               </tr>
@@ -234,5 +279,50 @@ export default function NewRecordTable({
         </table>
       </div>
     </div>
+  );
+}
+
+function DefaultColumnFilter({
+  column: { filterValue, preFilteredRows, setFilter },
+}) {
+  // const count = preFilteredRows.length;
+  return (
+    <input
+      className='mt-1 w-40 rounded-md py-1 px-2 text-gray-500 shadow focus:outline-blue-300'
+      value={filterValue || ''}
+      onChange={(e) => {
+        setFilter(e.target.value || undefined);
+      }}
+      placeholder={`Ara...`}
+    />
+  );
+}
+
+function SelectColumnFilter({
+  column: { filterValue, setFilter, preFilteredRows, id },
+}) {
+  const options = useMemo(() => {
+    const options = new Set();
+    preFilteredRows.forEach((row) => {
+      options.add(row.values[id]);
+    });
+    return [...options.values()];
+  }, [id, preFilteredRows]);
+
+  return (
+    <select
+      className='mt-1 w-40 rounded-md py-1 px-2 text-gray-500 shadow focus:outline-blue-300'
+      value={filterValue}
+      onChange={(e) => {
+        setFilter(e.target.value || undefined);
+      }}
+    >
+      <option value=''>Tümü</option>
+      {options.map((option, i) => (
+        <option key={i} value={option}>
+          {option}
+        </option>
+      ))}
+    </select>
   );
 }
