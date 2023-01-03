@@ -1,6 +1,6 @@
 const ldap = require('ldapjs');
 import verifyToken from '../../../backend/verifyToken';
-import { addUser, addLog } from '../../../database/dbOps';
+import { addUser, addLog, setUsersInactive } from '../../../database/dbOps';
 
 export default async function handler(req, response) {
   const userData = await verifyToken(req.headers.cookie);
