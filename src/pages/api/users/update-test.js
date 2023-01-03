@@ -1,13 +1,8 @@
 const ldap = require('ldapjs');
-import verifyToken from '../../../backend/verifyToken';
-import { addUser, addLog } from '../../../database/dbOps';
+import { addUser, setUsersInactive } from '../../../database/dbOps';
 
 export default async function handler(req, response) {
-  const userData = await verifyToken(req.headers.cookie);
   try {
-    if (userData.is_hr !== true)
-      throw 'Bu işlem için yetkiniz bulunmamaktadır.';
-
     const client = ldap.createClient({
       url: [process.env.LDAP_IP_1, process.env.LDAP_IP_2],
     });
@@ -19,12 +14,6 @@ export default async function handler(req, response) {
         response.status(200).json({
           success: false,
           message: `LDAP Bind Error : ${err}`,
-        });
-        addLog({
-          type: 'api',
-          isError: true,
-          username: userData.username || null,
-          info: `api/users/update ${err}`,
         });
       }
     });
@@ -140,14 +129,6 @@ export default async function handler(req, response) {
 
           if (errorlength === totalLength) return false;
 
-          if (errorlength !== 0)
-            addLog({
-              type: 'api',
-              isError: true,
-              username: userData.username || null,
-              info: `api/users/update ${successLength} kullanıcı başarıyla güncellendi. ${errorlength} kullanıcı güncellenirken hata oluştu.`,
-            });
-
           return `${successLength} kullanıcı başarıyla güncellendi. ${errorlength} kullanıcı güncellenirken hata oluştu.`;
         };
 
@@ -165,12 +146,6 @@ export default async function handler(req, response) {
     response.status(200).json({
       success: false,
       message: err,
-    });
-    addLog({
-      type: 'api',
-      isError: true,
-      username: userData.username || null,
-      info: `api/users/update ${err}`,
     });
   }
 }

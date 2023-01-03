@@ -23,12 +23,24 @@ export async function addUser(user) {
       .input('department', sql.NVarChar, user.department)
       .input('directReports', sql.NVarChar, user.directReports)
       .input('manager_dn', sql.NVarChar, user.manager_dn)
+      .input('is_active', sql.Bit, user.is_active)
       .execute('PKDS.AddUser');
     // console.log(result);
     return result;
   } catch (err) {
     console.error(err);
     return err;
+  }
+}
+
+export async function setUsersInactive() {
+  try {
+    const pool = await sql.connect(dbConfig);
+    const result = await pool.request().execute('PKDS.SetUsersInactive');
+    return result;
+  } catch (err) {
+    console.error(err);
+    return false;
   }
 }
 

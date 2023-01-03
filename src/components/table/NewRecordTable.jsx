@@ -98,7 +98,7 @@ export default function NewRecordTable({
         Filter: SelectColumnFilter,
         Cell: ({ value }) => (
           <span className='font-light text-gray-400'>
-            {value === undefined ? null : String(value)}
+            {value === undefined || value === null ? null : String(value)}
           </span>
         ),
       },
