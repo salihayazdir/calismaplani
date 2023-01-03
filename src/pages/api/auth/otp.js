@@ -94,6 +94,13 @@ export default async function handler(req, res) {
         })
       )
       .json({ success: true, username });
+
+    addLog({
+      type: 'api',
+      isError: false,
+      username: usernameFromRequest || null,
+      info: `api/auth/otp`,
+    });
   } catch (err) {
     console.error(err);
     res.status(200).json({ success: false, message: err });
@@ -101,7 +108,7 @@ export default async function handler(req, res) {
       type: 'api',
       isError: true,
       username: usernameFromRequest || null,
-      info: `api/auth/login ${err}`,
+      info: `api/auth/otp ${err}`,
     });
   }
 }

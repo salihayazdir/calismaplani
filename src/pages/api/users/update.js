@@ -158,6 +158,12 @@ export default async function handler(req, response) {
           message: message(),
           ldapData,
         });
+        addLog({
+          type: 'api',
+          isError: false,
+          username: userData.username || null,
+          info: `api/users/update ${message() || null}`,
+        });
       });
     });
   } catch (err) {

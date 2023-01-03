@@ -44,6 +44,7 @@ export default function Home({
     isError: false,
     message: '',
   });
+  const [prevRecordsExist, setPrevRecordsExist] = useState(false);
 
   const router = useRouter();
   const signOut = () => {
@@ -55,6 +56,27 @@ export default function Home({
       });
   };
 
+  // const indexOfPreviousRecord = records.findIndex(
+  //   (record) =>
+  //     record.record_date.slice(0, 10) === format(selectedDate, 'yyyy-MM-dd')
+  // );
+
+  // useEffect(() => {
+  //   if (indexOfPreviousRecord !== -1) {
+  //     setPrevRecordsExist(true);
+  //   } else {
+  //     setPrevRecordsExist(false);
+  //   }
+  // }, [selectedDate]);
+
+  useEffect(() => {
+    if (records.length !== 0) {
+      setPrevRecordsExist(true);
+    } else {
+      setPrevRecordsExist(false);
+    }
+  }, [records]);
+
   useEffect(() => {
     if (apiStatus.isError === true) signOut();
   }, [apiStatus]);
@@ -63,17 +85,55 @@ export default function Home({
     days.map((day, dayIdx) => ({
       dayIdx,
       dayDisplayName: day,
-      data: directReports.map((user) => ({
-        username: user.username,
-        display_name: user.display_name,
-        physicalDeliveryOfficeName: user.physicalDeliveryOfficeName,
-        mail: user.mail,
-        user_status_id: 1,
-        day: dayIdx,
-        record_status_id: 2,
-      })),
+      data: directReports.map((user) => {
+        return {
+          username: user.username,
+          display_name: user.display_name,
+          physicalDeliveryOfficeName: user.physicalDeliveryOfficeName,
+          mail: user.mail,
+          user_status_id: 1,
+          day: dayIdx,
+          record_status_id: 2,
+        };
+      }),
     }))
   );
+
+  const fillWithPreviousRecords = () => {
+    setNewRecords(() =>
+      days.map((day, dayIdx) => {
+        const recordsOfTheDay = records.filter(
+          (record) =>
+            record.record_date.slice(0, 10) ===
+            format(addDays(selectedDate, dayIdx), 'yyyy-MM-dd')
+        );
+        return {
+          dayIdx,
+          dayDisplayName: day,
+          data: directReports.map((user) => {
+            let status;
+            const recordOfTheUser = recordsOfTheDay.filter(
+              (record) => record.username === user.username
+            );
+            if (recordOfTheUser.length !== 1) {
+              status = 1;
+            } else {
+              status = recordOfTheUser[0].user_status_id;
+            }
+            return {
+              username: user.username,
+              display_name: user.display_name,
+              physicalDeliveryOfficeName: user.physicalDeliveryOfficeName,
+              mail: user.mail,
+              user_status_id: status,
+              day: dayIdx,
+              record_status_id: 2,
+            };
+          }),
+        };
+      })
+    );
+  };
 
   const fetchTableData = () => {
     const startDate = format(selectedDate, 'yyyy-MM-dd');
@@ -177,7 +237,7 @@ export default function Home({
                       ? startOfISOWeek(new Date())
                       : null
                   }
-                  maxDate={addDays(endOfISOWeek(new Date()), 7)}
+                  maxDate={addDays(endOfISOWeek(new Date()), 14)}
                 />
               </div>
               {selectedView === 'records' ? (
@@ -210,6 +270,9 @@ export default function Home({
                   userStatuses={userStatuses}
                   selectedDate={selectedDate}
                   authorizedPersonnel={authorizedPersonnel}
+                  prevRecordsExist={prevRecordsExist}
+                  fillWithPreviousRecords={fillWithPreviousRecords}
+                  apiStatus={apiStatus}
                 />
                 <button
                   className='self-end rounded-lg bg-green-500 px-8 py-3 font-semibold text-white hover:bg-green-600 '
@@ -249,7 +312,7 @@ export default function Home({
           setIsOpen={setNewRecordModalIsOpen}
           newRecords={newRecords}
           selectedDate={selectedDate}
-          records={records}
+          prevRecordsExist={prevRecordsExist}
         />
       ) : null}
 

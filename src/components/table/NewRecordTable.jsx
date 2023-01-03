@@ -3,8 +3,9 @@ import { useTable, useRowSelect, useFilters } from 'react-table';
 import StatusSelect from './StatusSelect';
 import NewRecordBulkActions from './NewRecordBulkActions';
 import { addDays, format } from 'date-fns';
-import { CheckIcon } from '@heroicons/react/24/outline';
+import { CheckIcon, ExclamationCircleIcon } from '@heroicons/react/24/outline';
 import _ from 'lodash';
+import Loader from '../skeletons/Loader';
 
 const IndeterminateCheckbox = forwardRef(({ indeterminate, ...rest }, ref) => {
   const defaultRef = useRef();
@@ -27,6 +28,9 @@ export default function NewRecordTable({
   userStatuses,
   selectedDate,
   authorizedPersonnel,
+  prevRecordsExist,
+  fillWithPreviousRecords,
+  apiStatus,
 }) {
   const filterTypes = useMemo(
     () => ({
@@ -212,14 +216,40 @@ export default function NewRecordTable({
             'd MMMM yyyy'
           )}`}
         </h2>
-        <NewRecordBulkActions
-          newRecords={newRecords}
-          setNewRecords={setNewRecords}
-          userStatuses={userStatuses}
-          selectedFlatRows={selectedFlatRows}
-          numberOfSelectedRows={Object.keys(selectedRowIds).length}
-          toggleAllRowsSelected={toggleAllRowsSelected}
-        />
+        <div className='flex items-center justify-end gap-6'>
+          {apiStatus.isLoading ? (
+            <div className='flex items-center gap-4'>
+              <span className='whitespace-nowrap text-xs font-light text-gray-400'>
+                Geçmiş kayıtlar yükleniyor...
+              </span>
+              <Loader size='6' />
+            </div>
+          ) : null}
+          {prevRecordsExist && !apiStatus.isLoading ? (
+            <div className='inline-flex items-center gap-4 whitespace-nowrap rounded-md bg-amber-50 pl-4 text-xs text-amber-700 '>
+              <div>
+                <span>
+                  <ExclamationCircleIcon className='h-4 w-4' />
+                </span>
+              </div>
+              <span>Seçilen tarih aralığı için mevcut kayıt bulunuyor.</span>
+              <button
+                onClick={() => fillWithPreviousRecords()}
+                className='rounded-md bg-amber-700 px-3 py-2 font-bold text-amber-50 hover:bg-amber-600'
+              >
+                Getir
+              </button>
+            </div>
+          ) : null}
+          <NewRecordBulkActions
+            newRecords={newRecords}
+            setNewRecords={setNewRecords}
+            userStatuses={userStatuses}
+            selectedFlatRows={selectedFlatRows}
+            numberOfSelectedRows={Object.keys(selectedRowIds).length}
+            toggleAllRowsSelected={toggleAllRowsSelected}
+          />
+        </div>
       </div>
       <div className={`overflow-x-auto text-xs`}>
         <table

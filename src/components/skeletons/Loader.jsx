@@ -1,9 +1,9 @@
-export default function Loader() {
+export default function Loader({ size, color }) {
   return (
     <div role='status'>
       <svg
         aria-hidden='true'
-        className='mr-2 h-10 w-10 animate-spin fill-blue-600 text-gray-200'
+        className={`mr-2 text-gray-200 h-${size} w-${size} animate-spin fill-${color}`}
         viewBox='0 0 100 101'
         fill='none'
         xmlns='http://www.w3.org/2000/svg'
@@ -21,3 +21,8 @@ export default function Loader() {
     </div>
   );
 }
+
+Loader.defaultProps = {
+  size: '10',
+  color: 'blue-600',
+};

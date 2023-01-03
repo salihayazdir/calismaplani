@@ -10,10 +10,9 @@ export default function NewRecordsModal({
   setIsOpen,
   newRecords,
   selectedDate,
-  records,
+  prevRecordsExist,
 }) {
   const [offPersonnelExists, setOffPersonnelExists] = useState(false);
-  const [prevRecordsExist, setPrevRecordsExist] = useState(false);
 
   const [apiStatus, setApiStatus] = useState({
     isLoading: false,
@@ -22,19 +21,6 @@ export default function NewRecordsModal({
     message: '',
   });
   const { isLoading, isSent, isError, message } = apiStatus;
-
-  const indexOfPreviousRecord = records.findIndex(
-    (record) =>
-      record.record_date.slice(0, 10) === format(selectedDate, 'yyyy-MM-dd')
-  );
-
-  useEffect(() => {
-    if (indexOfPreviousRecord !== -1) {
-      setPrevRecordsExist(true);
-    } else {
-      setPrevRecordsExist(false);
-    }
-  }, [selectedDate, isOpen]);
 
   const sendRecords = () => {
     setApiStatus({

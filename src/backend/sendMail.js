@@ -1,4 +1,5 @@
 const nodemailer = require('nodemailer');
+import { addLog } from '../database/dbOps';
 
 export default async function sendMail({ mailTo, subject, content }) {
   return new Promise((resolve, reject) => {
@@ -42,8 +43,21 @@ export default async function sendMail({ mailTo, subject, content }) {
         }
         transport.close();
       });
+
+      addLog({
+        type: 'mail',
+        isError: false,
+        info: `To: ${mailTo}, Subject: ${subject}, Content: ${content}`,
+      });
     } catch (err) {
       console.error(err);
+
+      addLog({
+        type: 'mail',
+        isError: true,
+        info: `Error: ${err} , To: ${mailTo}, Subject: ${subject}, Content: ${content}`,
+      });
+
       return {
         success: false,
         info: err,
