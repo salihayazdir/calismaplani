@@ -30,6 +30,7 @@ export default function NewRecordTable({
   authorizedPersonnel,
   prevRecordsExist,
   fillWithPreviousRecords,
+  tableIsFilledWithPreviousRecords,
   apiStatus,
 }) {
   const filterTypes = useMemo(
@@ -226,7 +227,7 @@ export default function NewRecordTable({
             </div>
           ) : null}
           {prevRecordsExist && !apiStatus.isLoading ? (
-            <div className='inline-flex items-center gap-4 whitespace-nowrap rounded-md bg-amber-50 pl-4 text-xs text-amber-700 '>
+            <div className='inline-flex items-center gap-4 whitespace-nowrap rounded-md bg-orange-50 pl-4 text-xs text-orange-700 '>
               <div>
                 <span>
                   <ExclamationCircleIcon className='h-4 w-4' />
@@ -235,9 +236,17 @@ export default function NewRecordTable({
               <span>Seçilen tarih aralığı için mevcut kayıt bulunuyor.</span>
               <button
                 onClick={() => fillWithPreviousRecords()}
-                className='rounded-md bg-amber-700 px-3 py-2 font-bold text-amber-50 hover:bg-amber-600'
+                disabled={tableIsFilledWithPreviousRecords}
+                className={`rounded-md bg-orange-700 px-3 py-2 font-bold text-orange-50 hover:bg-orange-600 disabled:bg-orange-50 disabled:text-orange-50 `}
               >
-                Getir
+                {/* {tableIsFilledWithPreviousRecords ? (
+                  <span className='flex w-full flex-col items-center'>
+                    <CheckIcon className='h-4 w-4 text-green-600' />
+                  </span>
+                ) : (
+                  'Getir'
+                )} */}
+                Kayıtları Getir
               </button>
             </div>
           ) : null}

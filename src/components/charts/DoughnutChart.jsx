@@ -82,7 +82,7 @@ export default function DoughnutChart({ records, userStatuses }) {
           })}
         </ul>
       </div>
-      <div className=' pt-[15%]'>
+      <div className=' py-[5%]'>
         <Doughnut data={data} />
       </div>
     </>

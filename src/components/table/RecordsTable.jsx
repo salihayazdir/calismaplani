@@ -359,7 +359,7 @@ export default function DashboardTable({
               setPageSize(Number(e.target.value));
             }}
           >
-            {[20, 50, 100].map((pageSize) => (
+            {[10, 50, 100].map((pageSize) => (
               <option key={pageSize} value={pageSize}>
                 {pageSize}
               </option>

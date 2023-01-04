@@ -44,11 +44,25 @@ export default function BarChart({ records, userStatuses }) {
     });
 
     const statusColors = ['#22c55e', '#3b82f6', '#facc15', '#ef4444'];
+    // const statusColors = [
+    //   '#22c55e',
+    //   '#3b82f6',
+    //   '#facc15',
+    //   '#f97316',
+    //   '#f97316',
+    //   '#f97316',
+    //   '#a21caf',
+    //   '#f97316',
+    //   '#ec4899',
+    //   '#ef4444',
+    //   '#ef4444',
+    // ];
 
     return {
       label: status.user_status_name,
       data,
       backgroundColor: idx < 4 ? statusColors[idx] : statusColors[3],
+      // backgroundColor: statusColors[idx],
       borderRadius: 3,
       stack: idx < 4 ? `Stack ${idx}` : `Stack 3`,
     };

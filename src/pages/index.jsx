@@ -19,6 +19,7 @@ import { ArrowPathIcon, UsersIcon } from '@heroicons/react/24/outline';
 import { Transition } from '@headlessui/react';
 import { useRouter } from 'next/router';
 import { addLog } from '../database/dbOps';
+import _ from 'lodash';
 
 export default function Home({
   directReports,
@@ -27,6 +28,10 @@ export default function Home({
   initialAuthorizedPersonnel,
   isAuthorizedPersonnel,
 }) {
+  useEffect(() => {
+    document.body.style.zoom = '90%';
+  }, []);
+
   const days = ['Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma'];
   const [selectedDate, setSelectedDate] = useState(
     startOfISOWeek(addDays(new Date(), 7))
@@ -56,18 +61,9 @@ export default function Home({
       });
   };
 
-  // const indexOfPreviousRecord = records.findIndex(
-  //   (record) =>
-  //     record.record_date.slice(0, 10) === format(selectedDate, 'yyyy-MM-dd')
-  // );
-
   // useEffect(() => {
-  //   if (indexOfPreviousRecord !== -1) {
-  //     setPrevRecordsExist(true);
-  //   } else {
-  //     setPrevRecordsExist(false);
-  //   }
-  // }, [selectedDate]);
+  //   if (apiStatus.isError === true) signOut();
+  // }, [apiStatus]);
 
   useEffect(() => {
     if (records.length !== 0) {
@@ -76,10 +72,6 @@ export default function Home({
       setPrevRecordsExist(false);
     }
   }, [records]);
-
-  useEffect(() => {
-    if (apiStatus.isError === true) signOut();
-  }, [apiStatus]);
 
   const [newRecords, setNewRecords] = useState(
     days.map((day, dayIdx) => ({
@@ -99,8 +91,46 @@ export default function Home({
     }))
   );
 
+  const [previousRecords, setPreviousRecords] = useState(() =>
+    days.map((day, dayIdx) => {
+      const recordsOfTheDay = records.filter(
+        (record) =>
+          record.record_date.slice(0, 10) ===
+          format(addDays(selectedDate, dayIdx), 'yyyy-MM-dd')
+      );
+      return {
+        dayIdx,
+        dayDisplayName: day,
+        data: directReports.map((user) => {
+          let status;
+          const recordOfTheUser = recordsOfTheDay.filter(
+            (record) => record.username === user.username
+          );
+          if (recordOfTheUser.length !== 1) {
+            status = 1;
+          } else {
+            status = recordOfTheUser[0].user_status_id;
+          }
+          return {
+            username: user.username,
+            display_name: user.display_name,
+            physicalDeliveryOfficeName: user.physicalDeliveryOfficeName,
+            mail: user.mail,
+            user_status_id: status,
+            day: dayIdx,
+            record_status_id: 2,
+          };
+        }),
+      };
+    })
+  );
+
   const fillWithPreviousRecords = () => {
-    setNewRecords(() =>
+    setNewRecords(previousRecords);
+  };
+
+  useEffect(() => {
+    setPreviousRecords(() =>
       days.map((day, dayIdx) => {
         const recordsOfTheDay = records.filter(
           (record) =>
@@ -133,7 +163,43 @@ export default function Home({
         };
       })
     );
-  };
+  }, [records]);
+
+  const [
+    tableIsFilledWithPreviousRecords,
+    setTableIsFilledWithPreviousRecords,
+  ] = useState(false);
+
+  useEffect(() => {
+    setTableIsFilledWithPreviousRecords(
+      Boolean(
+        JSON.stringify(
+          _.sortBy(
+            previousRecords.map((dayOfRecords) => {
+              return {
+                dayIdx: dayOfRecords.dayIdx,
+                dayDisplayName: dayOfRecords.dayDisplayName,
+                data: _.sortBy(dayOfRecords.data, 'display_name'),
+              };
+            }),
+            'dayIdx'
+          )
+        ) ===
+          JSON.stringify(
+            _.sortBy(
+              newRecords.map((dayOfRecords) => {
+                return {
+                  dayIdx: dayOfRecords.dayIdx,
+                  dayDisplayName: dayOfRecords.dayDisplayName,
+                  data: _.sortBy(dayOfRecords.data, 'display_name'),
+                };
+              }),
+              'dayIdx'
+            )
+          )
+      )
+    );
+  }, [previousRecords, records, newRecords]);
 
   const fetchTableData = () => {
     const startDate = format(selectedDate, 'yyyy-MM-dd');
@@ -273,6 +339,9 @@ export default function Home({
                   prevRecordsExist={prevRecordsExist}
                   fillWithPreviousRecords={fillWithPreviousRecords}
                   apiStatus={apiStatus}
+                  tableIsFilledWithPreviousRecords={
+                    tableIsFilledWithPreviousRecords
+                  }
                 />
                 <button
                   className='self-end rounded-lg bg-green-500 px-8 py-3 font-semibold text-white hover:bg-green-600 '

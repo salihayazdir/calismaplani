@@ -32,6 +32,10 @@ export default function Dashboard({
   listOfUsers,
   authorizedPersonnel,
 }) {
+  useEffect(() => {
+    document.body.style.zoom = '90%';
+  }, []);
+
   const [selectedDate, setSelectedDate] = useState(startOfISOWeek(new Date()));
   const [selectedDateRange, setSelectedDateRange] = useState('week');
   const [selectedView, setSelectedView] = useState('stats');
