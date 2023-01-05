@@ -98,16 +98,6 @@ export default function NewRecordTable({
         ),
       },
       {
-        Header: 'Servis',
-        accessor: 'physicalDeliveryOfficeName',
-        Filter: SelectColumnFilter,
-        Cell: ({ value }) => (
-          <span className='font-light text-gray-400'>
-            {value === undefined || value === null ? null : String(value)}
-          </span>
-        ),
-      },
-      {
         Header: 'Yetki',
         accessor: 'isAuthorized',
         Filter: false,
@@ -122,6 +112,16 @@ export default function NewRecordTable({
               </div>
             );
         },
+      },
+      {
+        Header: 'Servis',
+        accessor: 'physicalDeliveryOfficeName',
+        Filter: SelectColumnFilter,
+        Cell: ({ value }) => (
+          <span className='font-light text-gray-400'>
+            {value === undefined || value === null ? null : String(value)}
+          </span>
+        ),
       },
       {
         Header: '',
@@ -237,7 +237,7 @@ export default function NewRecordTable({
               <button
                 onClick={() => fillWithPreviousRecords()}
                 disabled={tableIsFilledWithPreviousRecords}
-                className={`rounded-md bg-orange-700 px-3 py-2 font-bold text-orange-50 hover:bg-orange-600 disabled:bg-orange-50 disabled:text-orange-50 `}
+                className={`rounded-md bg-orange-700 px-3 py-2 font-bold text-orange-50 hover:bg-orange-600 disabled:bg-gray-300 disabled:text-white `}
               >
                 {/* {tableIsFilledWithPreviousRecords ? (
                   <span className='flex w-full flex-col items-center'>
@@ -246,7 +246,7 @@ export default function NewRecordTable({
                 ) : (
                   'Getir'
                 )} */}
-                Kayıtları Getir
+                Geçmiş Kayıtları Tabloya Getir
               </button>
             </div>
           ) : null}

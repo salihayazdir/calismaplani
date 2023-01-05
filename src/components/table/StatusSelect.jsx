@@ -11,17 +11,20 @@ export default function StatusSelect({
 }) {
   const getStatusStyles = (statusId) => {
     switch (statusId) {
+      case 0:
+        return ' text-gray-400 font-light';
+        break;
       case 1:
-        return 'bg-green-50 text-green-700 border border-green-300';
+        return ' text-green-500 font-semibold';
         break;
       case 2:
-        return 'bg-sky-50 text-sky-700 border border-sky-300';
+        return ' text-sky-500 font-semibold';
         break;
       case 3:
-        return 'bg-yellow-50 text-yellow-700 border border-yellow-300';
+        return ' text-yellow-500 font-semibold';
         break;
       default:
-        return 'bg-red-50 text-red-700 border border-red-300';
+        return ' text-red-500 font-semibold';
     }
   };
 
@@ -51,15 +54,15 @@ export default function StatusSelect({
     <Listbox value={selectedId} onChange={handleSelectOnChange}>
       <div className='absolute -mt-3.5 min-w-[7rem] text-gray-600'>
         <Listbox.Button
-          className={`relative w-32 cursor-pointer rounded-lg  bg-white py-1.5 pl-3 pr-10 text-left focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 
+          className={`relative w-32 cursor-pointer rounded-lg  border border-gray-200 bg-white py-1.5 pl-3 pr-10 text-left focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 
           ${getStatusStyles(selectedId)} `}
         >
           <span className='block truncate'>
-            {
-              userStatuses.filter(
-                (status) => status.user_status_id === selectedId
-              )[0].user_status_name
-            }
+            {selectedId === 0
+              ? 'Seçiniz'
+              : userStatuses.filter(
+                  (status) => status.user_status_id === selectedId
+                )[0].user_status_name}
           </span>
           <span className='pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2'>
             <ChevronUpDownIcon

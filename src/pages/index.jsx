@@ -15,7 +15,11 @@ import AuthorizedPersonnelModal from '../components/modals/AuthorizedPersonnelMo
 import DashboardRecordsView from '../components/dashboardViews/DashboardRecordsView';
 import DailyStats from '../components/charts/DailyStats';
 import ViewRadio from '../components/radio/ViewRadio';
-import { ArrowPathIcon, UsersIcon } from '@heroicons/react/24/outline';
+import {
+  ArrowPathIcon,
+  UsersIcon,
+  ExclamationCircleIcon,
+} from '@heroicons/react/24/outline';
 import { Transition } from '@headlessui/react';
 import { useRouter } from 'next/router';
 import { addLog } from '../database/dbOps';
@@ -83,7 +87,7 @@ export default function Home({
           display_name: user.display_name,
           physicalDeliveryOfficeName: user.physicalDeliveryOfficeName,
           mail: user.mail,
-          user_status_id: 1,
+          user_status_id: 0,
           day: dayIdx,
           record_status_id: 2,
         };
@@ -267,6 +271,12 @@ export default function Home({
     (user) => user.username !== userData.username
   );
 
+  const unselectedStatusExists =
+    newRecords
+      .map((day) => day.data.map((record) => record.user_status_id))
+      .flat()
+      .filter((statusId) => statusId === 0).length !== 0;
+
   return (
     <>
       <Layout
@@ -343,12 +353,24 @@ export default function Home({
                     tableIsFilledWithPreviousRecords
                   }
                 />
-                <button
-                  className='self-end rounded-lg bg-green-500 px-8 py-3 font-semibold text-white hover:bg-green-600 '
-                  onClick={() => setNewRecordModalIsOpen(true)}
-                >
-                  Tümünü Gönder
-                </button>
+                <div className='flex gap-4 self-end text-center align-middle'>
+                  {unselectedStatusExists ? (
+                    <div className='flex items-center gap-4 rounded-lg bg-yellow-100 pr-4 pl-6 text-yellow-700 '>
+                      <span className=' text-left text-xs'>
+                        Kayıtları gönderebilmek
+                        <br /> için tabloyu doldurmalısınız.
+                      </span>
+                      <ExclamationCircleIcon className='h-8 w-8' />
+                    </div>
+                  ) : null}
+                  <button
+                    disabled={unselectedStatusExists}
+                    className=' rounded-lg bg-green-500 px-8 py-3 font-semibold text-white hover:bg-green-600 disabled:bg-gray-300 disabled:hover:bg-gray-300  '
+                    onClick={() => setNewRecordModalIsOpen(true)}
+                  >
+                    Tümünü Gönder
+                  </button>
+                </div>
               </div>
             </Transition>
           ) : null}
