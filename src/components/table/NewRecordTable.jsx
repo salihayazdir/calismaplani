@@ -3,7 +3,11 @@ import { useTable, useRowSelect, useFilters } from 'react-table';
 import StatusSelect from './StatusSelect';
 import NewRecordBulkActions from './NewRecordBulkActions';
 import { addDays, format } from 'date-fns';
-import { CheckIcon, ExclamationCircleIcon } from '@heroicons/react/24/outline';
+import {
+  CheckIcon,
+  ExclamationCircleIcon,
+  UserGroupIcon,
+} from '@heroicons/react/24/outline';
 import _ from 'lodash';
 import Loader from '../skeletons/Loader';
 
@@ -27,11 +31,14 @@ export default function NewRecordTable({
   setNewRecords,
   userStatuses,
   selectedDate,
-  authorizedPersonnel,
   prevRecordsExist,
   fillWithPreviousRecords,
   tableIsFilledWithPreviousRecords,
   apiStatus,
+  directReports,
+  isLeaderAndUnAuthorized,
+  setSelectedUsernames,
+  forceTableDataRerender,
 }) {
   const filterTypes = useMemo(
     () => ({
@@ -59,18 +66,23 @@ export default function NewRecordTable({
   const tableData = useMemo(
     () =>
       _.sortBy(
-        newRecords[0].data.map((user) => ({
-          username: user.username,
-          display_name: user.display_name,
-          physicalDeliveryOfficeName: user.physicalDeliveryOfficeName,
-          user_status_id: user.user_status_id,
-          isAuthorized: Boolean(
-            authorizedPersonnel.indexOf(user.username) !== -1
-          ),
-        })),
+        newRecords[0].data.map((user) => {
+          const dataOfUser = directReports.filter(
+            (directReport) => directReport.username === user.username
+          )[0];
+          return {
+            username: dataOfUser.username,
+            display_name: dataOfUser.display_name,
+            physicalDeliveryOfficeName: dataOfUser.physicalDeliveryOfficeName,
+            user_status_id: user.user_status_id,
+            is_authorized: dataOfUser.is_authorized,
+            is_leader: dataOfUser.is_leader,
+            team_display_name: dataOfUser.team_display_name,
+          };
+        }),
         'display_name'
       ),
-    [selectedDate, authorizedPersonnel]
+    [forceTableDataRerender]
   );
 
   const columns = useMemo(
@@ -91,28 +103,38 @@ export default function NewRecordTable({
       {
         Header: 'Personel',
         accessor: 'display_name',
-        Cell: ({ value }) => (
-          <span className=' font-medium text-gray-800'>
-            {value === undefined ? null : String(value)}
-          </span>
-        ),
-      },
-      {
-        Header: 'Yetki',
-        accessor: 'isAuthorized',
-        Filter: false,
-        maxWidth: 40,
-        width: 20,
-        Cell: ({ value }) => {
-          if (value === true)
-            return (
+        Cell: ({ row }) => (
+          <div className='flex items-center gap-5'>
+            <span className=' whitespace-nowrap font-medium text-gray-800'>
+              {row.values.display_name === undefined
+                ? null
+                : String(row.values.display_name)}
+            </span>
+            {row.original.is_authorized && (
               <div className='inline-flex items-center gap-2 rounded-full bg-green-100 px-3 py-1 text-center text-green-700 outline outline-1 outline-green-400'>
                 <span>Yetkili</span>
                 <CheckIcon className='h-4 w-4  ' />
               </div>
-            );
-        },
+            )}
+          </div>
+        ),
       },
+      // {
+      //   Header: 'Yetki',
+      //   accessor: 'is_authorized',
+      //   Filter: false,
+      //   maxWidth: 40,
+      //   width: 20,
+      //   Cell: ({ value }) => {
+      //     if (value === true)
+      //       return (
+      //         <div className='inline-flex items-center gap-2 rounded-full bg-green-100 px-3 py-1 text-center text-green-700 outline outline-1 outline-green-400'>
+      //           <span>Yetkili</span>
+      //           <CheckIcon className='h-4 w-4  ' />
+      //         </div>
+      //       );
+      //   },
+      // },
       {
         Header: 'Servis',
         accessor: 'physicalDeliveryOfficeName',
@@ -127,41 +149,68 @@ export default function NewRecordTable({
         Header: '',
         accessor: 'username',
       },
+      {
+        Header: 'Ekip',
+        accessor: 'team_display_name',
+        Filter: SelectColumnFilter,
+        Cell: ({ row }) => (
+          <div className='flex items-center gap-5'>
+            <span className='font-light text-gray-400'>
+              {row.values.team_display_name === undefined ||
+              row.values.team_display_name === null
+                ? null
+                : String(row.values.team_display_name)}
+            </span>
+            {row.original.is_leader && (
+              <div className='inline-flex items-center gap-2 rounded-full bg-sky-100 px-3 py-1 text-center text-sky-700 outline outline-1 outline-sky-400'>
+                <span>Lider</span>
+                <UserGroupIcon className='h-4 w-4  ' />
+              </div>
+            )}
+          </div>
+        ),
+      },
     ],
     [newRecords, selectedDate]
   );
 
   const days = ['Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma'];
-  const selectBoxColumns = days.map((dayName, dayIdx) => ({
-    id: dayIdx,
-    Header: () => {
-      const day = addDays(selectedDate, dayIdx);
-      const formattedDay = format(day, 'd MMMM');
-      return (
-        <div className='w-20 '>
-          <div>{dayName}</div>
-          <div className='mt-2 rounded-lg text-gray-400'>{formattedDay}</div>
-        </div>
-      );
-    },
-    Cell: ({ row }) => {
-      return (
-        <StatusSelect
-          selectedId={
-            newRecords
-              .filter((newRecords) => newRecords.dayIdx === dayIdx)[0]
-              .data.filter(
-                (record) => record.username === row.values.username
-              )[0].user_status_id
-          }
-          setNewRecords={setNewRecords}
-          userStatuses={userStatuses}
-          username={row.values.username}
-          day={dayIdx}
-        />
-      );
-    },
-  }));
+  const selectBoxColumns = useMemo(
+    () =>
+      days.map((dayName, dayIdx) => ({
+        id: dayIdx,
+        Header: () => {
+          const day = addDays(selectedDate, dayIdx);
+          const formattedDay = format(day, 'd MMMM');
+          return (
+            <div className='w-20 '>
+              <div>{dayName}</div>
+              <div className='mt-2 rounded-lg text-gray-400'>
+                {formattedDay}
+              </div>
+            </div>
+          );
+        },
+        Cell: ({ row }) => {
+          return (
+            <StatusSelect
+              selectedId={
+                newRecords
+                  .filter((newRecords) => newRecords.dayIdx === dayIdx)[0]
+                  .data.filter(
+                    (record) => record.username === row.values.username
+                  )[0].user_status_id
+              }
+              setNewRecords={setNewRecords}
+              userStatuses={userStatuses}
+              username={row.values.username}
+              day={dayIdx}
+            />
+          );
+        },
+      })),
+    [newRecords, selectedDate]
+  );
 
   const tableHooks = (hooks) => {
     hooks.visibleColumns.push((columns) => [
@@ -200,11 +249,29 @@ export default function NewRecordTable({
       data: tableData,
       defaultColumn,
       filterTypes,
-      initialState: { hiddenColumns: ['username'] },
+      initialState: {
+        hiddenColumns: [
+          'username',
+          isLeaderAndUnAuthorized && 'team_display_name',
+        ],
+      },
     },
     useFilters,
     useRowSelect,
     tableHooks
+  );
+
+  useEffect(
+    () =>
+      setSelectedUsernames(
+        selectedFlatRows.map((flatRow) => {
+          const usernameColumn = flatRow.allCells.filter(
+            (column) => column.column.id === 'username'
+          )[0];
+          return usernameColumn.value;
+        })
+      ),
+    [selectedRowIds]
   );
 
   return (
@@ -239,13 +306,6 @@ export default function NewRecordTable({
                 disabled={tableIsFilledWithPreviousRecords}
                 className={`rounded-md bg-orange-700 px-3 py-2 font-bold text-orange-50 hover:bg-orange-600 disabled:bg-gray-300 disabled:text-white `}
               >
-                {/* {tableIsFilledWithPreviousRecords ? (
-                  <span className='flex w-full flex-col items-center'>
-                    <CheckIcon className='h-4 w-4 text-green-600' />
-                  </span>
-                ) : (
-                  'Getir'
-                )} */}
                 Geçmiş Kayıtları Tabloya Getir
               </button>
             </div>
@@ -256,7 +316,7 @@ export default function NewRecordTable({
             userStatuses={userStatuses}
             selectedFlatRows={selectedFlatRows}
             numberOfSelectedRows={Object.keys(selectedRowIds).length}
-            toggleAllRowsSelected={toggleAllRowsSelected}
+            // toggleAllRowsSelected={toggleAllRowsSelected}
           />
         </div>
       </div>
@@ -274,7 +334,6 @@ export default function NewRecordTable({
                     {...column.getHeaderProps({
                       style: { minWidth: column.minWidth, width: column.width },
                     })}
-                    // className='whitespace-nowrap px-3 py-3 text-left font-semibold first-of-type:pl-6'
                     className='px-3 py-2 text-left align-baseline font-semibold first-of-type:pl-6 first-of-type:align-middle'
                   >
                     {column.render('Header')}

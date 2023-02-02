@@ -13,9 +13,8 @@ import {
 export default function AuthorizedPersonnelModal({
   isOpen,
   setIsOpen,
-  authorizedPersonnel,
-  setAuthorizedPersonnel,
   directReportsWithoutManager,
+  fetchDirectReports,
 }) {
   const [
     authorizedPersonnelConfirmationModalIsOpen,
@@ -91,9 +90,10 @@ export default function AuthorizedPersonnelModal({
                     <div></div>
                     <div className='flex flex-col divide-y border-y border-gray-200 text-xs'>
                       {directReportsWithoutManager.map((user) => {
-                        const isAuthorized = Boolean(
-                          authorizedPersonnel.indexOf(user.username) !== -1
-                        );
+                        const isAuthorized = user.is_authorized;
+                        // const isAuthorized = Boolean(
+                        //   authorizedPersonnel.indexOf(user.username) !== -1
+                        // );
                         return (
                           <div
                             key={user.username}
@@ -162,7 +162,7 @@ export default function AuthorizedPersonnelModal({
           isOpen={authorizedPersonnelConfirmationModalIsOpen}
           setIsOpen={setAuthorizedPersonnelConfirmationModalIsOpen}
           selectedPersonnel={selectedPersonnel}
-          setAuthorizedPersonnel={setAuthorizedPersonnel}
+          fetchDirectReports={fetchDirectReports}
         />
       ) : null}
     </>

@@ -7,12 +7,19 @@ export default function NewRecordBulkActions({
   userStatuses,
   selectedFlatRows,
   numberOfSelectedRows,
-  toggleAllRowsSelected,
+  // toggleAllRowsSelected,
 }) {
-  const [selectedStatus, setSelectedStatus] = useState(userStatuses[0]);
+  const userStatusesWithEmpty = [
+    { user_status_id: 0, user_status_name: 'Belirsiz' },
+    ...userStatuses,
+  ];
+
+  const [selectedStatus, setSelectedStatus] = useState(
+    userStatusesWithEmpty[1]
+  );
 
   const applyBulkStatus = () => {
-    toggleAllRowsSelected(false);
+    // toggleAllRowsSelected(false);
 
     const usersToApplyBulkAction = selectedFlatRows.map(
       (row) => row.values.username
@@ -63,7 +70,7 @@ export default function NewRecordBulkActions({
               leaveTo='opacity-0'
             >
               <Listbox.Options className='absolute z-50 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none'>
-                {userStatuses.map((status) => (
+                {userStatusesWithEmpty.map((status) => (
                   <Listbox.Option
                     key={status.user_status_id}
                     className={({ active }) =>

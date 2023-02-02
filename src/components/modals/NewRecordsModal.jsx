@@ -11,6 +11,9 @@ export default function NewRecordsModal({
   newRecords,
   selectedDate,
   prevRecordsExist,
+  sendingOnlyTheSelectedRecords,
+  setSendingOnlyTheSelectedRecords,
+  selectedUsernames,
 }) {
   const [offPersonnelExists, setOffPersonnelExists] = useState(false);
 
@@ -30,20 +33,53 @@ export default function NewRecordsModal({
       message: '',
     });
 
-    const recordsToSend = newRecords
-      .map((dayOfRecords) => {
-        const recordDate = format(
-          addDays(selectedDate, dayOfRecords.dayIdx),
-          'yyyy-MM-dd'
+    let recordsToSend;
+
+    if (sendingOnlyTheSelectedRecords === true) {
+      recordsToSend = newRecords
+        .map((dayOfRecords) => {
+          const recordDate = format(
+            addDays(selectedDate, dayOfRecords.dayIdx),
+            'yyyy-MM-dd'
+          );
+          return dayOfRecords.data.map((record) => ({
+            username: record.username,
+            record_date: recordDate,
+            user_status_id: record.user_status_id,
+            record_status_id: record.record_status_id,
+            mailData: {
+              display_name: record.display_name,
+              mail: record.mail,
+            },
+          }));
+        })
+        .flat()
+        .filter(
+          (record) =>
+            record.user_status_id !== 0 &&
+            selectedUsernames.indexOf(record.username) !== -1
         );
-        return dayOfRecords.data.map((record) => ({
-          username: record.username,
-          record_date: recordDate,
-          user_status_id: record.user_status_id,
-          record_status_id: record.record_status_id,
-        }));
-      })
-      .flat();
+    } else {
+      recordsToSend = newRecords
+        .map((dayOfRecords) => {
+          const recordDate = format(
+            addDays(selectedDate, dayOfRecords.dayIdx),
+            'yyyy-MM-dd'
+          );
+          return dayOfRecords.data.map((record) => ({
+            username: record.username,
+            record_date: recordDate,
+            user_status_id: record.user_status_id,
+            record_status_id: record.record_status_id,
+            mailData: {
+              display_name: record.display_name,
+              mail: record.mail,
+            },
+          }));
+        })
+        .flat()
+        .filter((record) => record.user_status_id !== 0);
+    }
 
     const indexOfOffPersonnelRecord = recordsToSend.findIndex(
       (record) => record.user_status_id > 3
@@ -89,6 +125,7 @@ export default function NewRecordsModal({
 
   const handleClose = () => {
     setIsOpen(false);
+    setSendingOnlyTheSelectedRecords(false);
     // setApiStatus({
     //   isLoading: false,
     //   isSent: false,
@@ -143,7 +180,7 @@ export default function NewRecordsModal({
 
                   {isSent === false && (
                     <div className='px-6 pt-4'>
-                      <div className='flex flex-col rounded-md bg-gray-50 p-4 text-gray-800'>
+                      <div className='flex flex-col gap-1 rounded-md bg-gray-50 p-4 text-gray-800'>
                         <span className='font-medium text-blue-600'>{`${format(
                           selectedDate,
                           'dd-MM-yyyy'
@@ -151,9 +188,15 @@ export default function NewRecordsModal({
                           addDays(selectedDate, 4),
                           'dd-MM-yyyy'
                         )} `}</span>
-                        <span>
-                          tarih aralığı için kayıtlar gönderilecektir.
-                        </span>
+                        <div>
+                          <span>tarih aralığında</span>
+                          <span>
+                            {sendingOnlyTheSelectedRecords === true
+                              ? ` ${selectedUsernames.length} `
+                              : ` tüm `}
+                          </span>
+                          <span>personel için kayıt girişi yapılacaktır.</span>
+                        </div>
                       </div>
                     </div>
                   )}

@@ -4,13 +4,14 @@ import _ from 'lodash';
 
 export default async function newRecordEmail({
   rawRecords,
+  records,
   userData,
   prevRecordsExist,
   recordsStartDate,
   recordsEndDate,
 }) {
   let mailContent;
-  if (userData.isAuthorizedPersonnel) {
+  if (userData.is_authorized) {
     mailContent = `${userData.display_name}, yöneticisi ${
       userData.manager_display_name
     } adına ${
@@ -23,7 +24,7 @@ export default async function newRecordEmail({
   }
 
   let mailSubject;
-  if (userData.isAuthorizedPersonnel) {
+  if (userData.is_authorized) {
     mailSubject = `Çalışma Planı | ${
       prevRecordsExist ? 'Kayıt Düzenleme' : 'Yeni Kayıt'
     } | ${userData.display_name} (${userData.manager_display_name})`;
@@ -39,15 +40,27 @@ export default async function newRecordEmail({
     content: mailContent,
   });
 
+  // const usersInRecords2 = [
+  //   ...new Set(
+  //     rawRecords[0].data.map((record) => ({
+  //       username: record.username,
+  //       display_name: record.display_name,
+  //       mail: record.mail,
+  //     }))
+  //   ),
+  // ];
+
   const usersInRecords = [
     ...new Set(
-      rawRecords[0].data.map((record) => ({
-        username: record.username,
-        display_name: record.display_name,
-        mail: record.mail,
-      }))
+      records.map((record) =>
+        JSON.stringify({
+          username: record.username,
+          display_name: record.mailData.display_name,
+          mail: record.mailData.mail,
+        })
+      )
     ),
-  ];
+  ].map((user) => JSON.parse(user));
 
   const userMailData = usersInRecords.map((user) => {
     const recordsOfUser = rawRecords.map((dayOfRecord) => {
@@ -67,7 +80,7 @@ export default async function newRecordEmail({
     userMailData.forEach((mailDataOfUser) => {
       const sayin = `Sayın ${mailDataOfUser.display_name};<br/><br/>`;
       let entryDetails;
-      if (userData.isAuthorizedPersonnel) {
+      if (userData.is_authorized) {
         entryDetails = `${userData.display_name}, ${
           userData.manager_display_name
         } adına ${

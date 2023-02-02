@@ -1,9 +1,4 @@
-import {
-  getLoginInfo,
-  addOtp,
-  getAuthorizedPersonnel,
-  addLog,
-} from '../../../database/dbOps';
+import { getLoginInfo, addOtp, addLog } from '../../../database/dbOps';
 import sendMail from '../../../backend/sendMail';
 import crypto from 'node:crypto';
 import bcrypt from 'bcrypt';
@@ -20,22 +15,15 @@ export default async function handler(req, res) {
 
     const loginInfo = loginInfoResult.result[0];
 
-    const checkIsAuthorized = async () => {
-      const authorizedPersonnel = await getAuthorizedPersonnel();
-      const authorizedPersonnelUsernames = authorizedPersonnel.result.map(
-        (user) => user.username
-      );
-      const isAuthorizedPersonnel = Boolean(
-        authorizedPersonnelUsernames.indexOf(loginInfo.username) !== -1
-      );
-      return isAuthorizedPersonnel;
-    };
+    console.log(loginInfo);
 
-    if (loginInfo.is_hr === false && loginInfo.is_manager === false) {
-      const authorizedCheckResult = await checkIsAuthorized();
-      if (authorizedCheckResult !== true)
-        throw 'Sisteme giriş yetkiniz bulunmuyor.';
-    }
+    if (
+      loginInfo.is_hr !== true &&
+      loginInfo.is_manager !== true &&
+      loginInfo.is_leader !== true &&
+      loginInfo.is_authorized !== true
+    )
+      throw 'Sisteme giriş yetkiniz bulunmuyor.';
 
     const username = loginInfo.username;
     const usermail = loginInfo.mail;

@@ -227,51 +227,50 @@ export async function addLog({ type, info, username, isError }) {
   }
 }
 
-export async function getAuthorizedPersonnel() {
-  try {
-    const pool = await sql.connect(dbConfig);
-    const result = await pool.request().execute('PKDS.GetAuthorizedPersonnel');
-    return {
-      success: true,
-      result: result.recordset,
-    };
-  } catch (err) {
-    console.error(err);
-    return {
-      success: false,
-      result: err,
-    };
-  }
-}
+// export async function getAuthorizedPersonnel() {
+//   try {
+//     const pool = await sql.connect(dbConfig);
+//     const result = await pool.request().execute('PKDS.GetAuthorizedPersonnel');
+//     return {
+//       success: true,
+//       result: result.recordset,
+//     };
+//   } catch (err) {
+//     console.error(err);
+//     return {
+//       success: false,
+//       result: err,
+//     };
+//   }
+// }
 
-export async function getAuthorizedPersonnelByManager(manager_username) {
-  try {
-    const pool = await sql.connect(dbConfig);
-    const result = await pool
-      .request()
-      .input('manager_username', sql.NVarChar, manager_username)
-      .execute('PKDS.GetAuthorizedPersonnelByManager');
-    return {
-      success: true,
-      // result: result.recordset,
-      result: result.recordset,
-    };
-  } catch (err) {
-    console.error(err);
-    return {
-      success: false,
-      result: err,
-    };
-  }
-}
+// export async function getAuthorizedPersonnelByManager(manager_username) {
+//   try {
+//     const pool = await sql.connect(dbConfig);
+//     const result = await pool
+//       .request()
+//       .input('manager_username', sql.NVarChar, manager_username)
+//       .execute('PKDS.GetAuthorizedPersonnelByManager');
+//     return {
+//       success: true,
+//       // result: result.recordset,
+//       result: result.recordset,
+//     };
+//   } catch (err) {
+//     console.error(err);
+//     return {
+//       success: false,
+//       result: err,
+//     };
+//   }
+// }
 
-export async function addAuthorizedPersonnel({ username, manager_username }) {
+export async function addAuthorizedPersonnel({ username }) {
   try {
     const pool = await sql.connect(dbConfig);
     const result = await pool
       .request()
       .input('username', sql.NVarChar, username)
-      .input('manager_username', sql.NVarChar, manager_username)
       .execute('PKDS.AddAuthorizedPersonnel');
     // console.log(result);
     return {
@@ -294,6 +293,222 @@ export async function deleteAuthorizedPersonnel(username) {
       .request()
       .input('username', sql.NVarChar, username)
       .execute('PKDS.DeleteAuthorizedPersonnel');
+    // console.log(result);
+    return {
+      success: true,
+      result,
+    };
+  } catch (err) {
+    console.error(err);
+    return {
+      success: false,
+      result: err,
+    };
+  }
+}
+
+export async function addTeam({
+  manager_username,
+  leader_username,
+  display_name,
+}) {
+  try {
+    const pool = await sql.connect(dbConfig);
+    const result = await pool
+      .request()
+      .input('manager_username', sql.NVarChar, manager_username)
+      .input('leader_username', sql.NVarChar, leader_username)
+      .input('display_name', sql.NVarChar, display_name)
+      .execute('PKDS.AddTeam');
+    // console.log(result);
+    return {
+      success: true,
+      result,
+    };
+  } catch (err) {
+    console.error(err);
+    return {
+      success: false,
+      result: err,
+    };
+  }
+}
+
+export async function editTeamName({ id, display_name }) {
+  try {
+    const pool = await sql.connect(dbConfig);
+    const result = await pool
+      .request()
+      .input('id', sql.Int, id)
+      .input('display_name', sql.NVarChar, display_name)
+      .execute('PKDS.EditTeamName');
+    // console.log(result);
+    return {
+      success: true,
+      result,
+    };
+  } catch (err) {
+    console.error(err);
+    return {
+      success: false,
+      result: err,
+    };
+  }
+}
+
+export async function editTeamLeader({ id, leader_username }) {
+  try {
+    const pool = await sql.connect(dbConfig);
+    const result = await pool
+      .request()
+      .input('id', sql.Int, id)
+      .input('leader_username', sql.NVarChar, leader_username)
+      .execute('PKDS.EditTeamLeader');
+    // console.log(result);
+    return {
+      success: true,
+      result,
+    };
+  } catch (err) {
+    console.error(err);
+    return {
+      success: false,
+      result: err,
+    };
+  }
+}
+
+export async function deleteTeam({ id }) {
+  try {
+    const pool = await sql.connect(dbConfig);
+    const result = await pool
+      .request()
+      .input('id', sql.Int, id)
+      .execute('PKDS.DeleteTeam');
+    // console.log(result);
+    return {
+      success: true,
+      result,
+    };
+  } catch (err) {
+    console.error(err);
+    return {
+      success: false,
+      result: err,
+    };
+  }
+}
+
+export async function addTeamMember({ team_id, username }) {
+  try {
+    const pool = await sql.connect(dbConfig);
+    const result = await pool
+      .request()
+      .input('team_id', sql.Int, team_id)
+      .input('username', sql.NVarChar, username)
+      .execute('PKDS.AddTeamMember');
+    // console.log(result);
+    return {
+      success: true,
+      result,
+    };
+  } catch (err) {
+    console.error(err);
+    return {
+      success: false,
+      result: err,
+    };
+  }
+}
+
+export async function deleteTeamMember({ username }) {
+  try {
+    const pool = await sql.connect(dbConfig);
+    const result = await pool
+      .request()
+      .input('username', sql.NVarChar, username)
+      .execute('PKDS.DeleteTeamMember');
+    // console.log(result);
+    return {
+      success: true,
+      result,
+    };
+  } catch (err) {
+    console.error(err);
+    return {
+      success: false,
+      result: err,
+    };
+  }
+}
+
+export async function getMembersOfTeam({ team_id }) {
+  try {
+    const pool = await sql.connect(dbConfig);
+    const result = await pool
+      .request()
+      .input('team_id', sql.Int, team_id)
+      .execute('PKDS.GetMembersOfTeam');
+    // console.log(result);
+    return {
+      success: true,
+      result,
+    };
+  } catch (err) {
+    console.error(err);
+    return {
+      success: false,
+      result: err,
+    };
+  }
+}
+
+export async function getTeamOfUser({ username }) {
+  try {
+    const pool = await sql.connect(dbConfig);
+    const result = await pool
+      .request()
+      .input('username', sql.NVarChar, username)
+      .execute('PKDS.GetTeamOfUser');
+    // console.log(result);
+    return {
+      success: true,
+      result,
+    };
+  } catch (err) {
+    console.error(err);
+    return {
+      success: false,
+      result: err,
+    };
+  }
+}
+
+export async function getTeamsByManager({ manager_username }) {
+  try {
+    const pool = await sql.connect(dbConfig);
+    const result = await pool
+      .request()
+      .input('manager_username', sql.NVarChar, manager_username)
+      .execute('PKDS.GetTeamsByManager');
+    // console.log(result);
+    return {
+      success: true,
+      result,
+    };
+  } catch (err) {
+    console.error(err);
+    return {
+      success: false,
+      result: err,
+    };
+  }
+}
+
+export async function getTeams() {
+  try {
+    const pool = await sql.connect(dbConfig);
+    const result = await pool.request().execute('PKDS.GetTeams');
     // console.log(result);
     return {
       success: true,

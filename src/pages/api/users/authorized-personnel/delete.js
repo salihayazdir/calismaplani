@@ -27,9 +27,6 @@ export default async function handler(req, response) {
     if (requestedUserInfo.manager_username !== userData.username)
       throw 'Kullanıcının yöneticisi değilsiniz.';
 
-    if (requestedUserInfo.is_manager === true)
-      throw `${requestedUserInfo.display_name} isimli kullanıcı zaten yönetici.`;
-
     const deletedAuthorizedPersonnel = await deleteAuthorizedPersonnel(
       requestUsername
     );

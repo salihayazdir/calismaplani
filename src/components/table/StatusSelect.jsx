@@ -9,6 +9,10 @@ export default function StatusSelect({
   username,
   day,
 }) {
+  const userStatusesWithEmpty = [
+    { user_status_id: 0, user_status_name: 'Belirsiz' },
+    ...userStatuses,
+  ];
   const getStatusStyles = (statusId) => {
     switch (statusId) {
       case 0:
@@ -60,7 +64,7 @@ export default function StatusSelect({
           <span className='block truncate'>
             {selectedId === 0
               ? 'Seçiniz'
-              : userStatuses.filter(
+              : userStatusesWithEmpty.filter(
                   (status) => status.user_status_id === selectedId
                 )[0].user_status_name}
           </span>
@@ -78,7 +82,7 @@ export default function StatusSelect({
           leaveTo='opacity-0'
         >
           <Listbox.Options className='absolute z-50 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none'>
-            {userStatuses.map((status) => (
+            {userStatusesWithEmpty.map((status) => (
               <Listbox.Option
                 key={status.user_status_id}
                 className={({ active, selected }) =>

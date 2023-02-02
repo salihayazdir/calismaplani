@@ -8,7 +8,7 @@ export default function AuthorizedPersonnelConfirmationModal({
   isOpen,
   setIsOpen,
   selectedPersonnel,
-  setAuthorizedPersonnel,
+  fetchDirectReports,
 }) {
   const [apiStatus, setApiStatus] = useState({
     isLoading: false,
@@ -36,7 +36,7 @@ export default function AuthorizedPersonnelConfirmationModal({
           }
         )
         .then((res) => {
-          // console.log(res);
+          console.log(res);
           if (res.data.success === true) {
             setApiStatus({
               isLoading: false,
@@ -44,10 +44,7 @@ export default function AuthorizedPersonnelConfirmationModal({
               isError: false,
               message: res.data.message || '',
             });
-            setAuthorizedPersonnel((prev) => [
-              res.data.newAuthorizedPersonnel,
-              ...prev,
-            ]);
+            fetchDirectReports();
           } else {
             setApiStatus({
               isLoading: false,
@@ -69,7 +66,6 @@ export default function AuthorizedPersonnelConfirmationModal({
     }
 
     if (action === 'delete') {
-      console.log(username);
       axios
         .delete(
           `${process.env.NEXT_PUBLIC_DOMAIN}/api/users/authorized-personnel/delete`,
@@ -88,11 +84,7 @@ export default function AuthorizedPersonnelConfirmationModal({
               isError: false,
               message: res.data.message || '',
             });
-            setAuthorizedPersonnel((prev) =>
-              prev.filter(
-                (user) => user !== res.data.deletedAuthorizedPersonnel
-              )
-            );
+            fetchDirectReports();
           } else {
             setApiStatus({
               isLoading: false,

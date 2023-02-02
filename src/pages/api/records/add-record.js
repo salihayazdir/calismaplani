@@ -61,6 +61,7 @@ export default async function handler(req, response) {
 
     newRecordEmail({
       rawRecords,
+      records,
       userData,
       prevRecordsExist,
       recordsStartDate,

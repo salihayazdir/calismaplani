@@ -13,7 +13,6 @@ export default function DashboardManagersView({
   setSelectedDate,
   selectedDateRange,
   setSelectedDateRange,
-  authorizedPersonnel,
 }) {
   if (apiStatus.isError) return <FetchError />;
 
@@ -38,7 +37,6 @@ export default function DashboardManagersView({
                 listOfUsers={listOfUsers}
                 records={records}
                 selectedDate={selectedDate}
-                authorizedPersonnel={authorizedPersonnel}
               />
             </div>
           </Transition>

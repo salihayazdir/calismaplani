@@ -162,7 +162,8 @@ export async function getServerSideProps(context) {
         if (userData.is_hr === true) throw '/dashboard';
         else if (
           userData.is_manager === true ||
-          userData.isAuthorizedPersonnel === true
+          userData.is_authorized === true ||
+          userData.is_leader
         )
           throw '/';
       }

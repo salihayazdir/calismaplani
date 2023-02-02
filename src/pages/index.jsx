@@ -1,17 +1,14 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import axios from 'axios';
 import verifyToken from '../backend/verifyToken';
-import {
-  getAuthorizedPersonnelByManager,
-  getDirectReports,
-  getUserStatuses,
-} from '../database/dbOps';
+import { getDirectReports, getUserStatuses } from '../database/dbOps';
 import NewRecordTable from '../components/table/NewRecordTable';
 import { startOfISOWeek, endOfISOWeek, addDays, format } from 'date-fns';
 import Layout from '../components/layout/Layout';
 import WeekPicker from '../components/datepickers/WeekPicker';
 import NewRecordsModal from '../components/modals/NewRecordsModal';
 import AuthorizedPersonnelModal from '../components/modals/AuthorizedPersonnelModal';
+import TeamsModal from '../components/modals/TeamsModal';
 import DashboardRecordsView from '../components/dashboardViews/DashboardRecordsView';
 import DailyStats from '../components/charts/DailyStats';
 import ViewRadio from '../components/radio/ViewRadio';
@@ -21,16 +18,14 @@ import {
   ExclamationCircleIcon,
 } from '@heroicons/react/24/outline';
 import { Transition } from '@headlessui/react';
-import { useRouter } from 'next/router';
 import { addLog } from '../database/dbOps';
 import _ from 'lodash';
 
 export default function Home({
-  directReports,
+  initialDirectReports,
   userStatuses,
   userData,
-  initialAuthorizedPersonnel,
-  isAuthorizedPersonnel,
+  directReportsManagerUsername,
 }) {
   useEffect(() => {
     document.body.style.zoom = '90%';
@@ -42,32 +37,32 @@ export default function Home({
   );
   const [selectedView, setSelectedView] = useState('newrecord');
   const [records, setRecords] = useState([]);
+  const [directReports, setDirectReports] = useState(initialDirectReports);
   const [newRecordModalIsOpen, setNewRecordModalIsOpen] = useState(false);
+  const [sendingOnlyTheSelectedRecords, setSendingOnlyTheSelectedRecords] =
+    useState(false);
   const [authorizedPersonnelModalIsOpen, setAuthorizedPersonnelModalIsOpen] =
     useState(false);
-  const [authorizedPersonnel, setAuthorizedPersonnel] = useState(
-    initialAuthorizedPersonnel
-  );
+  const [teamsModalIsOpen, setTeamsModalIsOpen] = useState(false);
   const [apiStatus, setApiStatus] = useState({
     isLoading: true,
     isError: false,
     message: '',
   });
   const [prevRecordsExist, setPrevRecordsExist] = useState(false);
+  const [selectedUsernames, setSelectedUsernames] = useState([]);
+  const [forceTableDataRerender, setForceTableDataRerender] = useState(true);
 
-  const router = useRouter();
-  const signOut = () => {
-    axios
-      .get(`${process.env.NEXT_PUBLIC_DOMAIN}/api/auth/logout`)
-      .then((res) => router.push('/giris'))
-      .catch((err) => {
-        console.error(err);
-      });
-  };
+  const managerUsername =
+    userData.is_manager !== true
+      ? userData.manager_username
+      : userData.username;
 
-  // useEffect(() => {
-  //   if (apiStatus.isError === true) signOut();
-  // }, [apiStatus]);
+  const isLeaderAndUnAuthorized = Boolean(
+    userData.is_manager !== true &&
+      userData.is_authorized !== true &&
+      userData.is_leader === true
+  );
 
   useEffect(() => {
     if (records.length !== 0) {
@@ -86,6 +81,7 @@ export default function Home({
           username: user.username,
           display_name: user.display_name,
           physicalDeliveryOfficeName: user.physicalDeliveryOfficeName,
+          is_authorized: user.is_authorized,
           mail: user.mail,
           user_status_id: 0,
           day: dayIdx,
@@ -94,6 +90,32 @@ export default function Home({
       }),
     }))
   );
+
+  useEffect(() => {
+    setNewRecords((prevNewRecords) => {
+      return days.map((day, dayIdx) => ({
+        dayIdx,
+        dayDisplayName: day,
+        data: directReports.map((user) => {
+          const prevStatus = prevNewRecords
+            .filter((dayOfRecords) => dayOfRecords.dayIdx === dayIdx)[0]
+            .data.filter(
+              (prevUser) => prevUser.username === user.username
+            )[0].user_status_id;
+          return {
+            username: user.username,
+            display_name: user.display_name,
+            physicalDeliveryOfficeName: user.physicalDeliveryOfficeName,
+            is_authorized: user.is_authorized,
+            mail: user.mail,
+            user_status_id: prevStatus,
+            day: dayIdx,
+            record_status_id: 2,
+          };
+        }),
+      }));
+    });
+  }, [directReports]);
 
   const [previousRecords, setPreviousRecords] = useState(() =>
     days.map((day, dayIdx) => {
@@ -150,7 +172,7 @@ export default function Home({
               (record) => record.username === user.username
             );
             if (recordOfTheUser.length !== 1) {
-              status = 1;
+              status = 0;
             } else {
               status = recordOfTheUser[0].user_status_id;
             }
@@ -169,13 +191,44 @@ export default function Home({
     );
   }, [records]);
 
-  const [
-    tableIsFilledWithPreviousRecords,
-    setTableIsFilledWithPreviousRecords,
-  ] = useState(false);
+  // const [
+  //   tableIsFilledWithPreviousRecords,
+  //   setTableIsFilledWithPreviousRecords,
+  // ] = useState(false);
 
-  useEffect(() => {
-    setTableIsFilledWithPreviousRecords(
+  // useEffect(() => {
+  //   setTableIsFilledWithPreviousRecords(
+  //     Boolean(
+  //       JSON.stringify(
+  //         _.sortBy(
+  //           previousRecords.map((dayOfRecords) => {
+  //             return {
+  //               dayIdx: dayOfRecords.dayIdx,
+  //               dayDisplayName: dayOfRecords.dayDisplayName,
+  //               data: _.sortBy(dayOfRecords.data, 'display_name'),
+  //             };
+  //           }),
+  //           'dayIdx'
+  //         )
+  //       ) ===
+  //         JSON.stringify(
+  //           _.sortBy(
+  //             newRecords.map((dayOfRecords) => {
+  //               return {
+  //                 dayIdx: dayOfRecords.dayIdx,
+  //                 dayDisplayName: dayOfRecords.dayDisplayName,
+  //                 data: _.sortBy(dayOfRecords.data, 'display_name'),
+  //               };
+  //             }),
+  //             'dayIdx'
+  //           )
+  //         )
+  //     )
+  //   );
+  // }, [previousRecords, newRecords]);
+
+  const tableIsFilledWithPreviousRecords = useMemo(
+    () =>
       Boolean(
         JSON.stringify(
           _.sortBy(
@@ -183,7 +236,13 @@ export default function Home({
               return {
                 dayIdx: dayOfRecords.dayIdx,
                 dayDisplayName: dayOfRecords.dayDisplayName,
-                data: _.sortBy(dayOfRecords.data, 'display_name'),
+                data: _.sortBy(
+                  dayOfRecords.data.map((record) => ({
+                    username: record.username,
+                    user_status_id: record.user_status_id,
+                  })),
+                  'display_name'
+                ),
               };
             }),
             'dayIdx'
@@ -195,15 +254,21 @@ export default function Home({
                 return {
                   dayIdx: dayOfRecords.dayIdx,
                   dayDisplayName: dayOfRecords.dayDisplayName,
-                  data: _.sortBy(dayOfRecords.data, 'display_name'),
+                  data: _.sortBy(
+                    dayOfRecords.data.map((record) => ({
+                      username: record.username,
+                      user_status_id: record.user_status_id,
+                    })),
+                    'display_name'
+                  ),
                 };
               }),
               'dayIdx'
             )
           )
-      )
-    );
-  }, [previousRecords, records, newRecords]);
+      ),
+    [previousRecords, newRecords]
+  );
 
   const fetchTableData = () => {
     const startDate = format(selectedDate, 'yyyy-MM-dd');
@@ -219,16 +284,26 @@ export default function Home({
       .post(
         `${process.env.NEXT_PUBLIC_DOMAIN}/api/records/get-records-by-manager`,
         {
-          managerUsername: isAuthorizedPersonnel
-            ? userData.manager_username
-            : userData.username,
-          startDate: startDate,
-          endDate: endDate,
+          managerUsername,
+          startDate,
+          endDate,
         }
       )
       .then((res) => {
         if (res.data.success === true) {
-          setRecords(res.data.records);
+          if (isLeaderAndUnAuthorized) {
+            const directReportsUsernames = directReports.map(
+              (user) => user.username
+            );
+            setRecords(
+              res.data.records.filter(
+                (record) =>
+                  directReportsUsernames.indexOf(record.username) !== -1
+              )
+            );
+          } else {
+            setRecords(res.data.records);
+          }
           setApiStatus({
             isLoading: false,
             isError: false,
@@ -256,6 +331,53 @@ export default function Home({
     fetchTableData();
   }, [selectedDate, newRecordModalIsOpen]);
 
+  const fetchDirectReports = () => {
+    // setApiStatus({
+    //   isLoading: true,
+    //   isError: false,
+    //   message: '',
+    // });
+
+    axios
+      .get(`${process.env.NEXT_PUBLIC_DOMAIN}/api/users/get-direct-reports`, {
+        params: {
+          managerUsername: directReportsManagerUsername,
+        },
+      })
+      .then((res) => {
+        if (res.data.success === true) {
+          if (isLeaderAndUnAuthorized) {
+            const directReportsOfTeamLeader = res.data.directReports.filter(
+              (user) => user.leader_username === userData.username
+            );
+            setDirectReports(directReportsOfTeamLeader);
+          } else {
+            setDirectReports(res.data.directReports);
+          }
+          // setApiStatus({
+          //   isLoading: false,
+          //   isError: false,
+          //   message: res.data.message || '',
+          // });
+        } else {
+          console.log(res);
+          // setApiStatus({
+          //   isLoading: false,
+          //   isError: true,
+          //   message: res.data.message || 'Bağlantı hatası.',
+          // });
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+        // setApiStatus({
+        //   isLoading: false,
+        //   isError: true,
+        //   message: 'Bağlantı hatası.',
+        // });
+      });
+  };
+
   const views = [
     {
       name: 'Yeni Kayıt',
@@ -271,11 +393,29 @@ export default function Home({
     (user) => user.username !== userData.username
   );
 
-  const unselectedStatusExists =
-    newRecords
-      .map((day) => day.data.map((record) => record.user_status_id))
-      .flat()
-      .filter((statusId) => statusId === 0).length !== 0;
+  const allUnselectedRecords = newRecords
+    .map((day) =>
+      day.data.map((record) => ({
+        username: record.username,
+        status: record.user_status_id,
+      }))
+    )
+    .flat()
+    .filter((record) => record.status === 0);
+
+  const unselectedStatusExists = allUnselectedRecords.length !== 0;
+
+  const unselectedStatusExistsInSelectedRows = Boolean(
+    allUnselectedRecords.filter(
+      (record) => selectedUsernames.indexOf(record.username) !== -1
+    ).length !== 0
+  );
+
+  const isThereASelectedRow = Boolean(selectedUsernames.length !== 0);
+
+  const isSendSelectedRecordsButonDisabled = Boolean(
+    unselectedStatusExistsInSelectedRows || !isThereASelectedRow
+  );
 
   return (
     <>
@@ -292,6 +432,15 @@ export default function Home({
               setSelectedDate={setSelectedDate}
             />
             <div className='flex gap-4'>
+              {userData.is_manager || userData.is_authorized ? (
+                <button
+                  onClick={() => setTeamsModalIsOpen(true)}
+                  className='inline-flex items-center gap-3 rounded-lg border border-gray-200  px-4 py-2 text-center text-xs font-medium text-gray-500 hover:bg-white hover:text-blue-600 '
+                >
+                  <span>Ekipler</span>
+                  <UsersIcon className='h-4 w-4' />
+                </button>
+              ) : null}
               {userData.is_manager ? (
                 <button
                   onClick={() => setAuthorizedPersonnelModalIsOpen(true)}
@@ -345,24 +494,42 @@ export default function Home({
                   setNewRecords={setNewRecords}
                   userStatuses={userStatuses}
                   selectedDate={selectedDate}
-                  authorizedPersonnel={authorizedPersonnel}
                   prevRecordsExist={prevRecordsExist}
                   fillWithPreviousRecords={fillWithPreviousRecords}
                   apiStatus={apiStatus}
                   tableIsFilledWithPreviousRecords={
                     tableIsFilledWithPreviousRecords
                   }
+                  directReports={directReports}
+                  isLeaderAndUnAuthorized={isLeaderAndUnAuthorized}
+                  setSelectedUsernames={setSelectedUsernames}
+                  forceTableDataRerender={forceTableDataRerender}
                 />
                 <div className='flex gap-4 self-end text-center align-middle'>
                   {unselectedStatusExists ? (
-                    <div className='flex items-center gap-4 rounded-lg bg-yellow-100 pr-4 pl-6 text-yellow-700 '>
+                    <div className='flex items-center gap-4 rounded-lg bg-amber-100 pr-4 pl-6 text-yellow-700 '>
                       <span className=' text-left text-xs'>
-                        Kayıtları gönderebilmek
-                        <br /> için tabloyu doldurmalısınız.
+                        Kayıt gönderebilmek için
+                        <br /> statü seçimlerini doldurmalısınız.
                       </span>
                       <ExclamationCircleIcon className='h-8 w-8' />
                     </div>
                   ) : null}
+                  <button
+                    disabled={isSendSelectedRecordsButonDisabled}
+                    className=' rounded-lg bg-blue-500 px-8 py-3 font-semibold text-white hover:bg-blue-600 disabled:bg-gray-300 disabled:hover:bg-gray-300  '
+                    onClick={() => {
+                      setSendingOnlyTheSelectedRecords(true);
+                      setNewRecordModalIsOpen(true);
+                    }}
+                  >
+                    <span>Seçilileri Gönder</span>
+                    {selectedUsernames.length !== 0 ? (
+                      <span>{`  (${selectedUsernames.length})`}</span>
+                    ) : (
+                      ''
+                    )}
+                  </button>
                   <button
                     disabled={unselectedStatusExists}
                     className=' rounded-lg bg-green-500 px-8 py-3 font-semibold text-white hover:bg-green-600 disabled:bg-gray-300 disabled:hover:bg-gray-300  '
@@ -404,6 +571,9 @@ export default function Home({
           newRecords={newRecords}
           selectedDate={selectedDate}
           prevRecordsExist={prevRecordsExist}
+          sendingOnlyTheSelectedRecords={sendingOnlyTheSelectedRecords}
+          setSendingOnlyTheSelectedRecords={setSendingOnlyTheSelectedRecords}
+          selectedUsernames={selectedUsernames}
         />
       ) : null}
 
@@ -411,9 +581,20 @@ export default function Home({
         <AuthorizedPersonnelModal
           isOpen={authorizedPersonnelModalIsOpen}
           setIsOpen={setAuthorizedPersonnelModalIsOpen}
-          authorizedPersonnel={authorizedPersonnel}
-          setAuthorizedPersonnel={setAuthorizedPersonnel}
           directReportsWithoutManager={directReportsWithoutManager}
+          fetchDirectReports={fetchDirectReports}
+        />
+      ) : null}
+
+      {teamsModalIsOpen ? (
+        <TeamsModal
+          isOpen={teamsModalIsOpen}
+          setIsOpen={setTeamsModalIsOpen}
+          directReportsWithoutManager={directReportsWithoutManager}
+          managerUsername={managerUsername}
+          directReports={directReports}
+          fetchDirectReports={fetchDirectReports}
+          setForceTableDataRerender={setForceTableDataRerender}
         />
       ) : null}
     </>
@@ -427,43 +608,44 @@ export async function getServerSideProps(context) {
 
     if (
       !userData ||
-      (userData.is_manager !== true && userData.isAuthorizedPersonnel !== true)
+      (userData.is_manager !== true &&
+        userData.is_authorized !== true &&
+        userData.is_leader !== true)
     ) {
       if (userData.is_hr === true) throw '/dashboard';
       if (userData.is_hr !== true) throw '/giris';
     }
 
-    let authorizedPersonnelRequest;
-    if (userData.is_manager === true)
-      authorizedPersonnelRequest = await getAuthorizedPersonnelByManager(
-        userData.username
-      );
-    if (userData.isAuthorizedPersonnel === true)
-      authorizedPersonnelRequest = await getAuthorizedPersonnelByManager(
-        userData.manager_username
-      );
+    let directReportsManagerUsername;
 
-    if (!Array.isArray(authorizedPersonnelRequest.result))
-      throw 'DB error (index/ authorizedPersonnelRequest.result)';
+    if (userData.is_manager === true) {
+      directReportsManagerUsername = userData.username;
+    } else {
+      directReportsManagerUsername = userData.manager_username;
+    }
 
-    const authorizedPersonnel = authorizedPersonnelRequest.result.map(
-      (user) => user.username
+    const directReports = await getDirectReports(directReportsManagerUsername);
+
+    const isLeaderAndUnAuthorized = Boolean(
+      userData.is_manager !== true &&
+        userData.is_authorized !== true &&
+        userData.is_leader === true
     );
 
-    let directReports;
-    if (userData.is_manager === true)
-      directReports = await getDirectReports(userData.username);
-    if (userData.isAuthorizedPersonnel === true)
-      directReports = await getDirectReports(userData.manager_username);
+    const directReportsOfTeamLeader = directReports.filter(
+      (user) => user.leader_username === userData.username
+    );
+
     const userStatuses = await getUserStatuses();
 
     return {
       props: {
-        directReports,
+        initialDirectReports: isLeaderAndUnAuthorized
+          ? directReportsOfTeamLeader
+          : directReports,
         userStatuses,
         userData,
-        initialAuthorizedPersonnel: authorizedPersonnel,
-        isAuthorizedPersonnel: userData.isAuthorizedPersonnel,
+        directReportsManagerUsername,
       },
     };
   } catch (err) {

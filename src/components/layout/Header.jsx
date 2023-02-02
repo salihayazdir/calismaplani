@@ -18,7 +18,13 @@ export default function Header({ displayName }) {
   };
 
   return (
-    <header className='flex items-center justify-between border-b border-gray-200 bg-white py-3 px-10'>
+    <header
+      className={`flex items-center justify-between border-b border-gray-200 bg-white py-3 px-10 ${
+        process.env.NODE_ENV === 'development'
+          ? 'border-b-2 border-blue-400 shadow-md shadow-blue-100'
+          : null
+      }`}
+    >
       <Image
         src='/bilesimLogo.png'
         alt='Bileşim Logo'

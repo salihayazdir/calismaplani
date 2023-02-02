@@ -3,7 +3,6 @@ import {
   getOtp,
   deleteOtp,
   getLoginInfo,
-  getAuthorizedPersonnel,
   addLog,
 } from '../../../database/dbOps';
 import cookie from 'cookie';
@@ -37,26 +36,6 @@ export default async function handler(req, res) {
 
     const loginInfo = loginInfoResult.result[0];
 
-    const checkIsAuthorized = async () => {
-      const authorizedPersonnel = await getAuthorizedPersonnel();
-      const authorizedPersonnelUsernames = authorizedPersonnel.result.map(
-        (user) => user.username
-      );
-      const isAuthorizedPersonnel = Boolean(
-        authorizedPersonnelUsernames.indexOf(loginInfo.username) !== -1
-      );
-      return isAuthorizedPersonnel;
-    };
-
-    let isAuthorizedPersonnel = false;
-    if (loginInfo.is_manager !== true) {
-      isAuthorizedPersonnel = await checkIsAuthorized();
-    }
-
-    const tokenData = { ...loginInfo, isAuthorizedPersonnel };
-
-    console.log(tokenData);
-
     var currentTime = new Date();
     var tokenCreatedAt =
       currentTime.getFullYear() +
@@ -72,7 +51,7 @@ export default async function handler(req, res) {
       currentTime.getSeconds();
 
     const token = jwt.sign(
-      { ...tokenData, created_at: tokenCreatedAt },
+      { ...loginInfo, created_at: tokenCreatedAt },
       process.env.JWT_SECRET
     );
 

@@ -9,13 +9,14 @@ import {
   ChevronDownIcon,
   XMarkIcon,
   EnvelopeIcon,
+  UserGroupIcon,
+  UserIcon,
 } from '@heroicons/react/24/outline';
 
 export default function ManagerUserTable({
   listOfUsers,
   records,
   selectedDate,
-  authorizedPersonnel,
 }) {
   const [bulkManagerMailModalIsOpen, setBulkManagerMailModalIsOpen] =
     useState(false);
@@ -30,48 +31,98 @@ export default function ManagerUserTable({
   const tableData = useMemo(() => {
     const managers = listOfUsers.filter((user) => user.is_manager);
     return managers.map((manager) => {
-      const didSendRecords = Boolean(
+      const hasRecord = Boolean(
         records.find(({ username }) => username === manager.username)
       );
 
-      const authorizedDirectReports = authorizedPersonnel
-        .map((user) => {
-          if (user.manager_username === manager.username) return user.username;
-        })
-        .filter((username) => username !== undefined);
+      const numberOfDirectReports = listOfUsers.filter(
+        (user) => user.manager_username === manager.username
+      ).length;
+
+      const authorizedDirectReports = listOfUsers.filter((user) => {
+        if (
+          user.manager_username === manager.username &&
+          user.is_authorized === true
+        )
+          return user.username;
+      });
 
       const numberOfAuthorizedDirectReports = authorizedDirectReports.length;
+      const numberOfTeams = listOfUsers.filter(
+        (user) =>
+          user.manager_username === manager.username && user.is_leader === true
+      ).length;
+
+      const recordCompletionPercentage = (
+        (100 *
+          records.filter(
+            (record) =>
+              record.manager_username === manager.username ||
+              record.username === manager.username
+          ).length) /
+        5 /
+        (listOfUsers.filter(
+          (user) => user.manager_username === manager.username
+        ).length +
+          1)
+      ).toFixed(0);
 
       return {
         ...manager,
-        didSendRecords,
+        hasRecord,
         numberOfAuthorizedDirectReports,
+        numberOfTeams,
+        numberOfDirectReports,
+        recordCompletionPercentage,
         subRows: listOfUsers
           .filter((user) => user.manager_username === manager.username)
-          .map((user) => ({
-            display_name: user.display_name,
-            username: user.username,
-            mail: user.mail,
-            isAuthorizedPersonnel: Boolean(
-              authorizedDirectReports.indexOf(user.username) !== -1
-            ),
-          })),
+          .map((user) => {
+            const hasRecord = Boolean(
+              records.find(({ username }) => username === user.username)
+            );
+
+            let leaderRecordCompletionPercentage = null;
+            if (user.is_leader === true) {
+              leaderRecordCompletionPercentage = (
+                (100 *
+                  records.filter(
+                    (record) => record.leader_username === user.username
+                  ).length) /
+                5 /
+                listOfUsers.filter(
+                  (member) => member.leader_username === user.username
+                ).length
+              ).toFixed(0);
+            }
+
+            return {
+              display_name: user.display_name,
+              username: user.username,
+              mail: user.mail,
+              is_authorized: user.is_authorized,
+              is_leader: user.is_leader,
+              is_manager: false,
+              team_display_name: user.team_display_name,
+              leaderRecordCompletionPercentage,
+              hasRecord,
+            };
+          }),
       };
     });
   }, []);
 
   const getBulkReminderMailList = () => {
     const mailsOfAuthorizedPersonnelWithoutRecords = tableData
-      .filter((manager) => !manager.didSendRecords)
+      .filter((manager) => !manager.hasRecord)
       .map((manager) =>
         manager.subRows
-          .filter((personnel) => personnel.isAuthorizedPersonnel)
+          .filter((personnel) => personnel.is_authorized)
           .map((user) => user.mail)
       )
       .flat(Infinity);
 
     const mailsOfManagersWithoutRecord = tableData
-      .filter((manager) => !manager.didSendRecords)
+      .filter((manager) => !manager.hasRecord)
       .map((manager) => manager.mail);
 
     return [
@@ -90,7 +141,7 @@ export default function ManagerUserTable({
     if (managerData.numberOfAuthorizedDirectReports < 1) return [];
 
     const authorizedDirectReports = managerData.subRows.filter(
-      (directReport) => directReport.isAuthorizedPersonnel
+      (directReport) => directReport.is_authorized
     );
     const authorizedDirectReportsMails = authorizedDirectReports.map(
       (directReport) => directReport.mail
@@ -122,18 +173,57 @@ export default function ManagerUserTable({
           ) : null,
       },
       {
-        Header: 'Yönetici İsmi',
+        Header: 'Personel',
         accessor: 'display_name',
         Cell: ({ row }) => {
           const value = row.values.display_name;
           return (
-            <span
-              className={`font-medium  ${
-                row.depth === 0 ? 'text-gray-700' : 'font-light text-gray-500'
-              }`}
-            >
-              {value === undefined || value === null ? null : String(value)}
-            </span>
+            <div className='flex items-center gap-4'>
+              {row.original.hasRecord === true ? (
+                <div className='mr-2 h-2 w-2  rounded-full bg-green-500'></div>
+              ) : (
+                <div className='mr-2 h-2 w-2  rounded-full bg-red-500 '></div>
+              )}
+              <span
+                className={`font-medium  ${
+                  row.depth === 0 ? 'text-gray-700' : 'font-light text-gray-500'
+                }`}
+              >
+                {value === undefined || value === null ? null : String(value)}
+              </span>
+              {row.original.is_authorized ? (
+                <div className=' inline-flex items-center gap-2 rounded-full bg-green-100 px-2 py-0.5 text-center text-green-700 outline outline-1 outline-green-400'>
+                  <span>Yetkili</span>
+                  <CheckIcon className='h-4 w-4  ' />
+                </div>
+              ) : null}
+              {row.original.is_leader ? (
+                <div className='inline-flex items-center gap-2 rounded-full bg-sky-100 px-2 py-0.5 text-center text-sky-700 outline outline-1 outline-sky-400'>
+                  <span>Lider</span>
+                  <UserGroupIcon className='h-4 w-4  ' />
+                </div>
+              ) : null}
+              {row.original.is_manager &&
+              row.original.numberOfDirectReports > 0 ? (
+                <div className='inline-flex items-center gap-2 rounded-full bg-gray-100 px-2 py-0.5 text-center text-gray-700 outline outline-1 outline-gray-200'>
+                  <span>{row.original.numberOfDirectReports}</span>
+                  <UserIcon className='h-3 w-3  ' />
+                </div>
+              ) : null}
+              {row.original.is_manager &&
+              row.original.numberOfAuthorizedDirectReports > 0 ? (
+                <div className='inline-flex items-center gap-2 rounded-full bg-green-100 px-2 py-0.5 text-center text-green-700 outline outline-1 outline-green-400'>
+                  <span>{row.original.numberOfAuthorizedDirectReports}</span>
+                  <CheckIcon className='h-4 w-4  ' />
+                </div>
+              ) : null}
+              {row.original.is_manager && row.original.numberOfTeams > 0 ? (
+                <div className='inline-flex items-center gap-2 rounded-full bg-sky-100 px-2 py-0.5 text-center text-sky-700 outline outline-1 outline-sky-400'>
+                  <span>{row.original.numberOfTeams}</span>
+                  <UserGroupIcon className='h-4 w-4  ' />
+                </div>
+              ) : null}
+            </div>
           );
         },
       },
@@ -145,26 +235,24 @@ export default function ManagerUserTable({
         Header: 'mail',
         accessor: 'mail',
       },
+      // {
+      //   Header: 'Yetkili Personel',
+      //   accessor: 'numberOfAuthorizedDirectReports',
+      //   Cell: ({ value }) =>
+      //     value > 0 ? (
+      //       <div className=' inline-flex items-center rounded-full bg-green-100 px-4 py-1 text-center font-bold text-green-700 '>
+      //         {String(value)}
+      //       </div>
+      //     ) : null,
+      // },
       {
-        Header: '',
-        accessor: 'isAuthorizedPersonnel',
-        Cell: ({ value }) =>
-          value ? (
-            <div className=' inline-flex items-center gap-2 rounded-full bg-green-100 px-3 py-0.5 text-center text-green-700 outline outline-1 outline-green-400'>
-              <span>Yetkili</span>
-              <CheckIcon className='h-4 w-4  ' />
-            </div>
-          ) : null,
-      },
-      {
-        Header: 'Yetkili Personel',
-        accessor: 'numberOfAuthorizedDirectReports',
-        Cell: ({ value }) =>
-          value > 0 ? (
-            <div className=' inline-flex items-center rounded-full bg-green-100 px-4 py-1 text-center font-bold text-green-700 '>
-              {String(value)}
-            </div>
-          ) : null,
+        Header: 'Ekip',
+        accessor: 'team_display_name',
+        Cell: ({ value }) => (
+          <span className=' text-gray-500'>
+            {value === undefined || value === null ? null : String(value)}
+          </span>
+        ),
       },
       {
         Header: 'Bölüm',
@@ -180,28 +268,103 @@ export default function ManagerUserTable({
         accessor: 'manager_display_name',
         Cell: ({ value }) => (
           <span className=' text-gray-500'>
-            {' '}
             {value === undefined || value === null ? null : String(value)}
           </span>
         ),
       },
       {
+        Header: 'Kayıt Oranı',
+        accessor: 'recordCompletionPercentage',
+        Cell: ({ row }) => {
+          let percentage;
+          if (row.original.is_leader) {
+            percentage = row.original.leaderRecordCompletionPercentage;
+          } else {
+            percentage = row.original.recordCompletionPercentage;
+          }
+
+          let styles;
+          if (percentage === undefined || percentage === null) return null;
+          if (percentage == 0) {
+            styles = ' bg-red-100 text-red-700';
+          } else if (percentage == 100) {
+            styles = ' bg-green-100 text-green-700';
+          } else {
+            styles = ' bg-yellow-100 text-yellow-700';
+          }
+
+          return (
+            <div
+              className={`flex w-16 items-center justify-center gap-2 rounded-md px-2 py-1 font-semibold
+            ${styles} `}
+            >
+              {`% ${percentage}`}
+            </div>
+          );
+        },
+      },
+      {
         Header: 'Kayıtlar',
-        accessor: 'didSendRecords',
-        Cell: ({ value }) => {
-          if (value)
+        accessor: 'hasRecord',
+        // Cell: ({ value }) => {
+        //   if (value === true)
+        //     return (
+        //       <div className='h-2 w-2 rounded-full  bg-green-500 shadow-md shadow-green-300 '></div>
+        //     );
+        //   else
+        //     return (
+        //       <div className='h-2 w-2 rounded-full  bg-red-500 shadow-sm shadow-red-300 '></div>
+        //     );
+        // },
+      },
+      {
+        id: 'reminder',
+        Header: 'E-Posta Bildirimi',
+        Cell: ({ row }) => {
+          if (
+            row.original.is_leader !== true &&
+            row.original.is_manager !== true
+          )
+            return null;
+
+          if (
+            row.original.recordCompletionPercentage !== '100' &&
+            row.original.leaderRecordCompletionPercentage !== '100'
+          )
             return (
-              <div className='flex w-24 items-center  justify-between gap-2 rounded-md border border-green-400 bg-green-200 px-2 py-[3px] text-green-700 '>
-                <span>Gönderdi</span>
-                <CheckIcon className='h-4 w-4' />
-              </div>
+              <button
+                onClick={() => {
+                  setManagerMailProps({
+                    username: row.original.username,
+                    name: row.original.display_name,
+                    mail: row.original.mail,
+                    type: 'reminder',
+                  });
+                  setManagerMailModalIsOpen(true);
+                }}
+                className='inline-flex items-center gap-2 rounded-md bg-gray-100 py-1 px-3 font-medium text-gray-600 hover:bg-blue-50 hover:text-blue-600'
+              >
+                <EnvelopeIcon className='h-5 w-5' />
+                <span className=''>Hatırlat</span>
+              </button>
             );
-          if (value === false)
+          else
             return (
-              <div className='flex w-24 items-center  justify-between gap-2 rounded-md border border-red-400 bg-red-200 px-2 py-[3px] text-red-700 '>
-                <span>Eksik</span>
-                <XMarkIcon className='h-4 w-4' />
-              </div>
+              <button
+                onClick={() => {
+                  setManagerMailProps({
+                    username: row.original.username,
+                    name: row.original.display_name,
+                    mail: row.original.mail,
+                    type: 'edit',
+                  });
+                  setManagerMailModalIsOpen(true);
+                }}
+                className='flex items-center gap-2 rounded-md py-1 px-3 font-medium text-gray-600 hover:bg-blue-50 hover:text-blue-600'
+              >
+                <EnvelopeIcon className='h-5 w-5' />
+                <span className=''>Düzenleme İste</span>
+              </button>
             );
         },
       },
@@ -209,51 +372,8 @@ export default function ManagerUserTable({
     []
   );
 
-  const emailColumn = {
-    id: 'reminder',
-    Header: 'E-Posta Bildirimi',
-    Cell: ({ row }) => {
-      if (row.values.didSendRecords === false)
-        return (
-          <button
-            onClick={() => {
-              setManagerMailProps({
-                username: row.values.username,
-                name: row.values.display_name,
-                mail: row.values.mail,
-                type: 'reminder',
-              });
-              setManagerMailModalIsOpen(true);
-            }}
-            className='inline-flex items-center gap-2 rounded-md bg-gray-100 py-1 px-3 font-medium text-gray-600 hover:bg-blue-50 hover:text-blue-600'
-          >
-            <EnvelopeIcon className='h-5 w-5' />
-            <span className=''>Hatırlat</span>
-          </button>
-        );
-      if (row.values.didSendRecords === true)
-        return (
-          <button
-            onClick={() => {
-              setManagerMailProps({
-                username: row.values.username,
-                name: row.values.display_name,
-                mail: row.values.mail,
-                type: 'edit',
-              });
-              setManagerMailModalIsOpen(true);
-            }}
-            className='flex items-center gap-2 rounded-md py-1 px-3 font-medium text-gray-600 hover:bg-blue-50 hover:text-blue-600'
-          >
-            <EnvelopeIcon className='h-5 w-5' />
-            <span className=''>Düzenleme İste</span>
-          </button>
-        );
-    },
-  };
-
   const tableHooks = (hooks) => {
-    hooks.visibleColumns.push((columns) => [...columns, emailColumn]);
+    hooks.visibleColumns.push((columns) => [...columns]);
   };
 
   const {
@@ -267,7 +387,7 @@ export default function ManagerUserTable({
     {
       columns,
       data: tableData,
-      initialState: { hiddenColumns: ['username', 'mail'] },
+      initialState: { hiddenColumns: ['username', 'mail', 'hasRecord'] },
     },
     useExpanded,
     tableHooks

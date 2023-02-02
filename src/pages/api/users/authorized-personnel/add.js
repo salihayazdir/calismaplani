@@ -33,7 +33,6 @@ export default async function handler(req, response) {
 
     const newAuthorizedPersonnel = await addAuthorizedPersonnel({
       username: requestUsername,
-      manager_username: userData.username,
     });
     if (newAuthorizedPersonnel.success !== true)
       throw newAuthorizedPersonnel.result || 'Database Error';

@@ -102,6 +102,7 @@ export default async function handler(req, response) {
           if (
             user.dn.includes('OU=Genel Mud. Yrd.') ||
             user.sAMAccountName === 'murhak' ||
+            user.sAMAccountName === 'salaya' ||
             user.description === 'İnsan Kaynakları Bölümü'
           )
             isHr = true;

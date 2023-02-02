@@ -8,11 +8,7 @@ import {
   format,
   endOfMonth,
 } from 'date-fns';
-import {
-  getUserStatuses,
-  getUsersWithManagers,
-  getAuthorizedPersonnel,
-} from '../database/dbOps';
+import { getUserStatuses, getUsersWithManagers } from '../database/dbOps';
 import Layout from '../components/layout/Layout';
 import DayPicker from '../components/datepickers/DayPicker';
 import WeekPicker from '../components/datepickers/WeekPicker';
@@ -26,12 +22,7 @@ import { ArrowPathIcon } from '@heroicons/react/24/outline';
 import { useRouter } from 'next/router';
 import { addLog } from '../database/dbOps';
 
-export default function Dashboard({
-  userStatuses,
-  userData,
-  listOfUsers,
-  authorizedPersonnel,
-}) {
+export default function Dashboard({ userStatuses, userData, listOfUsers }) {
   useEffect(() => {
     document.body.style.zoom = '90%';
   }, []);
@@ -217,7 +208,6 @@ export default function Dashboard({
               setSelectedDate={setSelectedDate}
               selectedDateRange={selectedDateRange}
               setSelectedDateRange={setSelectedDateRange}
-              authorizedPersonnel={authorizedPersonnel}
             />
           ) : null}
         </div>
@@ -234,14 +224,14 @@ export async function getServerSideProps(context) {
     if (!userData) throw '/giris';
     if (userData.is_hr !== true) throw '/';
 
-    const authorizedPersonnel = await (await getAuthorizedPersonnel()).result;
+    // const authorizedPersonnel = await (await getAuthorizedPersonnel()).result;
     const userStatuses = await getUserStatuses();
     const listOfUsers = await getUsersWithManagers();
 
-    if (!authorizedPersonnel || !userStatuses || !listOfUsers) throw 'DB Error';
+    if (!userStatuses || !listOfUsers) throw 'DB Error';
 
     return {
-      props: { userStatuses, userData, listOfUsers, authorizedPersonnel },
+      props: { userStatuses, userData, listOfUsers },
     };
   } catch (err) {
     console.error(err);
