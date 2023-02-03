@@ -1,54 +1,29 @@
 import { Fragment } from 'react';
 import { Listbox, Transition } from '@headlessui/react';
-import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid';
+import { ChevronUpDownIcon } from '@heroicons/react/20/solid';
+import selectboxStatusStyles from '../../utils/selectboxStatusStyles';
 
-export default function StatusSelect({
+export default function ModalStatusSelect({
   selectedId,
-  setNewRecords,
+  setNewEditedRecords,
   userStatuses,
-  username,
   day,
 }) {
-  const userStatusesWithEmpty = [
-    { user_status_id: 0, user_status_name: 'Belirsiz' },
-    ...userStatuses,
-  ];
-  const getStatusStyles = (statusId) => {
-    switch (statusId) {
-      case 0:
-        return ' text-gray-400 font-light';
-        break;
-      case 1:
-        return ' text-green-500 font-semibold';
-        break;
-      case 2:
-        return ' text-sky-500 font-semibold';
-        break;
-      case 3:
-        return ' text-yellow-500 font-semibold';
-        break;
-      default:
-        return ' text-red-500 font-semibold';
-    }
-  };
+  //   const userStatusesWithEmpty = [
+  //     { user_status_id: 0, user_status_name: 'Belirsiz' },
+  //     ...userStatuses,
+  //   ];
 
   const handleSelectOnChange = (value) => {
-    setNewRecords((prev) => {
-      const daysRecord = prev.filter((records) => records.dayIdx === day)[0];
-      const otherRecords = prev.filter((records) => records.dayIdx !== day);
-
-      const recordOwner = daysRecord.data.filter(
-        (user) => user.username === username
-      )[0];
-      const restOfUsers = daysRecord.data.filter(
-        (user) => user.username !== username
+    setNewEditedRecords((prev) => {
+      const restOfRecords = prev.filter(
+        (recordDay) => recordDay.dayIdx !== day
       );
-
       return [
-        ...otherRecords,
+        ...restOfRecords,
         {
-          ...daysRecord,
-          data: [...restOfUsers, { ...recordOwner, user_status_id: value }],
+          dayIdx: day,
+          user_status_id: value,
         },
       ];
     });
@@ -56,17 +31,17 @@ export default function StatusSelect({
 
   return (
     <Listbox value={selectedId} onChange={handleSelectOnChange}>
-      <div className='absolute -mt-3.5 min-w-[7rem] text-gray-600'>
+      <div className='min-w-[7rem] text-sm text-gray-600'>
         <Listbox.Button
-          className={`relative w-32 cursor-pointer rounded-lg  border border-gray-200 bg-white py-1.5 pl-3 pr-10 text-left focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 
-          ${getStatusStyles(selectedId)} `}
+          className={`relative w-36 cursor-pointer rounded-lg  border border-gray-200 bg-white py-1.5 pl-3 pr-10 text-left focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 
+          ${selectboxStatusStyles(selectedId)} `}
         >
           <span className='block truncate'>
             {selectedId === 0
               ? 'Seçiniz'
-              : userStatusesWithEmpty.filter(
+              : userStatuses.find(
                   (status) => status.user_status_id === selectedId
-                )[0].user_status_name}
+                ).user_status_name}
           </span>
           <span className='pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2'>
             <ChevronUpDownIcon
@@ -81,8 +56,8 @@ export default function StatusSelect({
           leaveFrom='opacity-100'
           leaveTo='opacity-0'
         >
-          <Listbox.Options className='absolute z-50 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none'>
-            {userStatusesWithEmpty.map((status) => (
+          <Listbox.Options className='absolute right-6 z-50 mt-1 max-h-52 w-44 overflow-auto rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none'>
+            {userStatuses.map((status) => (
               <Listbox.Option
                 key={status.user_status_id}
                 className={({ active, selected }) =>

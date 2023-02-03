@@ -78,7 +78,6 @@ export default function TeamsModal({
 
   useEffect(() => {
     fetchTeams();
-    console.log('fired');
   }, []);
 
   const fetchTeams = () => {

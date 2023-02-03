@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useTable, useFilters, usePagination } from 'react-table';
 import { addDays, format } from 'date-fns';
 import * as XLSX from 'xlsx';
@@ -9,7 +9,9 @@ import {
   ChevronDoubleRightIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
+  PencilSquareIcon,
 } from '@heroicons/react/24/outline';
+import EditRecordsModal from '../modals/EditRecordsModal';
 
 export default function DashboardTable({
   records,
@@ -17,6 +19,17 @@ export default function DashboardTable({
   selectedDate,
   isDashboard,
 }) {
+  const [editRecordsModalIsOpen, setEditRecordsModalIsOpen] = useState(false);
+  const [userDataForEditRecordsModal, setUserDataForEditRecordsModal] =
+    useState({
+      description: '',
+      display_name: '',
+      index: null,
+      manager_display_name: '',
+      physicalDeliveryOfficeName: '',
+      username: '',
+    });
+
   const getStatusContainerStyles = (statusId) => {
     switch (statusId) {
       case 1:
@@ -183,8 +196,36 @@ export default function DashboardTable({
     },
   }));
 
+  const editRecordsColumn = {
+    Header: 'Düzenle',
+    accessor: 'edit',
+    maxWidth: 40,
+    width: 20,
+    Filter: false,
+    Cell: ({ row }) => {
+      return row.values.username ? (
+        <button
+          onClick={() => handleEditRecordButton(row.values)}
+          className='flex items-center justify-center gap-1 rounded-md p-1 text-blue-600 hover:bg-blue-50'
+        >
+          <PencilSquareIcon className='h-5 w-5' />
+        </button>
+      ) : null;
+    },
+  };
+
+  const handleEditRecordButton = (userValues) => {
+    console.log(userValues);
+    setUserDataForEditRecordsModal(userValues);
+    setEditRecordsModalIsOpen(true);
+  };
+
   const tableHooks = (hooks) => {
-    hooks.visibleColumns.push((columns) => [...columns, ...statusColumns]);
+    hooks.visibleColumns.push((columns) => [
+      ...columns,
+      ...statusColumns,
+      editRecordsColumn,
+    ]);
   };
 
   const {
@@ -265,150 +306,169 @@ export default function DashboardTable({
   };
 
   return (
-    <div className={`overflow-x-auto overflow-y-visible text-xs`}>
-      <div className='flex w-full items-center justify-between px-4 pb-4'>
-        <h2 className='inline-flex gap-2 whitespace-nowrap rounded-md bg-blue-50 px-4 py-2 text-sm font-bold text-blue-700 '>
-          {`
+    <>
+      <div className={`overflow-x-auto overflow-y-visible text-xs`}>
+        <div className='flex w-full items-center justify-between px-4 pb-4'>
+          <h2 className='inline-flex gap-2 whitespace-nowrap rounded-md bg-blue-50 px-4 py-2 text-sm font-bold text-blue-700 '>
+            {`
         ${format(selectedDate, 'd MMMM')}  -  ${format(
-            addDays(selectedDate, 4),
-            'd MMMM yyyy'
-          )}`}
-        </h2>
-        <button
-          onClick={exportToExcel}
-          className='flex-end inline-flex gap-3 rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-md hover:bg-blue-800'
+              addDays(selectedDate, 4),
+              'd MMMM yyyy'
+            )}`}
+          </h2>
+          <button
+            onClick={exportToExcel}
+            className='flex-end inline-flex gap-3 rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-md hover:bg-blue-800'
+          >
+            <span>{"Excel'e Aktar"}</span>
+            <span>
+              <ArrowDownTrayIcon className='h-5 w-5' />
+            </span>
+          </button>
+        </div>
+        <table
+          {...getTableProps()}
+          className='w-full border-collapse rounded-lg'
         >
-          <span>{"Excel'e Aktar"}</span>
-          <span>
-            <ArrowDownTrayIcon className='h-5 w-5' />
-          </span>
-        </button>
-      </div>
-      <table {...getTableProps()} className='w-full border-collapse rounded-lg'>
-        <thead className='border-y border-gray-200 bg-gray-50'>
-          {headerGroups.map((headerGroup, idx) => (
-            <tr key={idx} {...headerGroup.getHeaderGroupProps()}>
-              {headerGroup.headers.map((column, idx) => (
-                <th
-                  key={idx}
-                  {...column.getHeaderProps({
-                    style: { minWidth: column.minWidth, width: column.width },
-                  })}
-                  className='px-3 py-2 text-left align-baseline font-semibold first-of-type:pl-6 first-of-type:pr-3'
-                >
-                  {column.render('Header')}
-                  <div>{column.canFilter ? column.render('Filter') : null}</div>
-                </th>
-              ))}
-            </tr>
-          ))}
-        </thead>
-        <tbody {...getTableBodyProps()} className='text-gray-800'>
-          {page.map((row, idx) => {
-            prepareRow(row);
-            return (
-              <tr
-                key={idx}
-                {...row.getRowProps()}
-                className='border-b border-gray-200'
-              >
-                {row.cells.map((cell, idx) => {
-                  return (
-                    <td
-                      key={idx}
-                      {...cell.getCellProps({
-                        style: {
-                          minWidth: cell.column.minWidth,
-                          width: cell.column.width,
-                        },
-                      })}
-                      className='py-2 pl-3 pr-5 first-of-type:pl-6 first-of-type:pr-3 '
-                    >
-                      {cell.render('Cell')}
-                    </td>
-                  );
-                })}
+          <thead className='border-y border-gray-200 bg-gray-50'>
+            {headerGroups.map((headerGroup, idx) => (
+              <tr key={idx} {...headerGroup.getHeaderGroupProps()}>
+                {headerGroup.headers.map((column, idx) => (
+                  <th
+                    key={idx}
+                    {...column.getHeaderProps({
+                      style: { minWidth: column.minWidth, width: column.width },
+                    })}
+                    className='px-3 py-2 text-left align-baseline font-semibold first-of-type:pl-6 first-of-type:pr-3'
+                  >
+                    {column.render('Header')}
+                    <div>
+                      {column.canFilter ? column.render('Filter') : null}
+                    </div>
+                  </th>
+                ))}
               </tr>
-            );
-          })}
-        </tbody>
-      </table>
-      <div className='flex justify-end gap-6 p-6'>
-        {/* <div className='flex w-20 flex-col gap-1'>
+            ))}
+          </thead>
+          <tbody {...getTableBodyProps()} className='text-gray-800'>
+            {page.map((row, idx) => {
+              prepareRow(row);
+              return (
+                <tr
+                  key={idx}
+                  {...row.getRowProps()}
+                  className='border-b border-gray-200'
+                >
+                  {row.cells.map((cell, idx) => {
+                    return (
+                      <td
+                        key={idx}
+                        {...cell.getCellProps({
+                          style: {
+                            minWidth: cell.column.minWidth,
+                            width: cell.column.width,
+                          },
+                        })}
+                        className='py-2 pl-3 pr-5 first-of-type:pl-6 first-of-type:pr-3 last-of-type:pl-5 '
+                      >
+                        {cell.render('Cell')}
+                      </td>
+                    );
+                  })}
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+        <div className='flex justify-end gap-6 p-6'>
+          {/* <div className='flex w-20 flex-col gap-1'>
           <span className='whitespace-nowrap font-medium text-gray-600'>
-            Sayfaya Git
+          Sayfaya Git
           </span>
           <input
-            type='number'
-            defaultValue={pageIndex + 1}
-            onChange={(e) => {
-              const page = e.target.value ? Number(e.target.value) - 1 : 0;
-              gotoPage(page);
-            }}
-            className='rounded-md py-2 px-3 text-gray-500 shadow focus:outline-blue-300'
+          type='number'
+          defaultValue={pageIndex + 1}
+          onChange={(e) => {
+            const page = e.target.value ? Number(e.target.value) - 1 : 0;
+            gotoPage(page);
+          }}
+          className='rounded-md py-2 px-3 text-gray-500 shadow focus:outline-blue-300'
           />
         </div> */}
-        <div className='rounded-m flex items-center gap-2'>
-          <div className='flex whitespace-nowrap text-sm font-medium text-gray-400'>
-            Sayfa Boyutu
+          <div className='rounded-m flex items-center gap-2'>
+            <div className='flex whitespace-nowrap text-sm font-medium text-gray-400'>
+              Sayfa Boyutu
+            </div>
+            <select
+              className='rounded-md bg-white py-2 px-1 text-sm font-medium text-gray-500 shadow focus:outline-blue-300'
+              value={pageSize}
+              onChange={(e) => {
+                setPageSize(Number(e.target.value));
+              }}
+            >
+              {[10, 50, 100].map((pageSize) => (
+                <option key={pageSize} value={pageSize}>
+                  {pageSize}
+                </option>
+              ))}
+            </select>
           </div>
-          <select
-            className='rounded-md bg-white py-2 px-1 text-sm font-medium text-gray-500 shadow focus:outline-blue-300'
-            value={pageSize}
-            onChange={(e) => {
-              setPageSize(Number(e.target.value));
-            }}
-          >
-            {[10, 50, 100].map((pageSize) => (
-              <option key={pageSize} value={pageSize}>
-                {pageSize}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div></div>
+          <div></div>
 
-        <div className='flex items-center justify-center gap-2.5'>
-          <button
-            onClick={() => gotoPage(0)}
-            disabled={!canPreviousPage}
-            className=' rounded-md bg-gray-50 p-2.5 text-gray-500 shadow hover:bg-blue-50  hover:text-blue-600 disabled:text-gray-300 disabled:shadow-none disabled:hover:bg-gray-50 disabled:hover:text-gray-300'
-          >
-            <ChevronDoubleLeftIcon className='h-4 w-4' />
-          </button>
-          <button
-            onClick={() => previousPage()}
-            disabled={!canPreviousPage}
-            className=' rounded-md bg-gray-50 p-2.5 text-gray-500 shadow hover:bg-blue-50  hover:text-blue-600 disabled:text-gray-300 disabled:shadow-none disabled:hover:bg-gray-50 disabled:hover:text-gray-300'
-          >
-            <ChevronLeftIcon className='h-4 w-4' />
-          </button>
+          <div className='flex items-center justify-center gap-2.5'>
+            <button
+              onClick={() => gotoPage(0)}
+              disabled={!canPreviousPage}
+              className=' rounded-md bg-gray-50 p-2.5 text-gray-500 shadow hover:bg-blue-50  hover:text-blue-600 disabled:text-gray-300 disabled:shadow-none disabled:hover:bg-gray-50 disabled:hover:text-gray-300'
+            >
+              <ChevronDoubleLeftIcon className='h-4 w-4' />
+            </button>
+            <button
+              onClick={() => previousPage()}
+              disabled={!canPreviousPage}
+              className=' rounded-md bg-gray-50 p-2.5 text-gray-500 shadow hover:bg-blue-50  hover:text-blue-600 disabled:text-gray-300 disabled:shadow-none disabled:hover:bg-gray-50 disabled:hover:text-gray-300'
+            >
+              <ChevronLeftIcon className='h-4 w-4' />
+            </button>
 
-          <div className='rounded-md bg-white p-2 text-sm  font-semibold text-gray-400 focus:outline-blue-300'>
-            <span className='flex gap-2 '>
-              <span className='text-blue-600'>{`${pageIndex + 1}`}</span>
-              <span>{`/`}</span>
-              <span>{`${pageOptions.length}`}</span>
-            </span>
+            <div className='rounded-md bg-white p-2 text-sm  font-semibold text-gray-400 focus:outline-blue-300'>
+              <span className='flex gap-2 '>
+                <span className='text-blue-600'>{`${pageIndex + 1}`}</span>
+                <span>{`/`}</span>
+                <span>{`${pageOptions.length}`}</span>
+              </span>
+            </div>
+
+            <button
+              onClick={() => nextPage()}
+              disabled={!canNextPage}
+              className=' rounded-md bg-gray-50 p-2.5 text-gray-500 shadow hover:bg-blue-50  hover:text-blue-600 disabled:text-gray-300 disabled:shadow-none disabled:hover:bg-gray-50 disabled:hover:text-gray-300'
+            >
+              <ChevronRightIcon className='h-4 w-4' />
+            </button>
+            <button
+              onClick={() => gotoPage(pageCount - 1)}
+              disabled={!canNextPage}
+              className=' rounded-md bg-gray-50 p-2.5 text-gray-500 shadow hover:bg-blue-50 hover:text-blue-600 disabled:text-gray-300 disabled:shadow-none disabled:hover:bg-gray-50 disabled:hover:text-gray-300'
+            >
+              <ChevronDoubleRightIcon className='h-4 w-4' />
+            </button>
           </div>
-
-          <button
-            onClick={() => nextPage()}
-            disabled={!canNextPage}
-            className=' rounded-md bg-gray-50 p-2.5 text-gray-500 shadow hover:bg-blue-50  hover:text-blue-600 disabled:text-gray-300 disabled:shadow-none disabled:hover:bg-gray-50 disabled:hover:text-gray-300'
-          >
-            <ChevronRightIcon className='h-4 w-4' />
-          </button>
-          <button
-            onClick={() => gotoPage(pageCount - 1)}
-            disabled={!canNextPage}
-            className=' rounded-md bg-gray-50 p-2.5 text-gray-500 shadow hover:bg-blue-50 hover:text-blue-600 disabled:text-gray-300 disabled:shadow-none disabled:hover:bg-gray-50 disabled:hover:text-gray-300'
-          >
-            <ChevronDoubleRightIcon className='h-4 w-4' />
-          </button>
         </div>
       </div>
-    </div>
+      {editRecordsModalIsOpen ? (
+        <EditRecordsModal
+          isOpen={editRecordsModalIsOpen}
+          setIsOpen={setEditRecordsModalIsOpen}
+          selectedDate={selectedDate}
+          userDataForEditRecordsModal={userDataForEditRecordsModal}
+          userStatuses={userStatuses}
+          records={records.filter(
+            (record) => record.username === userDataForEditRecordsModal.username
+          )}
+        />
+      ) : null}
+    </>
   );
 }
 

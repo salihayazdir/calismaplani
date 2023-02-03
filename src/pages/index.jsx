@@ -360,7 +360,7 @@ export default function Home({
           //   message: res.data.message || '',
           // });
         } else {
-          console.log(res);
+          // console.log(res);
           // setApiStatus({
           //   isLoading: false,
           //   isError: true,

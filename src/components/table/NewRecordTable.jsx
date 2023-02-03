@@ -1,6 +1,6 @@
 import { useMemo, useRef, forwardRef, useEffect } from 'react';
 import { useTable, useRowSelect, useFilters } from 'react-table';
-import StatusSelect from './StatusSelect';
+import TableStatusSelect from '../selecbox/TableStatusSelect';
 import NewRecordBulkActions from './NewRecordBulkActions';
 import { addDays, format } from 'date-fns';
 import {
@@ -193,7 +193,7 @@ export default function NewRecordTable({
         },
         Cell: ({ row }) => {
           return (
-            <StatusSelect
+            <TableStatusSelect
               selectedId={
                 newRecords
                   .filter((newRecords) => newRecords.dayIdx === dayIdx)[0]

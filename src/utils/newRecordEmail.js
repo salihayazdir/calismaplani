@@ -1,6 +1,14 @@
 import sendMail from '../backend/sendMail';
 import { getUserStatuses } from '../database/dbOps';
 import _ from 'lodash';
+import {
+  addDays,
+  format,
+  differenceInCalendarDays,
+  parse,
+  compareAsc,
+} from 'date-fns';
+import { setRevalidateHeaders } from 'next/dist/server/send-payload';
 
 export default async function newRecordEmail({
   rawRecords,
@@ -10,6 +18,8 @@ export default async function newRecordEmail({
   recordsStartDate,
   recordsEndDate,
 }) {
+  const days = ['Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma'];
+
   let mailContent;
   if (userData.is_authorized) {
     mailContent = `${userData.display_name}, yöneticisi ${
@@ -62,18 +72,39 @@ export default async function newRecordEmail({
     ),
   ].map((user) => JSON.parse(user));
 
+  // const userMailData = usersInRecords.map((user) => {
+  //   const recordsOfUser = rawRecords.map((dayOfRecord) => {
+  //     const recordOfUser = dayOfRecord.data.filter(
+  //       (record) => record.username === user.username
+  //     );
+  //     return {
+  //       dayIdx: dayOfRecord.dayIdx,
+  //       dayDisplayName: dayOfRecord.dayDisplayName,
+  //       statusOfDay: recordOfUser[0].user_status_id,
+  //     };
+  //   });
+  //   return { ...user, records: _.sortBy(recordsOfUser, 'dayIdx') };
+  // });
+
   const userMailData = usersInRecords.map((user) => {
-    const recordsOfUser = rawRecords.map((dayOfRecord) => {
-      const recordOfUser = dayOfRecord.data.filter(
-        (record) => record.username === user.username
-      );
-      return {
-        dayIdx: dayOfRecord.dayIdx,
-        dayDisplayName: dayOfRecord.dayDisplayName,
-        statusOfDay: recordOfUser[0].user_status_id,
-      };
-    });
-    return { ...user, records: _.sortBy(recordsOfUser, 'dayIdx') };
+    return {
+      username: user.username,
+      display_name: user.display_name,
+      mail: null,
+      records: days.map((day, idx) => {
+        const recordsOfUser = records.filter(
+          (record) => record.username === user.username
+        );
+        const recordDates = recordsOfUser
+          .map((record) => parse(record.record_date, 'yyyy-MM-dd', new Date()))
+          .sort(compareAsc);
+        return {
+          dayIdx: idx,
+          dayDisplayName: day,
+          statusOfDay: recordsOfUser[idx].user_status_id,
+        };
+      }),
+    };
   });
 
   await getUserStatuses().then((userStatusesData) => {
