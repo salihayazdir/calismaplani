@@ -18,6 +18,7 @@ export default function DashboardTable({
   userStatuses,
   selectedDate,
   isDashboard,
+  fetchTableData,
 }) {
   const [editRecordsModalIsOpen, setEditRecordsModalIsOpen] = useState(false);
   const [userDataForEditRecordsModal, setUserDataForEditRecordsModal] =
@@ -178,8 +179,8 @@ export default function DashboardTable({
           record.record_date.slice(0, 10) == formattedDay &&
           record.username == row.values.username
       );
-      if (filteredRecord.length !== 1) return <div>no data</div>;
-      if (!filteredRecord[0].user_status_id) return <div>no data</div>;
+      if (filteredRecord.length !== 1) return null;
+      if (!filteredRecord[0].user_status_id) return null;
       const statusId = filteredRecord[0].user_status_id;
       const userStatusObject = userStatuses.filter(
         (userStatus) => userStatus.user_status_id == statusId
@@ -466,6 +467,7 @@ export default function DashboardTable({
           records={records.filter(
             (record) => record.username === userDataForEditRecordsModal.username
           )}
+          fetchTableData={fetchTableData}
         />
       ) : null}
     </>

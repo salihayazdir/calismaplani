@@ -7,7 +7,7 @@ export default function selectboxStatusStyles(statusId) {
       return ' text-green-500 font-semibold';
       break;
     case 2:
-      return ' text-sky-500 font-semibold';
+      return ' text-blue-500 font-semibold';
       break;
     case 3:
       return ' text-yellow-500 font-semibold';

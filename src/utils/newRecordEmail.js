@@ -1,17 +1,10 @@
 import sendMail from '../backend/sendMail';
-import { getUserStatuses } from '../database/dbOps';
+import { getUserStatuses, getLoginInfo } from '../database/dbOps';
 import _ from 'lodash';
-import {
-  addDays,
-  format,
-  differenceInCalendarDays,
-  parse,
-  compareAsc,
-} from 'date-fns';
-import { setRevalidateHeaders } from 'next/dist/server/send-payload';
+import { parse, compareAsc } from 'date-fns';
 
 export default async function newRecordEmail({
-  rawRecords,
+  // rawRecords,
   records,
   userData,
   prevRecordsExist,
@@ -20,18 +13,35 @@ export default async function newRecordEmail({
 }) {
   const days = ['Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma'];
 
-  let mailContent;
-  if (userData.is_authorized) {
-    mailContent = `${userData.display_name}, yöneticisi ${
-      userData.manager_display_name
-    } adına ${
-      prevRecordsExist ? 'kayıtları düzenledi' : 'yeni kayıt girişi yaptı'
-    }. Tarih aralığı: ${recordsStartDate} - ${recordsEndDate}`;
-  } else {
-    mailContent = `Yönetici ${userData.display_name} ${
-      prevRecordsExist ? 'kayıtları düzenledi' : 'yeni kayıt girişi yaptı'
-    }. Tarih aralığı: ${recordsStartDate} - ${recordsEndDate}`;
-  }
+  const usersInRecords = [...new Set(records.map((record) => record.username))];
+
+  const userMailDataRequests = await Promise.allSettled(
+    usersInRecords.map(async (user) => {
+      const userDataRequest = await getLoginInfo(user);
+      if (userDataRequest.success !== true) return;
+      return userDataRequest.result;
+    })
+  );
+
+  const userMailData = userMailDataRequests.map((user) => {
+    if (user.status !== 'fulfilled' || user.value.length !== 1) return;
+    const userData = user.value[0];
+    return {
+      username: userData.username,
+      display_name: userData.display_name,
+      mail: userData.mail,
+      records: days.map((day, idx) => {
+        const recordsOfUser = records.filter(
+          (record) => record.username === userData.username
+        );
+        return {
+          dayIdx: idx,
+          dayDisplayName: day,
+          statusOfDay: recordsOfUser[idx].user_status_id,
+        };
+      }),
+    };
+  });
 
   let mailSubject;
   if (userData.is_authorized) {
@@ -44,10 +54,28 @@ export default async function newRecordEmail({
     } | ${userData.display_name}`;
   }
 
+  let mailContent;
+  if (userData.is_authorized) {
+    mailContent = `${userData.display_name}, yöneticisi ${
+      userData.manager_display_name
+    } adına ${
+      prevRecordsExist ? 'kayıtları düzenledi' : 'yeni kayıt girişi yaptı'
+    }.<br/><br/>Tarih aralığı: ${recordsStartDate} - ${recordsEndDate}`;
+  } else {
+    mailContent = `${userData.display_name} ${
+      prevRecordsExist ? 'kayıtları düzenledi' : 'yeni kayıt girişi yaptı'
+    }.<br/><br/>Tarih aralığı: ${recordsStartDate} - ${recordsEndDate}`;
+  }
+
+  const updatedUsersContent =
+    '<br/><br/>Güncellenen kullanıcılar:<br/>' +
+    userMailData.map((user) => user.display_name).join('<br/>') +
+    '<br/>';
+
   sendMail({
     mailTo: process.env.NOTIFICATION_MAIL,
     subject: mailSubject,
-    content: mailContent,
+    content: mailContent + updatedUsersContent,
   });
 
   // const usersInRecords2 = [
@@ -59,18 +87,6 @@ export default async function newRecordEmail({
   //     }))
   //   ),
   // ];
-
-  const usersInRecords = [
-    ...new Set(
-      records.map((record) =>
-        JSON.stringify({
-          username: record.username,
-          display_name: record.mailData.display_name,
-          mail: record.mailData.mail,
-        })
-      )
-    ),
-  ].map((user) => JSON.parse(user));
 
   // const userMailData = usersInRecords.map((user) => {
   //   const recordsOfUser = rawRecords.map((dayOfRecord) => {
@@ -86,26 +102,53 @@ export default async function newRecordEmail({
   //   return { ...user, records: _.sortBy(recordsOfUser, 'dayIdx') };
   // });
 
-  const userMailData = usersInRecords.map((user) => {
-    return {
-      username: user.username,
-      display_name: user.display_name,
-      mail: null,
-      records: days.map((day, idx) => {
-        const recordsOfUser = records.filter(
-          (record) => record.username === user.username
-        );
-        const recordDates = recordsOfUser
-          .map((record) => parse(record.record_date, 'yyyy-MM-dd', new Date()))
-          .sort(compareAsc);
-        return {
-          dayIdx: idx,
-          dayDisplayName: day,
-          statusOfDay: recordsOfUser[idx].user_status_id,
-        };
-      }),
-    };
-  });
+  // const test = await Promise.allSettled(
+  //   usersInRecords.map(async (user) => {
+  //     const userDataRequest = await getLoginInfo(user);
+
+  //     if (userDataRequest.success !== true) {
+  //       return;
+  //     }
+
+  //     return userDataRequest.result;
+  //   })
+  // );
+
+  // const userMailData = usersInRecords.map((user) => {
+  //   return {
+  //     username: user.username,
+  //     display_name: user.display_name,
+  //     mail: null,
+  //     records: days.map((day, idx) => {
+  //       const recordsOfUser = records.filter(
+  //         (record) => record.username === user.username
+  //       );
+  //       return {
+  //         dayIdx: idx,
+  //         dayDisplayName: day,
+  //         statusOfDay: recordsOfUser[idx].user_status_id,
+  //       };
+  //     }),
+  //   };
+  // });
+
+  // const userMailData = usersInRecords.map((user) => {
+  //   return {
+  //     username: user.username,
+  //     display_name: user.display_name,
+  //     mail: null,
+  //     records: days.map((day, idx) => {
+  //       const recordsOfUser = records.filter(
+  //         (record) => record.username === user.username
+  //       );
+  //       return {
+  //         dayIdx: idx,
+  //         dayDisplayName: day,
+  //         statusOfDay: recordsOfUser[idx].user_status_id,
+  //       };
+  //     }),
+  //   };
+  // });
 
   await getUserStatuses().then((userStatusesData) => {
     userMailData.forEach((mailDataOfUser) => {

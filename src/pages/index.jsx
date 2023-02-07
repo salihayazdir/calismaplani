@@ -16,6 +16,8 @@ import {
   ArrowPathIcon,
   UsersIcon,
   ExclamationCircleIcon,
+  ChevronRightIcon,
+  ChevronLeftIcon,
 } from '@heroicons/react/24/outline';
 import { Transition } from '@headlessui/react';
 import { addLog } from '../database/dbOps';
@@ -151,6 +153,11 @@ export default function Home({
     })
   );
 
+  const usersWithPreviousRecords = useMemo(
+    () => [...new Set(records.map((record) => record.username))],
+    [records]
+  );
+
   const fillWithPreviousRecords = () => {
     setNewRecords(previousRecords);
   };
@@ -190,42 +197,6 @@ export default function Home({
       })
     );
   }, [records]);
-
-  // const [
-  //   tableIsFilledWithPreviousRecords,
-  //   setTableIsFilledWithPreviousRecords,
-  // ] = useState(false);
-
-  // useEffect(() => {
-  //   setTableIsFilledWithPreviousRecords(
-  //     Boolean(
-  //       JSON.stringify(
-  //         _.sortBy(
-  //           previousRecords.map((dayOfRecords) => {
-  //             return {
-  //               dayIdx: dayOfRecords.dayIdx,
-  //               dayDisplayName: dayOfRecords.dayDisplayName,
-  //               data: _.sortBy(dayOfRecords.data, 'display_name'),
-  //             };
-  //           }),
-  //           'dayIdx'
-  //         )
-  //       ) ===
-  //         JSON.stringify(
-  //           _.sortBy(
-  //             newRecords.map((dayOfRecords) => {
-  //               return {
-  //                 dayIdx: dayOfRecords.dayIdx,
-  //                 dayDisplayName: dayOfRecords.dayDisplayName,
-  //                 data: _.sortBy(dayOfRecords.data, 'display_name'),
-  //               };
-  //             }),
-  //             'dayIdx'
-  //           )
-  //         )
-  //     )
-  //   );
-  // }, [previousRecords, newRecords]);
 
   const tableIsFilledWithPreviousRecords = useMemo(
     () =>
@@ -309,6 +280,7 @@ export default function Home({
             isError: false,
             message: res.data.message || '',
           });
+          setForceTableDataRerender((prev) => !prev);
         } else {
           setApiStatus({
             isLoading: false,
@@ -329,7 +301,7 @@ export default function Home({
 
   useEffect(() => {
     fetchTableData();
-  }, [selectedDate, newRecordModalIsOpen]);
+  }, [selectedDate]);
 
   const fetchDirectReports = () => {
     // setApiStatus({
@@ -417,6 +389,23 @@ export default function Home({
     unselectedStatusExistsInSelectedRows || !isThereASelectedRow
   );
 
+  const handleNextPrevDate = (action) => {
+    const isNext = action === 'next';
+    if (isNext) {
+      setSelectedDate((prev) => addDays(prev, 7));
+    } else {
+      setSelectedDate((prev) => addDays(prev, -7));
+    }
+  };
+
+  const nextWeekButtonDisabled = Boolean(
+    selectedDate > addDays(endOfISOWeek(new Date()), 7)
+  );
+  const previousWeekButtonDisabled =
+    selectedView === 'newrecord'
+      ? Boolean(selectedDate < addDays(startOfISOWeek(new Date()), 7))
+      : false;
+
   return (
     <>
       <Layout
@@ -441,6 +430,7 @@ export default function Home({
                   <UsersIcon className='h-4 w-4' />
                 </button>
               ) : null}
+
               {userData.is_manager ? (
                 <button
                   onClick={() => setAuthorizedPersonnelModalIsOpen(true)}
@@ -450,6 +440,7 @@ export default function Home({
                   <UsersIcon className='h-4 w-4' />
                 </button>
               ) : null}
+
               <div className='flex rounded-lg border border-gray-200 bg-white'>
                 <span className='flex items-center rounded-l-lg border-r px-4 text-sm font-semibold text-gray-500'>
                   Hafta
@@ -465,6 +456,23 @@ export default function Home({
                   maxDate={addDays(endOfISOWeek(new Date()), 14)}
                 />
               </div>
+              <div className='flex items-stretch divide-x divide-gray-200 rounded-lg border border-gray-200 bg-white  '>
+                <button
+                  disabled={previousWeekButtonDisabled}
+                  onClick={() => handleNextPrevDate('prev')}
+                  className='flex w-10 items-center justify-center rounded-l-lg text-blue-600 hover:bg-blue-600 hover:text-white disabled:text-gray-300 disabled:hover:bg-white disabled:hover:text-gray-300'
+                >
+                  <ChevronLeftIcon className='h-4 w-4' />
+                </button>
+                <button
+                  disabled={nextWeekButtonDisabled}
+                  onClick={() => handleNextPrevDate('next')}
+                  className='flex w-10 items-center justify-center rounded-r-lg text-blue-600 hover:bg-blue-600 hover:text-white disabled:text-gray-300 disabled:hover:bg-white disabled:hover:text-gray-300'
+                >
+                  <ChevronRightIcon className='h-4 w-4' />
+                </button>
+              </div>
+
               {selectedView === 'records' ? (
                 <button
                   onClick={() => fetchTableData()}
@@ -504,6 +512,7 @@ export default function Home({
                   isLeaderAndUnAuthorized={isLeaderAndUnAuthorized}
                   setSelectedUsernames={setSelectedUsernames}
                   forceTableDataRerender={forceTableDataRerender}
+                  usersWithPreviousRecords={usersWithPreviousRecords}
                 />
                 <div className='flex gap-4 self-end text-center align-middle'>
                   {unselectedStatusExists ? (
@@ -551,6 +560,7 @@ export default function Home({
                 apiStatus={apiStatus}
                 selectedDateRange='week'
                 isDashboard={false}
+                fetchTableData={fetchTableData}
               />
               {records.length !== 0 ? (
                 <DailyStats
@@ -570,10 +580,17 @@ export default function Home({
           setIsOpen={setNewRecordModalIsOpen}
           newRecords={newRecords}
           selectedDate={selectedDate}
-          prevRecordsExist={prevRecordsExist}
+          prevRecordsExist={
+            sendingOnlyTheSelectedRecords
+              ? selectedUsernames.some(
+                  (user) => usersWithPreviousRecords.indexOf(user) >= 0
+                )
+              : prevRecordsExist
+          }
           sendingOnlyTheSelectedRecords={sendingOnlyTheSelectedRecords}
           setSendingOnlyTheSelectedRecords={setSendingOnlyTheSelectedRecords}
           selectedUsernames={selectedUsernames}
+          fetchTableData={fetchTableData}
         />
       ) : null}
 

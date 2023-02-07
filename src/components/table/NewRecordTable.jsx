@@ -39,6 +39,7 @@ export default function NewRecordTable({
   isLeaderAndUnAuthorized,
   setSelectedUsernames,
   forceTableDataRerender,
+  usersWithPreviousRecords,
 }) {
   const filterTypes = useMemo(
     () => ({
@@ -78,6 +79,8 @@ export default function NewRecordTable({
             is_authorized: dataOfUser.is_authorized,
             is_leader: dataOfUser.is_leader,
             team_display_name: dataOfUser.team_display_name,
+            hasRecord:
+              usersWithPreviousRecords.indexOf(dataOfUser.username) !== -1,
           };
         }),
         'display_name'
@@ -104,7 +107,12 @@ export default function NewRecordTable({
         Header: 'Personel',
         accessor: 'display_name',
         Cell: ({ row }) => (
-          <div className='flex items-center gap-5'>
+          <div className='flex items-center gap-4'>
+            {row.original.hasRecord === true ? (
+              <div className='mr-2 h-2 w-2  rounded-full bg-green-500'></div>
+            ) : (
+              <div className='mr-2 h-2 w-2  rounded-full bg-red-500 '></div>
+            )}
             <span className=' whitespace-nowrap font-medium text-gray-800'>
               {row.values.display_name === undefined
                 ? null

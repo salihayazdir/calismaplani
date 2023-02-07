@@ -14,6 +14,7 @@ export default function NewRecordsModal({
   sendingOnlyTheSelectedRecords,
   setSendingOnlyTheSelectedRecords,
   selectedUsernames,
+  fetchTableData,
 }) {
   const [offPersonnelExists, setOffPersonnelExists] = useState(false);
 
@@ -47,10 +48,10 @@ export default function NewRecordsModal({
             record_date: recordDate,
             user_status_id: record.user_status_id,
             record_status_id: record.record_status_id,
-            mailData: {
-              display_name: record.display_name,
-              mail: record.mail,
-            },
+            // mailData: {
+            //   display_name: record.display_name,
+            //   mail: record.mail,
+            // },
           }));
         })
         .flat()
@@ -71,10 +72,10 @@ export default function NewRecordsModal({
             record_date: recordDate,
             user_status_id: record.user_status_id,
             record_status_id: record.record_status_id,
-            mailData: {
-              display_name: record.display_name,
-              mail: record.mail,
-            },
+            // mailData: {
+            //   display_name: record.display_name,
+            //   mail: record.mail,
+            // },
           }));
         })
         .flat()
@@ -89,7 +90,7 @@ export default function NewRecordsModal({
     axios
       .post(`${process.env.NEXT_PUBLIC_DOMAIN}/api/records/add-record`, {
         records: recordsToSend,
-        rawRecords: newRecords,
+        // rawRecords: newRecords,
         recordsStartDate: format(selectedDate, 'd MMMM yyyy'),
         recordsEndDate: format(addDays(selectedDate, 4), 'd MMMM yyyy'),
         prevRecordsExist: Boolean(prevRecordsExist),
@@ -124,6 +125,7 @@ export default function NewRecordsModal({
   };
 
   const handleClose = () => {
+    if (isSent) fetchTableData();
     setIsOpen(false);
     setSendingOnlyTheSelectedRecords(false);
     // setApiStatus({

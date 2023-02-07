@@ -15,6 +15,7 @@ export default function DashboardRecordsView({
   setSelectedDateRange,
   setSelectedView,
   isDashboard,
+  fetchTableData,
 }) {
   const { isLoading, isError, message } = apiStatus;
   const isNoRecords = Boolean(isLoading === false && records.length === 0);
@@ -46,6 +47,7 @@ export default function DashboardRecordsView({
                 selectedDate={selectedDate}
                 selectedDateRange={selectedDateRange}
                 isDashboard={isDashboard}
+                fetchTableData={fetchTableData}
               />
             </div>
           </Transition>

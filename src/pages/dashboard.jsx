@@ -7,6 +7,7 @@ import {
   addDays,
   format,
   endOfMonth,
+  addMonths,
 } from 'date-fns';
 import { getUserStatuses, getUsersWithManagers } from '../database/dbOps';
 import Layout from '../components/layout/Layout';
@@ -18,7 +19,11 @@ import ViewRadio from '../components/radio/ViewRadio';
 import DashboardStatsView from '../components/dashboardViews/DashboardStatsView';
 import DashboardManagersView from '../components/dashboardViews/DashboardManagersView';
 import DashboardRecordsView from '../components/dashboardViews/DashboardRecordsView';
-import { ArrowPathIcon } from '@heroicons/react/24/outline';
+import {
+  ArrowPathIcon,
+  ChevronRightIcon,
+  ChevronLeftIcon,
+} from '@heroicons/react/24/outline';
 import { useRouter } from 'next/router';
 import { addLog } from '../database/dbOps';
 
@@ -118,6 +123,30 @@ export default function Dashboard({ userStatuses, userData, listOfUsers }) {
     },
   ];
 
+  const handleNextPrevDate = (action) => {
+    const isNext = action === 'next';
+
+    if (isNext) {
+      if (selectedDateRange === 'month')
+        setSelectedDate((prev) => addMonths(prev, 1));
+      if (selectedDateRange === 'week')
+        setSelectedDate((prev) => addDays(prev, 7));
+      if (selectedDateRange === 'day')
+        setSelectedDate((prev) => addDays(prev, 1));
+    } else {
+      if (selectedDateRange === 'month')
+        setSelectedDate((prev) => addMonths(prev, -1));
+      if (selectedDateRange === 'week')
+        setSelectedDate((prev) => addDays(prev, -7));
+      if (selectedDateRange === 'day')
+        setSelectedDate((prev) => addDays(prev, -1));
+    }
+  };
+
+  const nextDateButtonDisabled = Boolean(
+    selectedDate > addDays(endOfISOWeek(new Date()), 13)
+  );
+
   return (
     <>
       <Layout
@@ -148,24 +177,41 @@ export default function Dashboard({ userStatuses, userData, listOfUsers }) {
                   <DayPicker
                     selectedDate={selectedDate}
                     setSelectedDate={setSelectedDate}
-                    maxDate={addDays(endOfISOWeek(new Date()), 7)}
+                    maxDate={addDays(endOfISOWeek(new Date()), 14)}
                   />
                 ) : null}
                 {selectedDateRange === 'week' ? (
                   <WeekPicker
                     selectedDate={selectedDate}
                     setSelectedDate={setSelectedDate}
-                    maxDate={addDays(endOfISOWeek(new Date()), 7)}
+                    maxDate={addDays(endOfISOWeek(new Date()), 14)}
                   />
                 ) : null}
                 {selectedDateRange === 'month' ? (
                   <MonthPicker
                     selectedDate={selectedDate}
                     setSelectedDate={setSelectedDate}
-                    maxDate={new Date()}
+                    maxDate={addDays(endOfISOWeek(new Date()), 14)}
                   />
                 ) : null}
               </div>
+
+              <div className='flex items-stretch divide-x divide-gray-200 rounded-lg border border-gray-200 bg-white  '>
+                <button
+                  onClick={() => handleNextPrevDate('prev')}
+                  className='flex w-10 items-center justify-center rounded-l-lg text-blue-600 hover:bg-blue-600 hover:text-white disabled:text-gray-300 disabled:hover:bg-white disabled:hover:text-gray-300'
+                >
+                  <ChevronLeftIcon className='h-4 w-4' />
+                </button>
+                <button
+                  disabled={nextDateButtonDisabled}
+                  onClick={() => handleNextPrevDate('next')}
+                  className='flex w-10 items-center justify-center rounded-r-lg text-blue-600 hover:bg-blue-600 hover:text-white disabled:text-gray-300 disabled:hover:bg-white disabled:hover:text-gray-300'
+                >
+                  <ChevronRightIcon className='h-4 w-4' />
+                </button>
+              </div>
+
               <button
                 onClick={() => fetchTableData()}
                 type='button'

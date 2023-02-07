@@ -7,7 +7,7 @@ export default async function handler(req, response) {
   try {
     if (req.method !== 'POST') throw 'Http metodu POST olmalıdır.';
     const records = req.body.records;
-    const rawRecords = req.body.rawRecords;
+    // const rawRecords = req.body.rawRecords;
     const recordsStartDate = req.body.recordsStartDate;
     const recordsEndDate = req.body.recordsEndDate;
     const prevRecordsExist = req.body.prevRecordsExist;
@@ -60,7 +60,7 @@ export default async function handler(req, response) {
     });
 
     newRecordEmail({
-      rawRecords,
+      // rawRecords,
       records,
       userData,
       prevRecordsExist,

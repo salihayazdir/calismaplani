@@ -5,7 +5,7 @@ import {
   Disclosure,
   Popover,
 } from '@headlessui/react';
-import { Fragment, useState, useEffect } from 'react';
+import { Fragment, useState, useEffect, useMemo } from 'react';
 import Loader from '../skeletons/Loader';
 import axios from 'axios';
 import _ from 'lodash';
@@ -41,8 +41,12 @@ export default function TeamsModal({
   });
   const { isLoading, isSent, isError, message } = apiStatus;
 
-  const directReportsWithoutTeam = directReports.filter(
-    (user) => user.team_id === null && user.is_manager === false
+  const directReportsWithoutTeam = useMemo(
+    () =>
+      directReports.filter(
+        (user) => user.team_id === null && user.is_manager === false
+      ),
+    [directReports]
   );
 
   const [selectedNewTeamLeader, setSelectedNewTeamLeader] = useState(
@@ -102,7 +106,7 @@ export default function TeamsModal({
             isLoading: false,
             isSent: true,
             isError: false,
-            message: prev.message,
+            message: prev.isError ? '' : prev.message,
           }));
           setTeamMemberRecords(res.data.teamsData);
           fetchDirectReports();
@@ -126,7 +130,8 @@ export default function TeamsModal({
       });
   };
 
-  const handleNewTeamFormSubmit = () => {
+  const handleNewTeamFormSubmit = (e) => {
+    e.preventDefault();
     setApiStatus({
       isLoading: true,
       isSent: false,
@@ -505,7 +510,7 @@ export default function TeamsModal({
                       <div className='px-8'>
                         <button
                           onClick={() => setSelectedTeamId('new')}
-                          className='my-8 flex w-full items-center gap-4 rounded-lg  bg-green-50  py-2 px-4 font-semibold text-green-700 hover:bg-green-100'
+                          className='my-8 flex w-full items-center gap-4 rounded-lg bg-green-50  py-2  px-4 font-semibold text-green-700 hover:bg-green-100 disabled:bg-gray-100 disabled:text-gray-400'
                           disabled={directReportsWithoutTeam.length === 0}
                         >
                           <div className='flex items-center'>
@@ -731,8 +736,11 @@ export default function TeamsModal({
 
                                   <button
                                     onClick={handleNewTeamMemberSubmit}
-                                    className='rounded-lg bg-green-600 px-3 font-medium text-white hover:bg-green-500'
-                                    disabled={!selectedNewTeamLeader}
+                                    className='rounded-lg bg-green-600 px-3 font-medium text-white hover:bg-green-500 disabled:bg-gray-300'
+                                    disabled={
+                                      !selectedNewTeamLeader ||
+                                      directReportsWithoutTeam.length === 0
+                                    }
                                   >
                                     Ekle
                                   </button>
@@ -853,7 +861,10 @@ export default function TeamsModal({
                       {selectedTeamId === 'new' ? (
                         <>
                           <h2 className='text-xl font-semibold '>Yeni Ekip</h2>
-                          <div className='flex flex-col gap-6 text-sm'>
+                          <form
+                            onSubmit={handleNewTeamFormSubmit}
+                            className='flex flex-col gap-6 text-sm'
+                          >
                             <div className='relative flex flex-col gap-1 rounded-md '>
                               <label
                                 htmlFor='newTeamName'
@@ -974,14 +985,15 @@ export default function TeamsModal({
                                 </div>
                               ) : (
                                 <button
-                                  onClick={handleNewTeamFormSubmit}
+                                  // onClick={handleNewTeamFormSubmit}
+                                  type='submit'
                                   className='relativeflex group w-full justify-center rounded-md border border-transparent bg-blue-600 py-3 px-4 text-base font-medium text-white hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2'
                                 >
                                   Gönder
                                 </button>
                               )}
                             </div>
-                          </div>
+                          </form>
                         </>
                       ) : null}
                     </div>

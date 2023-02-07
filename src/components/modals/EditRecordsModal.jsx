@@ -5,6 +5,7 @@ import axios from 'axios';
 import { XMarkIcon, ExclamationCircleIcon } from '@heroicons/react/24/outline';
 import { format, addDays } from 'date-fns';
 import ModalStatusSelect from '../selecbox/ModalStatusSelect';
+import _ from 'lodash';
 
 export default function EditRecordsModal({
   isOpen,
@@ -13,36 +14,15 @@ export default function EditRecordsModal({
   userStatuses,
   selectedDate,
   records,
+  fetchTableData,
   newRecords,
   prevRecordsExist,
   sendingOnlyTheSelectedRecords,
   setSendingOnlyTheSelectedRecords,
   selectedUsernames,
 }) {
-  console.log(records);
   const days = ['Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma'];
-  //   const [newEditedRecords, setNewEditedRecords] = useState([
-  //     {
-  //       dayIdx: 0,
-  //       user_status_id: 0,
-  //     },
-  //     {
-  //       dayIdx: 1,
-  //       user_status_id: 0,
-  //     },
-  //     {
-  //       dayIdx: 2,
-  //       user_status_id: 0,
-  //     },
-  //     {
-  //       dayIdx: 3,
-  //       user_status_id: 0,
-  //     },
-  //     {
-  //       dayIdx: 4,
-  //       user_status_id: 0,
-  //     },
-  //   ]);
+
   const [newEditedRecords, setNewEditedRecords] = useState(() => {
     if (records.length !== 5) {
       return [
@@ -68,12 +48,18 @@ export default function EditRecordsModal({
         },
       ];
     } else {
-      return records.map((record, idx) => {
-        return {
-          dayIdx: idx,
-          user_status_id: record.user_status_id,
-        };
-      });
+      return records
+        .sort(function compare(a, b) {
+          var dateA = new Date(a.record_date);
+          var dateB = new Date(b.record_date);
+          return dateA - dateB;
+        })
+        .map((record, idx) => {
+          return {
+            dayIdx: idx,
+            user_status_id: record.user_status_id,
+          };
+        });
     }
   });
 
@@ -101,16 +87,18 @@ export default function EditRecordsModal({
       message: '',
     });
 
-    const recordsToSend = newEditedRecords.map((record) => ({
-      username,
-      record_date: format(addDays(selectedDate, record.dayIdx), 'yyyy-MM-dd'),
-      user_status_id: record.user_status_id,
-      record_status_id: 2,
-      mailData: {
-        display_name,
-        mail: null,
-      },
-    }));
+    const recordsToSend = _.sortBy(newEditedRecords, 'dayIdx').map(
+      (record) => ({
+        username,
+        record_date: format(addDays(selectedDate, record.dayIdx), 'yyyy-MM-dd'),
+        user_status_id: record.user_status_id,
+        record_status_id: 2,
+        mailData: {
+          display_name,
+          mail: null,
+        },
+      })
+    );
 
     axios
       .post(`${process.env.NEXT_PUBLIC_DOMAIN}/api/records/add-record`, {
@@ -121,7 +109,7 @@ export default function EditRecordsModal({
         prevRecordsExist: true,
       })
       .then((res) => {
-        console.log(res);
+        // console.log(res);
         if (res.data.success === true) {
           setApiStatus({
             isLoading: false,
@@ -150,6 +138,7 @@ export default function EditRecordsModal({
   };
 
   const handleClose = () => {
+    if (isSent) fetchTableData();
     setIsOpen(false);
   };
 
