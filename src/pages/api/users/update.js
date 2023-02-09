@@ -1,6 +1,7 @@
 const ldap = require('ldapjs');
 import verifyToken from '../../../backend/verifyToken';
 import { addUser, addLog, setUsersInactive } from '../../../database/dbOps';
+import toTitleCase from '../../../utils/toTitleCase';
 
 export default async function handler(req, response) {
   const userData = await verifyToken(req.headers.cookie);
@@ -109,7 +110,7 @@ export default async function handler(req, response) {
 
           return {
             username: user.sAMAccountName,
-            display_name: user.name || null,
+            display_name: user.name ? toTitleCase(user.name) : null,
             mail: user.mail,
             is_manager: isManager,
             is_hr: isHr,

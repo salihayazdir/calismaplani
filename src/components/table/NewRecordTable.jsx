@@ -31,15 +31,16 @@ export default function NewRecordTable({
   setNewRecords,
   userStatuses,
   selectedDate,
-  prevRecordsExist,
-  fillWithPreviousRecords,
-  tableIsFilledWithPreviousRecords,
+  // prevRecordsExist,
+  // fillWithPreviousRecords,
+  // tableIsFilledWithPreviousRecords,
   apiStatus,
   directReports,
   isLeaderAndUnAuthorized,
   setSelectedUsernames,
   forceTableDataRerender,
   usersWithPreviousRecords,
+  records,
 }) {
   const filterTypes = useMemo(
     () => ({
@@ -74,18 +75,26 @@ export default function NewRecordTable({
           return {
             username: dataOfUser.username,
             display_name: dataOfUser.display_name,
-            physicalDeliveryOfficeName: dataOfUser.physicalDeliveryOfficeName,
+            physicalDeliveryOfficeName:
+              dataOfUser.physicalDeliveryOfficeName === null
+                ? '-'
+                : dataOfUser.physicalDeliveryOfficeName,
             user_status_id: user.user_status_id,
             is_authorized: dataOfUser.is_authorized,
             is_leader: dataOfUser.is_leader,
-            team_display_name: dataOfUser.team_display_name,
+            team_display_name:
+              dataOfUser.team_display_name === null
+                ? '-'
+                : dataOfUser.team_display_name,
             hasRecord:
-              usersWithPreviousRecords.indexOf(dataOfUser.username) !== -1,
+              usersWithPreviousRecords.indexOf(dataOfUser.username) !== -1
+                ? 'Mevcut'
+                : 'Eksik',
           };
         }),
         'display_name'
       ),
-    [forceTableDataRerender]
+    [forceTableDataRerender, records]
   );
 
   const columns = useMemo(
@@ -97,22 +106,58 @@ export default function NewRecordTable({
         width: 20,
         Filter: false,
         accessor: (_row, i) => i + 1,
-        Cell: ({ value }) => (
-          <span className='font-medium text-gray-400'>
-            {value === undefined ? null : String(value + '.')}
-          </span>
-        ),
+        Cell: ({ row }) => {
+          const value = row.values.index;
+          return (
+            <div className='flex items-center gap-3'>
+              <span className='font-medium leading-6 text-gray-400'>
+                {value === undefined ? null : String(value)}
+              </span>
+              {/* {apiStatus.isLoading ? (
+                <div className={`h-2 w-2  rounded-full bg-gray-300`}></div>
+              ) : (
+                <div
+                  className={`h-2 w-2  rounded-full ${
+                    row.original.hasRecord === 'Mevcut'
+                      ? 'bg-green-500'
+                      : 'bg-red-500'
+                  }`}
+                ></div>
+              )} */}
+            </div>
+          );
+        },
+      },
+      {
+        Header: 'Kayıt',
+        id: 'hasRecord',
+        maxWidth: 40,
+        width: 20,
+        Filter: SelectColumnFilter,
+        accessor: 'hasRecord',
+        Cell: ({ row }) => {
+          return (
+            <div className='pl-4'>
+              {apiStatus.isLoading ? (
+                <div className={`h-3 w-3  rounded-full bg-gray-300`}></div>
+              ) : (
+                <div
+                  className={`h-2 w-5  rounded-full ${
+                    row.original.hasRecord === 'Mevcut'
+                      ? 'bg-green-500'
+                      : 'bg-red-500'
+                  }`}
+                ></div>
+              )}
+            </div>
+          );
+        },
       },
       {
         Header: 'Personel',
         accessor: 'display_name',
         Cell: ({ row }) => (
           <div className='flex items-center gap-4'>
-            {row.original.hasRecord === true ? (
-              <div className='mr-2 h-2 w-2  rounded-full bg-green-500'></div>
-            ) : (
-              <div className='mr-2 h-2 w-2  rounded-full bg-red-500 '></div>
-            )}
             <span className=' whitespace-nowrap font-medium text-gray-800'>
               {row.values.display_name === undefined
                 ? null
@@ -149,7 +194,9 @@ export default function NewRecordTable({
         Filter: SelectColumnFilter,
         Cell: ({ value }) => (
           <span className='font-light text-gray-400'>
-            {value === undefined || value === null ? null : String(value)}
+            {value === undefined || value === null || value === '-'
+              ? null
+              : String(value)}
           </span>
         ),
       },
@@ -161,25 +208,27 @@ export default function NewRecordTable({
         Header: 'Ekip',
         accessor: 'team_display_name',
         Filter: SelectColumnFilter,
-        Cell: ({ row }) => (
-          <div className='flex items-center gap-5'>
-            <span className='font-light text-gray-400'>
-              {row.values.team_display_name === undefined ||
-              row.values.team_display_name === null
-                ? null
-                : String(row.values.team_display_name)}
-            </span>
-            {row.original.is_leader && (
-              <div className='inline-flex items-center gap-2 rounded-full bg-sky-100 px-3 py-1 text-center text-sky-700 outline outline-1 outline-sky-400'>
-                <span>Lider</span>
-                <UserGroupIcon className='h-4 w-4  ' />
-              </div>
-            )}
-          </div>
-        ),
+        Cell: ({ row }) => {
+          const value = row.values.team_display_name;
+          return (
+            <div className='flex items-center gap-5'>
+              <span className=' max-w-fit font-light text-gray-400'>
+                {value === undefined || value === null || value === '-'
+                  ? null
+                  : String(value)}
+              </span>
+              {row.original.is_leader && (
+                <div className='inline-flex items-center gap-2 rounded-full bg-sky-100 px-3 py-1 text-center text-sky-700 outline outline-1 outline-sky-400'>
+                  <span>Lider</span>
+                  <UserGroupIcon className='h-4 w-4  ' />
+                </div>
+              )}
+            </div>
+          );
+        },
       },
     ],
-    [newRecords, selectedDate]
+    [newRecords, records]
   );
 
   const days = ['Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma'];
@@ -191,7 +240,7 @@ export default function NewRecordTable({
           const day = addDays(selectedDate, dayIdx);
           const formattedDay = format(day, 'd MMMM');
           return (
-            <div className='w-20 '>
+            <div className='pl-2'>
               <div>{dayName}</div>
               <div className='mt-2 rounded-lg text-gray-400'>
                 {formattedDay}
@@ -217,7 +266,7 @@ export default function NewRecordTable({
           );
         },
       })),
-    [newRecords, selectedDate]
+    [newRecords, records]
   );
 
   const tableHooks = (hooks) => {
@@ -227,12 +276,12 @@ export default function NewRecordTable({
         maxWidth: 40,
         width: 20,
         Header: ({ getToggleAllRowsSelectedProps }) => (
-          <div className='flex items-center'>
+          <div className='flex h-full items-center justify-center pl-[26px]'>
             <IndeterminateCheckbox {...getToggleAllRowsSelectedProps()} />
           </div>
         ),
         Cell: ({ row }) => (
-          <div className='flex items-center'>
+          <div className='flex items-center pl-6'>
             <IndeterminateCheckbox {...row.getToggleRowSelectedProps()} />
           </div>
         ),
@@ -283,7 +332,7 @@ export default function NewRecordTable({
   );
 
   return (
-    <div className='flex flex-col rounded-xl border  border-gray-200 bg-white pb-4'>
+    <div className='flex flex-col rounded-xl  border border-gray-200 bg-white pb-4'>
       <div className='flex items-center justify-between p-4'>
         <h2 className='inline-flex gap-2 whitespace-nowrap rounded-md bg-green-50 px-4 py-2 text-sm font-bold text-green-600 '>
           {`
@@ -301,7 +350,7 @@ export default function NewRecordTable({
               <Loader size='6' />
             </div>
           ) : null}
-          {prevRecordsExist && !apiStatus.isLoading ? (
+          {/* {prevRecordsExist && !apiStatus.isLoading ? (
             <div className='inline-flex items-center gap-4 whitespace-nowrap rounded-md bg-orange-50 pl-4 text-xs text-orange-700 '>
               <div>
                 <span>
@@ -317,7 +366,7 @@ export default function NewRecordTable({
                 Geçmiş Kayıtları Tabloya Getir
               </button>
             </div>
-          ) : null}
+          ) : null} */}
           <NewRecordBulkActions
             newRecords={newRecords}
             setNewRecords={setNewRecords}
@@ -328,7 +377,7 @@ export default function NewRecordTable({
           />
         </div>
       </div>
-      <div className={`overflow-x-auto text-xs`}>
+      <div className={`overflow-x-auto overflow-y-visible text-xs`}>
         <table
           {...getTableProps()}
           className='w-full border-collapse rounded-lg '
@@ -342,7 +391,7 @@ export default function NewRecordTable({
                     {...column.getHeaderProps({
                       style: { minWidth: column.minWidth, width: column.width },
                     })}
-                    className='px-3 py-2 text-left align-baseline font-semibold first-of-type:pl-6 first-of-type:align-middle'
+                    className='py-2.5 px-2 text-left font-semibold'
                   >
                     {column.render('Header')}
                     <div>
@@ -372,7 +421,8 @@ export default function NewRecordTable({
                             width: cell.column.width,
                           },
                         })}
-                        className='w-44 py-4 pl-3 pr-5 first-of-type:w-20 first-of-type:pl-6 '
+                        // className='h-16 w-44 py-4 pl-3 pr-5 first-of-type:w-20 first-of-type:pl-6 '
+                        className='px-3 py-2'
                       >
                         {cell.render('Cell')}
                       </td>
@@ -407,7 +457,7 @@ function DefaultColumnFilter({
 function SelectColumnFilter({
   column: { filterValue, setFilter, preFilteredRows, id },
 }) {
-  const options = useMemo(() => {
+  const preOptions = useMemo(() => {
     const options = new Set();
     preFilteredRows.forEach((row) => {
       options.add(row.values[id]);
@@ -415,9 +465,13 @@ function SelectColumnFilter({
     return [...options.values()];
   }, [id, preFilteredRows]);
 
+  const options = preOptions.filter((option) => option !== null);
+
   return (
     <select
-      className='mt-1 w-40 rounded-md py-1 px-2 text-gray-500 shadow focus:outline-blue-300'
+      className={`mt-1 rounded-md py-1 px-2 text-gray-500 shadow focus:outline-blue-300 ${
+        id === 'hasRecord' ? 'w-20' : 'w-40'
+      }`}
       value={filterValue}
       onChange={(e) => {
         setFilter(e.target.value || undefined);

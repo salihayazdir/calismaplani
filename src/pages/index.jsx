@@ -119,127 +119,122 @@ export default function Home({
     });
   }, [directReports]);
 
-  const [previousRecords, setPreviousRecords] = useState(() =>
-    days.map((day, dayIdx) => {
-      const recordsOfTheDay = records.filter(
-        (record) =>
-          record.record_date.slice(0, 10) ===
-          format(addDays(selectedDate, dayIdx), 'yyyy-MM-dd')
-      );
-      return {
-        dayIdx,
-        dayDisplayName: day,
-        data: directReports.map((user) => {
-          let status;
-          const recordOfTheUser = recordsOfTheDay.filter(
-            (record) => record.username === user.username
-          );
-          if (recordOfTheUser.length !== 1) {
-            status = 1;
-          } else {
-            status = recordOfTheUser[0].user_status_id;
-          }
-          return {
-            username: user.username,
-            display_name: user.display_name,
-            physicalDeliveryOfficeName: user.physicalDeliveryOfficeName,
-            mail: user.mail,
-            user_status_id: status,
-            day: dayIdx,
-            record_status_id: 2,
-          };
-        }),
-      };
-    })
-  );
+  // const [previousRecords, setPreviousRecords] = useState(() =>
+  //   days.map((day, dayIdx) => {
+  //     const recordsOfTheDay = records.filter(
+  //       (record) =>
+  //         record.record_date.slice(0, 10) ===
+  //         format(addDays(selectedDate, dayIdx), 'yyyy-MM-dd')
+  //     );
+  //     return {
+  //       dayIdx,
+  //       dayDisplayName: day,
+  //       data: directReports.map((user) => {
+  //         let status;
+  //         const recordOfTheUser = recordsOfTheDay.filter(
+  //           (record) => record.username === user.username
+  //         );
+  //         if (recordOfTheUser.length !== 1) {
+  //           status = 1;
+  //         } else {
+  //           status = recordOfTheUser[0].user_status_id;
+  //         }
+  //         return {
+  //           username: user.username,
+  //           display_name: user.display_name,
+  //           physicalDeliveryOfficeName: user.physicalDeliveryOfficeName,
+  //           mail: user.mail,
+  //           user_status_id: status,
+  //           day: dayIdx,
+  //           record_status_id: 2,
+  //         };
+  //       }),
+  //     };
+  //   })
+  // );
 
-  const usersWithPreviousRecords = useMemo(
-    () => [...new Set(records.map((record) => record.username))],
-    [records]
-  );
+  // const fillWithPreviousRecords = () => {
+  //   setNewRecords(previousRecords);
+  // };
 
-  const fillWithPreviousRecords = () => {
-    setNewRecords(previousRecords);
-  };
+  // useEffect(() => {
+  //   setPreviousRecords(() =>
+  //     days.map((day, dayIdx) => {
+  //       const recordsOfTheDay = records.filter(
+  //         (record) =>
+  //           record.record_date.slice(0, 10) ===
+  //           format(addDays(selectedDate, dayIdx), 'yyyy-MM-dd')
+  //       );
+  //       return {
+  //         dayIdx,
+  //         dayDisplayName: day,
+  //         data: directReports.map((user) => {
+  //           let status;
+  //           const recordOfTheUser = recordsOfTheDay.filter(
+  //             (record) => record.username === user.username
+  //           );
+  //           if (recordOfTheUser.length !== 1) {
+  //             status = 0;
+  //           } else {
+  //             status = recordOfTheUser[0].user_status_id;
+  //           }
+  //           return {
+  //             username: user.username,
+  //             display_name: user.display_name,
+  //             physicalDeliveryOfficeName: user.physicalDeliveryOfficeName,
+  //             mail: user.mail,
+  //             user_status_id: status,
+  //             day: dayIdx,
+  //             record_status_id: 2,
+  //           };
+  //         }),
+  //       };
+  //     })
+  //   );
+  // }, [records]);
 
-  useEffect(() => {
-    setPreviousRecords(() =>
-      days.map((day, dayIdx) => {
-        const recordsOfTheDay = records.filter(
-          (record) =>
-            record.record_date.slice(0, 10) ===
-            format(addDays(selectedDate, dayIdx), 'yyyy-MM-dd')
-        );
-        return {
-          dayIdx,
-          dayDisplayName: day,
-          data: directReports.map((user) => {
-            let status;
-            const recordOfTheUser = recordsOfTheDay.filter(
-              (record) => record.username === user.username
-            );
-            if (recordOfTheUser.length !== 1) {
-              status = 0;
-            } else {
-              status = recordOfTheUser[0].user_status_id;
-            }
-            return {
-              username: user.username,
-              display_name: user.display_name,
-              physicalDeliveryOfficeName: user.physicalDeliveryOfficeName,
-              mail: user.mail,
-              user_status_id: status,
-              day: dayIdx,
-              record_status_id: 2,
-            };
-          }),
-        };
-      })
-    );
-  }, [records]);
-
-  const tableIsFilledWithPreviousRecords = useMemo(
-    () =>
-      Boolean(
-        JSON.stringify(
-          _.sortBy(
-            previousRecords.map((dayOfRecords) => {
-              return {
-                dayIdx: dayOfRecords.dayIdx,
-                dayDisplayName: dayOfRecords.dayDisplayName,
-                data: _.sortBy(
-                  dayOfRecords.data.map((record) => ({
-                    username: record.username,
-                    user_status_id: record.user_status_id,
-                  })),
-                  'display_name'
-                ),
-              };
-            }),
-            'dayIdx'
-          )
-        ) ===
-          JSON.stringify(
-            _.sortBy(
-              newRecords.map((dayOfRecords) => {
-                return {
-                  dayIdx: dayOfRecords.dayIdx,
-                  dayDisplayName: dayOfRecords.dayDisplayName,
-                  data: _.sortBy(
-                    dayOfRecords.data.map((record) => ({
-                      username: record.username,
-                      user_status_id: record.user_status_id,
-                    })),
-                    'display_name'
-                  ),
-                };
-              }),
-              'dayIdx'
-            )
-          )
-      ),
-    [previousRecords, newRecords]
-  );
+  // const tableIsFilledWithPreviousRecords = useMemo(
+  //   () =>
+  //     Boolean(
+  //       JSON.stringify(
+  //         _.sortBy(
+  //           previousRecords.map((dayOfRecords) => {
+  //             return {
+  //               dayIdx: dayOfRecords.dayIdx,
+  //               dayDisplayName: dayOfRecords.dayDisplayName,
+  //               data: _.sortBy(
+  //                 dayOfRecords.data.map((record) => ({
+  //                   username: record.username,
+  //                   user_status_id: record.user_status_id,
+  //                 })),
+  //                 'display_name'
+  //               ),
+  //             };
+  //           }),
+  //           'dayIdx'
+  //         )
+  //       ) ===
+  //         JSON.stringify(
+  //           _.sortBy(
+  //             newRecords.map((dayOfRecords) => {
+  //               return {
+  //                 dayIdx: dayOfRecords.dayIdx,
+  //                 dayDisplayName: dayOfRecords.dayDisplayName,
+  //                 data: _.sortBy(
+  //                   dayOfRecords.data.map((record) => ({
+  //                     username: record.username,
+  //                     user_status_id: record.user_status_id,
+  //                   })),
+  //                   'display_name'
+  //                 ),
+  //               };
+  //             }),
+  //             'dayIdx'
+  //           )
+  //         )
+  //     ),
+  //   [previousRecords, newRecords]
+  // );
 
   const fetchTableData = () => {
     const startDate = format(selectedDate, 'yyyy-MM-dd');
@@ -302,6 +297,11 @@ export default function Home({
   useEffect(() => {
     fetchTableData();
   }, [selectedDate]);
+
+  const usersWithPreviousRecords = useMemo(
+    () => [...new Set(records.map((record) => record.username))],
+    [records]
+  );
 
   const fetchDirectReports = () => {
     // setApiStatus({
@@ -374,7 +374,6 @@ export default function Home({
     )
     .flat()
     .filter((record) => record.status === 0);
-
   const unselectedStatusExists = allUnselectedRecords.length !== 0;
 
   const unselectedStatusExistsInSelectedRows = Boolean(
@@ -418,6 +417,7 @@ export default function Home({
               selected={selectedView}
               setSelected={setSelectedView}
               views={views}
+              selectedDate={selectedDate}
               setSelectedDate={setSelectedDate}
             />
             <div className='flex gap-4'>
@@ -503,16 +503,17 @@ export default function Home({
                   userStatuses={userStatuses}
                   selectedDate={selectedDate}
                   prevRecordsExist={prevRecordsExist}
-                  fillWithPreviousRecords={fillWithPreviousRecords}
                   apiStatus={apiStatus}
-                  tableIsFilledWithPreviousRecords={
-                    tableIsFilledWithPreviousRecords
-                  }
+                  // fillWithPreviousRecords={fillWithPreviousRecords}
+                  // tableIsFilledWithPreviousRecords={
+                  //   tableIsFilledWithPreviousRecords
+                  // }
                   directReports={directReports}
                   isLeaderAndUnAuthorized={isLeaderAndUnAuthorized}
                   setSelectedUsernames={setSelectedUsernames}
                   forceTableDataRerender={forceTableDataRerender}
                   usersWithPreviousRecords={usersWithPreviousRecords}
+                  records={records}
                 />
                 <div className='flex gap-4 self-end text-center align-middle'>
                   {unselectedStatusExists ? (

@@ -84,9 +84,12 @@ export default function DashboardTable({
       manager_display_name: record.manager_display_name,
       username: record.username,
       manager_username: record.manager_username,
-      department: record.department,
-      description: record.description,
-      physicalDeliveryOfficeName: record.physicalDeliveryOfficeName,
+      department: record.department === null ? '-' : record.department,
+      description: record.description === null ? '-' : record.description,
+      physicalDeliveryOfficeName:
+        record.physicalDeliveryOfficeName === null
+          ? '-'
+          : record.physicalDeliveryOfficeName,
     }));
     const uniqUsersInRecords = removeDuplicateObjects(
       usersInRecords,
@@ -139,9 +142,13 @@ export default function DashboardTable({
         accessor: 'description',
         Filter: SelectColumnFilter,
         Cell: ({ value }) => {
-          return value ? (
-            <span className=' text-gray-500'>{String(value)}</span>
-          ) : null;
+          return (
+            <span className=' text-gray-500'>
+              {value === undefined || value === null || value === '-'
+                ? null
+                : String(value)}
+            </span>
+          );
         },
       },
       {
@@ -149,9 +156,13 @@ export default function DashboardTable({
         accessor: 'physicalDeliveryOfficeName',
         Filter: SelectColumnFilter,
         Cell: ({ value }) => {
-          return value ? (
-            <span className=' text-gray-500'>{String(value)}</span>
-          ) : null;
+          return (
+            <span className=' text-gray-500'>
+              {value === undefined || value === null || value === '-'
+                ? null
+                : String(value)}
+            </span>
+          );
         },
       },
     ],
@@ -493,13 +504,15 @@ function DefaultColumnFilter({
 function SelectColumnFilter({
   column: { filterValue, setFilter, preFilteredRows, id },
 }) {
-  const options = useMemo(() => {
+  const preOptions = useMemo(() => {
     const options = new Set();
     preFilteredRows.forEach((row) => {
       options.add(row.values[id]);
     });
     return [...options.values()];
   }, [id, preFilteredRows]);
+
+  const options = preOptions.filter((option) => option !== null);
 
   return (
     <select

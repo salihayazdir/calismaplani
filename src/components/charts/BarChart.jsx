@@ -9,6 +9,7 @@ import {
   Legend,
 } from 'chart.js';
 import { Bar } from 'react-chartjs-2';
+import { chartStatusColors } from '../../utils/chartStatusColors.';
 
 ChartJS.register(
   CategoryScale,
@@ -43,26 +44,14 @@ export default function BarChart({ records, userStatuses }) {
       return ((statusCount * 100) / divisionTotal).toFixed(1);
     });
 
-    const statusColors = ['#22c55e', '#3b82f6', '#facc15', '#ef4444'];
-    // const statusColors = [
-    //   '#22c55e',
-    //   '#3b82f6',
-    //   '#facc15',
-    //   '#f97316',
-    //   '#f97316',
-    //   '#f97316',
-    //   '#a21caf',
-    //   '#f97316',
-    //   '#ec4899',
-    //   '#ef4444',
-    //   '#ef4444',
-    // ];
+    // const statusColors = ['#22c55e', '#3b82f6', '#facc15', '#ef4444'];
+    const statusColors = chartStatusColors;
 
     return {
       label: status.user_status_name,
       data,
-      backgroundColor: idx < 4 ? statusColors[idx] : statusColors[3],
-      // backgroundColor: statusColors[idx],
+      // backgroundColor: idx < 4 ? statusColors[idx] : statusColors[3],
+      backgroundColor: statusColors[idx],
       borderRadius: 3,
       stack: idx < 4 ? `Stack ${idx}` : `Stack 3`,
     };

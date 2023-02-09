@@ -61,13 +61,14 @@ export default function DailyStats({ records, userStatuses, selectedDate }) {
                     >
                       <div className='py-1'>{status.user_status_name}</div>
                       <div className='ml-2 flex overflow-hidden rounded-md font-semibold tracking-wider '>
-                        <div className=' whitespace-nowrap bg-gray-600 px-3 py-1 text-gray-100'>
+                        <div className=' whitespace-nowrap bg-gray-100 px-3 py-1 text-gray-600'>
                           {status.count}
                         </div>
-                        <div className='whitespace-nowrap bg-gray-100 px-2 py-1 text-gray-600'>{`% ${(
-                          (100 * status.count) /
-                          recordCount
-                        ).toFixed(1)}`}</div>
+                        <div className='w-16 whitespace-nowrap bg-gray-600 px-2 py-1 text-center text-white'>
+                          {`% ${((100 * status.count) / recordCount).toFixed(
+                            1
+                          )}`}
+                        </div>
                       </div>
                     </li>
                   );

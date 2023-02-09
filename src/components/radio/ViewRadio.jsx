@@ -5,11 +5,12 @@ export default function ViewRadio({
   selected,
   setSelected,
   views,
+  selectedDate,
   setSelectedDate,
 }) {
   const handleOnChange = (value) => {
     setSelected(value);
-    if (value === 'newrecord')
+    if (value === 'newrecord' && selectedDate < startOfISOWeek(new Date()))
       setSelectedDate(startOfISOWeek(addDays(new Date(), 7)));
   };
 

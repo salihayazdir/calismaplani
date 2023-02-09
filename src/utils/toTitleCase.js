@@ -1,7 +1,7 @@
 export default function toTitleCase(str) {
-  return str.replace(/[^-'\s]+/g, function (word) {
-    return word.replace(/^./, function (first) {
-      return first.toUpperCase();
+  return str
+    .toLocaleLowerCase('tr-TR')
+    .replace(/(?:^|\s|,|;|!|:|-|\.|\?)[a-z0-9ğçşüöı]/g, function (match) {
+      return match.toLocaleUpperCase('tr-TR');
     });
-  });
 }

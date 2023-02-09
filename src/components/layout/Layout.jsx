@@ -11,7 +11,7 @@ export default function Layout({ children, title, displayName }) {
         <link rel='icon' href='/favicon.ico' />
       </Head>
       <Header displayName={displayName} />
-      <main className='pb-10'>{children}</main>
+      <main className='pb-40'>{children}</main>
     </div>
   );
 }

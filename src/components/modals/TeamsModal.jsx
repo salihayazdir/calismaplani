@@ -219,7 +219,8 @@ export default function TeamsModal({
       });
   };
 
-  const handleEditTeamName = () => {
+  const handleEditTeamName = (e) => {
+    e.preventDefault();
     setApiStatus({
       isLoading: true,
       isSent: false,
@@ -478,7 +479,7 @@ export default function TeamsModal({
                           ).length;
                           const isSelected = selectedTeamId === team.team_id;
                           return (
-                            <div className='group flex '>
+                            <div key={team.team_id} className='group flex '>
                               <div
                                 className={`w-2 bg-white  ${
                                   isSelected
@@ -521,7 +522,7 @@ export default function TeamsModal({
                       </div>
                     </div>
 
-                    <div className='flex flex-1 flex-col gap-6 px-8 pt-6 pb-24'>
+                    <div className='flex flex-1 flex-col gap-6 px-8 pt-6 pb-28'>
                       {selectedTeam ? (
                         <>
                           <h2 className='text-xl font-semibold'>
@@ -534,9 +535,12 @@ export default function TeamsModal({
                                 (record) =>
                                   record.team_id === selectedTeam.team_id
                               )
-                              .map((record) => {
+                              .map((record, i) => {
                                 return (
-                                  <li className=' flex items-center justify-between py-1.5 pr-1 pl-3 text-gray-600  hover:text-gray-800'>
+                                  <li
+                                    key={record.username}
+                                    className=' flex items-center justify-between py-1.5 pr-1 pl-3 text-gray-600  hover:text-gray-800'
+                                  >
                                     <span className=''>
                                       {record.user_display_name}
                                     </span>
@@ -779,35 +783,41 @@ export default function TeamsModal({
                                     </div>
                                   </div>
                                 </Disclosure.Button>
-                                <Disclosure.Panel className='absolute z-40 flex w-full flex-col gap-4 rounded-b-lg border border-t-0 border-gray-200 bg-white p-5 pt-3 text-sm shadow-xl'>
-                                  <div className='relative mt-2 rounded-md '>
-                                    <input
-                                      id='username'
-                                      name='username'
-                                      type='text'
-                                      required
-                                      disabled={isLoading}
-                                      pattern='^.{3,100}$'
-                                      value={editTeamNameInput}
-                                      onChange={(e) =>
-                                        setEditTeamNameInput(e.target.value)
-                                      }
-                                      className='peer block w-full appearance-none rounded-lg border border-gray-300 bg-transparent px-4 py-3 text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-0 disabled:text-gray-500 '
-                                      placeholder=' '
-                                    />
-                                    <label
-                                      htmlFor='username'
-                                      className='absolute top-1 left-2 z-10 origin-[0] -translate-y-4 scale-75 transform bg-white px-2 text-gray-500 duration-300 peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:scale-100 peer-focus:top-1 peer-focus:-translate-y-4 peer-focus:scale-75 peer-focus:px-2 peer-focus:text-blue-500 '
-                                    >
-                                      Ekip İsmi
-                                    </label>
-                                  </div>
-                                  <button
-                                    onClick={handleEditTeamName}
-                                    className='group relative flex w-full justify-center rounded-md border border-transparent bg-blue-600 py-3 px-4 font-medium text-white hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2'
+                                <Disclosure.Panel className='absolute z-40 w-full rounded-b-lg border border-t-0 border-gray-200 bg-white p-5 pt-3 text-sm shadow-xl'>
+                                  <form
+                                    onSubmit={handleEditTeamName}
+                                    className='flex flex-col gap-4'
                                   >
-                                    Gönder
-                                  </button>
+                                    <div className='relative mt-2 rounded-md '>
+                                      <input
+                                        id='username'
+                                        name='username'
+                                        type='text'
+                                        required
+                                        disabled={isLoading}
+                                        pattern='^.{3,100}$'
+                                        value={editTeamNameInput}
+                                        onChange={(e) =>
+                                          setEditTeamNameInput(e.target.value)
+                                        }
+                                        className='peer block w-full appearance-none rounded-lg border border-gray-300 bg-transparent px-4 py-3 text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-0 disabled:text-gray-500 '
+                                        placeholder=' '
+                                      />
+                                      <label
+                                        htmlFor='username'
+                                        className='absolute top-1 left-2 z-10 origin-[0] -translate-y-4 scale-75 transform bg-white px-2 text-gray-500 duration-300 peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:scale-100 peer-focus:top-1 peer-focus:-translate-y-4 peer-focus:scale-75 peer-focus:px-2 peer-focus:text-blue-500 '
+                                      >
+                                        Ekip İsmi
+                                      </label>
+                                    </div>
+                                    <button
+                                      // onClick={handleEditTeamName}
+                                      type='submit'
+                                      className='group relative flex w-full justify-center rounded-md border border-transparent bg-blue-600 py-3 px-4 font-medium text-white hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2'
+                                    >
+                                      Gönder
+                                    </button>
+                                  </form>
                                 </Disclosure.Panel>
                               </div>
                             )}
