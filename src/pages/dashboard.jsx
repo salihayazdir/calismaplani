@@ -243,6 +243,7 @@ export default function Dashboard({ userStatuses, userData, listOfUsers }) {
               setSelectedDateRange={setSelectedDateRange}
               setSelectedView={setSelectedView}
               isDashboard={true}
+              fetchTableData={fetchTableData}
             />
           ) : null}
           {selectedView === 'managers' ? (

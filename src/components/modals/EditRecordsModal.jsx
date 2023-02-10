@@ -1,8 +1,8 @@
 import { Dialog, Transition } from '@headlessui/react';
 import Loader from '../skeletons/Loader';
-import { Fragment, useState, useEffect } from 'react';
+import { Fragment, useState } from 'react';
 import axios from 'axios';
-import { XMarkIcon, ExclamationCircleIcon } from '@heroicons/react/24/outline';
+import { XMarkIcon } from '@heroicons/react/24/outline';
 import { format, addDays } from 'date-fns';
 import ModalStatusSelect from '../selecbox/ModalStatusSelect';
 import _ from 'lodash';
@@ -15,11 +15,6 @@ export default function EditRecordsModal({
   selectedDate,
   records,
   fetchTableData,
-  newRecords,
-  prevRecordsExist,
-  sendingOnlyTheSelectedRecords,
-  setSendingOnlyTheSelectedRecords,
-  selectedUsernames,
 }) {
   const days = ['Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma'];
 
@@ -70,14 +65,7 @@ export default function EditRecordsModal({
     message: '',
   });
   const { isLoading, isSent, isError, message } = apiStatus;
-  const {
-    description,
-    display_name,
-    index,
-    manager_display_name,
-    physicalDeliveryOfficeName,
-    username,
-  } = userDataForEditRecordsModal;
+  const { display_name, username } = userDataForEditRecordsModal;
 
   const sendRecords = () => {
     setApiStatus({

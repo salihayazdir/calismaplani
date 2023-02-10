@@ -49,6 +49,8 @@ export default function TeamsModal({
     [directReports]
   );
 
+  console.log(directReports);
+
   const [selectedNewTeamLeader, setSelectedNewTeamLeader] = useState(
     directReportsWithoutTeam[0]
   );
@@ -479,7 +481,10 @@ export default function TeamsModal({
                           ).length;
                           const isSelected = selectedTeamId === team.team_id;
                           return (
-                            <div key={team.team_id} className='group flex '>
+                            <div
+                              // key={team.team_id}
+                              className='group flex '
+                            >
                               <div
                                 className={`w-2 bg-white  ${
                                   isSelected
@@ -538,7 +543,7 @@ export default function TeamsModal({
                               .map((record, i) => {
                                 return (
                                   <li
-                                    key={record.username}
+                                    // key={record.username}
                                     className=' flex items-center justify-between py-1.5 pr-1 pl-3 text-gray-600  hover:text-gray-800'
                                   >
                                     <span className=''>
