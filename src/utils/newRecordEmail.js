@@ -1,7 +1,7 @@
 import sendMail from '../backend/sendMail';
 import { getUserStatuses, getLoginInfo } from '../database/dbOps';
 import _ from 'lodash';
-import { parse, compareAsc } from 'date-fns';
+import parse from 'date-fns/parse';
 
 export default async function newRecordEmail({
   // rawRecords,
@@ -26,22 +26,35 @@ export default async function newRecordEmail({
   const userMailData = userMailDataRequests.map((user) => {
     if (user.status !== 'fulfilled' || user.value.length !== 1) return;
     const userData = user.value[0];
+    const recordsOfUser = records
+      .filter((record) => record.username === userData.username)
+      .sort(function (a, b) {
+        return (
+          parse(a.record_date, 'yyyy-MM-dd', new Date()) -
+          parse(b.record_date, 'yyyy-MM-dd', new Date())
+        );
+      })
+      .map((record, idx) => {
+        return {
+          dayIdx: idx,
+          dayDisplayName: days[idx],
+          statusOfDay: record.user_status_id,
+        };
+      });
+
     return {
       username: userData.username,
       display_name: userData.display_name,
       mail: userData.mail,
-      records: days.map((day, idx) => {
-        const recordsOfUser = records.filter(
-          (record) => record.username === userData.username
-        );
-        return {
-          dayIdx: idx,
-          dayDisplayName: day,
-          statusOfDay: recordsOfUser[idx].user_status_id,
-        };
-      }),
+      records: recordsOfUser,
     };
   });
+
+  // return {
+  //   dayIdx: idx,
+  //   dayDisplayName: day,
+  //   statusOfDay: recordsOfUser[idx].user_status_id,
+  // };
 
   let mailSubject;
   if (userData.is_authorized) {
@@ -78,78 +91,6 @@ export default async function newRecordEmail({
     content: mailContent + updatedUsersContent,
   });
 
-  // const usersInRecords2 = [
-  //   ...new Set(
-  //     rawRecords[0].data.map((record) => ({
-  //       username: record.username,
-  //       display_name: record.display_name,
-  //       mail: record.mail,
-  //     }))
-  //   ),
-  // ];
-
-  // const userMailData = usersInRecords.map((user) => {
-  //   const recordsOfUser = rawRecords.map((dayOfRecord) => {
-  //     const recordOfUser = dayOfRecord.data.filter(
-  //       (record) => record.username === user.username
-  //     );
-  //     return {
-  //       dayIdx: dayOfRecord.dayIdx,
-  //       dayDisplayName: dayOfRecord.dayDisplayName,
-  //       statusOfDay: recordOfUser[0].user_status_id,
-  //     };
-  //   });
-  //   return { ...user, records: _.sortBy(recordsOfUser, 'dayIdx') };
-  // });
-
-  // const test = await Promise.allSettled(
-  //   usersInRecords.map(async (user) => {
-  //     const userDataRequest = await getLoginInfo(user);
-
-  //     if (userDataRequest.success !== true) {
-  //       return;
-  //     }
-
-  //     return userDataRequest.result;
-  //   })
-  // );
-
-  // const userMailData = usersInRecords.map((user) => {
-  //   return {
-  //     username: user.username,
-  //     display_name: user.display_name,
-  //     mail: null,
-  //     records: days.map((day, idx) => {
-  //       const recordsOfUser = records.filter(
-  //         (record) => record.username === user.username
-  //       );
-  //       return {
-  //         dayIdx: idx,
-  //         dayDisplayName: day,
-  //         statusOfDay: recordsOfUser[idx].user_status_id,
-  //       };
-  //     }),
-  //   };
-  // });
-
-  // const userMailData = usersInRecords.map((user) => {
-  //   return {
-  //     username: user.username,
-  //     display_name: user.display_name,
-  //     mail: null,
-  //     records: days.map((day, idx) => {
-  //       const recordsOfUser = records.filter(
-  //         (record) => record.username === user.username
-  //       );
-  //       return {
-  //         dayIdx: idx,
-  //         dayDisplayName: day,
-  //         statusOfDay: recordsOfUser[idx].user_status_id,
-  //       };
-  //     }),
-  //   };
-  // });
-
   await getUserStatuses().then((userStatusesData) => {
     userMailData.forEach((mailDataOfUser) => {
       const sayin = `Sayın ${mailDataOfUser.display_name};<br/><br/>`;
@@ -172,9 +113,9 @@ export default async function newRecordEmail({
 
       const recordDetails = mailDataOfUser.records
         .map((record) => {
-          const statusDisplayName = userStatusesData.filter(
+          const statusDisplayName = userStatusesData.find(
             (status) => status.user_status_id === record.statusOfDay
-          )[0].user_status_name;
+          ).user_status_name;
           return `${record.dayDisplayName}: ${statusDisplayName}`;
         })
         .join('<br/>')

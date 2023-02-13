@@ -48,10 +48,6 @@ export default function NewRecordsModal({
             record_date: recordDate,
             user_status_id: record.user_status_id,
             record_status_id: record.record_status_id,
-            // mailData: {
-            //   display_name: record.display_name,
-            //   mail: record.mail,
-            // },
           }));
         })
         .flat()
@@ -72,10 +68,6 @@ export default function NewRecordsModal({
             record_date: recordDate,
             user_status_id: record.user_status_id,
             record_status_id: record.record_status_id,
-            // mailData: {
-            //   display_name: record.display_name,
-            //   mail: record.mail,
-            // },
           }));
         })
         .flat()
