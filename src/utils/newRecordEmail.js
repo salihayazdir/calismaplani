@@ -50,12 +50,6 @@ export default async function newRecordEmail({
     };
   });
 
-  // return {
-  //   dayIdx: idx,
-  //   dayDisplayName: day,
-  //   statusOfDay: recordsOfUser[idx].user_status_id,
-  // };
-
   let mailSubject;
   if (userData.is_authorized) {
     mailSubject = `Çalışma Planı | ${

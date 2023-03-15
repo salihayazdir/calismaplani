@@ -108,6 +108,10 @@ export default async function handler(req, response) {
           )
             isHr = true;
 
+          let is_active = true;
+          if (manager_dn === null || manager_dn === undefined)
+            is_active = false;
+
           return {
             username: user.sAMAccountName,
             display_name: user.name ? toTitleCase(user.name) : null,
@@ -122,7 +126,7 @@ export default async function handler(req, response) {
             department: user.department || null,
             directReports: joinArray(user.directReports) || null,
             manager_dn: user.manager || null,
-            is_active: true,
+            is_active,
           };
         });
 

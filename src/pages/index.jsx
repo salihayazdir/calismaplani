@@ -285,7 +285,7 @@ export default function Home({
   );
   const previousWeekButtonDisabled =
     selectedView === 'newrecord'
-      ? Boolean(selectedDate < addDays(startOfISOWeek(new Date()), 7))
+      ? Boolean(selectedDate < startOfISOWeek(new Date()), 7)
       : false;
 
   return (
@@ -333,7 +333,7 @@ export default function Home({
                   setSelectedDate={setSelectedDate}
                   minDate={
                     selectedView === 'newrecord'
-                      ? startOfISOWeek(new Date())
+                      ? startOfISOWeek(addDays(new Date(), -7))
                       : null
                   }
                   maxDate={addDays(endOfISOWeek(new Date()), 14)}
