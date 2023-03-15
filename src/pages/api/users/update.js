@@ -109,7 +109,7 @@ export default async function handler(req, response) {
             isHr = true;
 
           let is_active = true;
-          if (manager_dn === null || manager_dn === undefined)
+          if (user.manager === null || user.manager === undefined)
             is_active = false;
 
           return {
